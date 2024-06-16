@@ -31,6 +31,7 @@ public class MessagePanel extends JPanel {
   }
     public void append(String message){
         textArea.append("\n"+message);
+        //test
     }
     public void error(String message,Throwable ex){
         message(message);
