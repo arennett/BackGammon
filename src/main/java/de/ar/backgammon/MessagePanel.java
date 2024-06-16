@@ -20,7 +20,6 @@ public class MessagePanel extends JPanel {
         textArea.setFont(new Font("Times New Roman",Font.PLAIN,20));
         DefaultCaret caret = (DefaultCaret) textArea.getCaret();
         caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-        JPanel p= new JPanel();
         JScrollPane scrollPane = new JScrollPane (textArea);
         scrollPane.setAutoscrolls(true);
         textArea.setEditable(false);
@@ -30,4 +29,16 @@ public class MessagePanel extends JPanel {
   public void message(String message){
         textArea.setText(message);
   }
+    public void append(String message){
+        textArea.append("\n"+message);
+    }
+    public void error(String message,Throwable ex){
+        message(message);
+        append(ex.getClass().getName()+" :"+ ex.getMessage());
+        if(ex.getCause()!=null){
+            append(ex.getCause().getClass().getName()+" :"+ex.getCause().getMessage());
+        }
+
+    }
+
 }
