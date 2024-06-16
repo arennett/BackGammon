@@ -4,6 +4,10 @@ public interface BoardModelIf {
 
     void setPoint(int pidx, int psize, BColor bcolor);
 
-    void clear();
+    BPoint getPoint(int i);
 
+
+    void setBar(int pcount, BColor bcolor);
+
+    void clear();
 }

@@ -24,9 +24,10 @@ public class MainWindow extends JFrame {
         messagePanel.message("Welcome to BackGammon V1.0");
         Game game = new Game(messagePanel);
 
-        BoardRenderer bRenderer = new BoardRenderer();
-        BoardPanel boardPanel = new BoardPanel(bRenderer);
         BoardModelIf bModel= new BoardModel();
+        BoardRenderer bRenderer = new BoardRenderer(bModel);
+        BoardPanel boardPanel = new BoardPanel(bRenderer);
+
         BoardModelReaderIf bmReader=new BoardModelReader();
         ButtonPanelController bpController= new ButtonPanelController(
                 game,

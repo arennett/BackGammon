@@ -1,14 +1,25 @@
 package de.ar.backgammon;
 
 public class BPoint {
-    public BColor getColor() {
-        return color;
+    BColor pieceColor;
+
+    public int getPieceCount() {
+        return pieceCount;
     }
 
-    public void setColor(BColor color) {
-        this.color = color;
+    public void setPieceCount(int pieceCount) {
+        this.pieceCount = pieceCount;
     }
 
-    BColor color;
+    int pieceCount = 0;
+
+    public BColor getPieceColor() {
+        return pieceColor;
+    }
+
+    public void setPieceColor(BColor pieceColor) {
+        this.pieceColor = pieceColor;
+    }
+
 
 }

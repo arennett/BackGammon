@@ -1,10 +1,10 @@
 p0,2,w
-p5,x5,r
+p5,5,r
 p7,3,r
 p11,5,w
 p12,5,r
 p16,3,w
 p18,5,w
 p23,2,r
-bar,0,x
+bar,1,r
 turn,x

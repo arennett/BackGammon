@@ -35,6 +35,16 @@ public class BoardModelReader implements BoardModelReaderIf{
                 BColor bColor =BColor.getBColor(scol);
                 bModel.setPoint(pidx,psize,bColor);
             }
+            if (strs[0].startsWith("bar")){
+                try{
+                   psize =Integer.parseInt(strs[1]);
+                }catch (NumberFormatException nfe){
+                    throw new BException("read failed",nfe);
+                }
+                String scol=strs[2];
+                BColor bColor =BColor.getBColor(scol);
+                bModel.setBar(psize,bColor);
+            }
        }
 
 
