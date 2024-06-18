@@ -22,6 +22,10 @@ public enum BColor {
         return STR_COLORS[this.ordinal()];
     }
 
+    public String getShortString() {
+        return SHORTSTR_COLORS[this.ordinal()];
+    }
+
     public Color getColor() {
         return COLORS[this.ordinal()];
     }

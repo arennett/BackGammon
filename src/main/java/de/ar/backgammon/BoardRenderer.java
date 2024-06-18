@@ -6,9 +6,8 @@ import java.awt.*;
 import static de.ar.backgammon.ConstIf.*;
 
 public class BoardRenderer implements BoardRendererIf {
-    static int BAR_WIDTH = 40;
-    static int POINT_WIDTH = (BOARD_WIDTH - BAR_WIDTH) / 12;
-    static int POINT_HEIGTH = BOARD_HEIGTH * 4 / 10;
+
+
     private final BoardModelIf bModel;
 
     public BoardRenderer(BoardModelIf bModel){
@@ -90,8 +89,28 @@ public class BoardRenderer implements BoardRendererIf {
 
         }
         g2d.drawLine(x1, y1, x2, y2);
-        g2d.drawString(""+point.getPieceCount(),x1+10,y1+10);
-        g2d.drawString(""+point.getPieceCount(),x2+10,y2);
+        if(!point.isEmpty()){
+            for (int i=0;i <point.getPieceCount();i++){
+                if (idx < 12){
+                    drawPiece(x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                }else {
+                    drawPiece(x2,y2-25-PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                }
+            }
+
+        }
+
+
+        String str=""+point.getIndex();
+        if(point.getPieceCount()> 0) {
+            str = str+"/"+point.getPieceCount() + point.getPieceColor().getShortString();
+        }
+
+        if (idx < 12){
+            g2d.drawString(str,x1-10,y1+15);
+        }else {
+            g2d.drawString(str, x2-10, y2-5);
+        }
     }
 
     private void drawPointTriangle(int x1, int y1, int x2, int y2, boolean up, boolean fill, int stroke_width, Graphics2D g2d) {
@@ -119,6 +138,15 @@ public class BoardRenderer implements BoardRendererIf {
         drawPolygon(x, y, stroke_width, false, g2d);
     }
 
-
-
+    private void drawPiece(int x1,int y1,BColor color,Graphics2D g2d){
+        g2d.setStroke(new BasicStroke(3));
+        g2d.drawOval(x1-PIECE_WIDTH/2,y1-PIECE_WIDTH/2,PIECE_WIDTH,PIECE_WIDTH);
+        g2d.setColor(color.getColor());
+        int w1=PIECE_WIDTH-2;
+        g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);
+        g2d.setColor(Color.BLACK);
+        w1=PIECE_WIDTH-10;
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawOval(x1-w1/2,y1-w1/2,w1,w1);
+    }
 }

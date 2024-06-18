@@ -18,10 +18,11 @@ public class BoardModel implements BoardModelIf {
 
     private void initModel() {
         for (int i=0;i<MAX_POINTS;i++){
-            BPoint point =new BPoint();
+            BPoint point =new BPoint(i);
             points.add(point);
+            setPoint(i,0,null);
         }
-        bar = new BPoint();
+        bar = new BPoint(-1);
     }
 
     @Override

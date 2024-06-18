@@ -1,7 +1,13 @@
 package de.ar.backgammon;
 
 public class BPoint {
+    private final int index;
     BColor pieceColor;
+    
+    public BPoint(int index){
+
+        this.index = index;
+    }
 
     public int getPieceCount() {
         return pieceCount;
@@ -22,4 +28,11 @@ public class BPoint {
     }
 
 
+    public int getIndex() {
+        return index;
+    }
+
+    public boolean isEmpty() {
+        return getPieceCount() < 1;
+    }
 }
