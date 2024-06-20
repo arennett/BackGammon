@@ -10,6 +10,7 @@ public class BoardModel implements BoardModelIf {
     static int MAX_POINTS=24;
     Vector<BPoint> points =new Vector<>();
     BPoint bar;
+    int pointSelectedIdx = -1;
 
     public BoardModel(){
 
@@ -37,6 +38,10 @@ public class BoardModel implements BoardModelIf {
         return points.elementAt(i);
     }
 
+    public BPoint getPointSelected() {
+        return points.elementAt(this.getPointSelectedIdx());
+    }
+
     @Override
     public void setBar(int pcount, BColor bcolor) {
         bar.setPieceColor(bcolor);
@@ -53,6 +58,18 @@ public class BoardModel implements BoardModelIf {
         bar.setPieceCount(0);
 
     }
+
+      @Override
+    public int getPointSelectedIdx() {
+        return pointSelectedIdx;
+    }
+
+    @Override
+    public void setPointSelectedIdx(int pointIdxPressed) {
+        pointSelectedIdx=pointIdxPressed;
+    }
+
+
 
 
 }

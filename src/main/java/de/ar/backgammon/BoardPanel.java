@@ -8,15 +8,20 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 
 import static de.ar.backgammon.ConstIf.*;
 
-public class BoardPanel extends JPanel implements MouseListener {
+public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener {
     private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
 
 
     private final BoardRendererIf boardRenderer;
     JPanel innerBoard;
+
+    int pointIdxPressed = -1;
+    private GameControl gameControl;
+
 
     public BoardPanel(BoardRendererIf boardRenderer) {
         this.boardRenderer = boardRenderer;
@@ -34,6 +39,7 @@ public class BoardPanel extends JPanel implements MouseListener {
             }
         };
         innerBoard.addMouseListener(this);
+        innerBoard.addMouseMotionListener(this);
         setLayout(new BorderLayout());
         add(innerBoard, BorderLayout.CENTER);
         setPreferredSize(new Dimension(BOARD_WIDTH + BOARD_OFFSET, BOARD_HEIGTH + BOARD_OFFSET));
@@ -43,9 +49,6 @@ public class BoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        int idx = getPointIndex(e);
-        logger.debug("clicked on point idx: {}", idx);
-
 
     }
 
@@ -69,12 +72,28 @@ public class BoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mousePressed(MouseEvent e) {
-
+        pointIdxPressed = getPointIndex(e);
+        if (pointIdxPressed >-1){
+            gameControl.setPointSelectedIdx(pointIdxPressed);
+            this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        }
+        logger.debug("pressed on point idx: {}", pointIdxPressed);
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        gameControl.setPointSelectedIdx(-1);
+        int pointIdxReleased = getPointIndex(e);
+        this.setCursor(Cursor.getDefaultCursor());
+        if (pointIdxReleased >-1 && pointIdxPressed >-1){
+                moveRequest(pointIdxPressed,pointIdxReleased);
+        }
+        logger.debug("released on point idx: {}", pointIdxReleased);
+    }
 
+    private void moveRequest(int pointIdxPressed, int pointIdxReleased) {
+        logger.debug("moveRequest from: {} to: {}", pointIdxPressed,pointIdxReleased);
+        gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
     }
 
     @Override
@@ -84,6 +103,21 @@ public class BoardPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+
+    public void setGameControl(GameControl gameControl) {
+
+        this.gameControl = gameControl;
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
 
     }
 }

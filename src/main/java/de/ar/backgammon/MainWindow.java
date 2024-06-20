@@ -29,13 +29,22 @@ public class MainWindow extends JFrame {
         BoardPanel boardPanel = new BoardPanel(bRenderer);
 
         BoardModelReaderIf bmReader=new BoardModelReader();
+
+
+        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader);
+        boardPanel.setGameControl(gameControl);
+
         ButtonPanelController bpController= new ButtonPanelController(
                 game,
                 boardPanel,
                 bModel,
-                bmReader
+                bmReader,
+                gameControl
         );
-        ButtonPanel buttonPanel= new ButtonPanel(bpController);
+        ButtonPanel buttonPanel= new ButtonPanel(bpController,game);
+        gameControl.setButtonPanel(buttonPanel);
+
+
 
         add(boardPanel,BorderLayout.CENTER);
         add(messagePanel,BorderLayout.SOUTH);

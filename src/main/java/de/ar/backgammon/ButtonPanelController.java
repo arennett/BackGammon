@@ -9,33 +9,22 @@ public class ButtonPanelController {
     private final BoardPanel boardPanel;
     private final BoardModelIf bmodel;
     private final BoardModelReaderIf bmReader;
+    private final GameControl gameControl;
 
     public ButtonPanelController(Game game,
                                  BoardPanel boardPanel,
                                  BoardModelIf bmodel,
-                                 BoardModelReaderIf bmReader){
+                                 BoardModelReaderIf bmReader,
+                                 GameControl gameControl){
         this.game = game;
         this.boardPanel = boardPanel;
 
         this.bmodel = bmodel;
         this.bmReader = bmReader;
+        this.gameControl = gameControl;
     }
 
     public void start()  {
-
-         bmodel.clear();
-        try {
-            bmReader.readSetupMap(bmodel);
-            game.message("Game Started");
-        } catch (Exception ex) {
-            logger.error("start failed",ex);
-            game.error("start failed!",ex);
-        }finally {
-            boardPanel.repaint();
-        }
-
+            gameControl.start();
     }
-
-
-
 }

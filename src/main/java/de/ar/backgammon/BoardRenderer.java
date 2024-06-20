@@ -91,6 +91,9 @@ public class BoardRenderer implements BoardRendererIf {
         g2d.drawLine(x1, y1, x2, y2);
         if(!point.isEmpty()){
             for (int i=0;i <point.getPieceCount();i++){
+                if (bModel.getPointSelectedIdx()==idx && i==point.getPieceCount()-1){
+                    continue;
+                }
                 if (idx < 12){
                     drawPiece(x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
                 }else {

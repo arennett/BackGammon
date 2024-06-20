@@ -10,4 +10,8 @@ public interface BoardModelIf {
     void setBar(int pcount, BColor bcolor);
 
     void clear();
+
+    int getPointSelectedIdx();
+
+    void setPointSelectedIdx(int pointIdxPressed);
 }

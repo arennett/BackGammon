@@ -14,7 +14,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
     private final ButtonPanelController bpController;
 
     JButton jButton_start;
-    public ButtonPanel(ButtonPanelController bpController){
+    public ButtonPanel(ButtonPanelController bpController,Game game){
         this.bpController = bpController;
 
         initUi();
@@ -36,5 +36,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
             bpController.start();
 
         }
+    }
+
+    public void updateComponents() {
     }
 }

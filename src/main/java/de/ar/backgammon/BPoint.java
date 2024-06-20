@@ -35,4 +35,9 @@ public class BPoint {
     public boolean isEmpty() {
         return getPieceCount() < 1;
     }
+
+    @Override
+    public String toString() {
+        return "<" + getIndex()+ ">";
+    }
 }
