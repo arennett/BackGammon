@@ -17,14 +17,18 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
 
     private final BoardRendererIf boardRenderer;
+    private final Game game;
     JPanel innerBoard;
 
     int pointIdxPressed = -1;
+    int pointSelectedIdx = -1;
     private GameControl gameControl;
+    private int pieceSelectedIdx =-1;
 
 
-    public BoardPanel(BoardRendererIf boardRenderer) {
+    public BoardPanel(BoardRendererIf boardRenderer, Game game) {
         this.boardRenderer = boardRenderer;
+        this.game = game;
         initUi();
     }
 
@@ -47,10 +51,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     // important! the mouse events come from the inner board panel
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
 
-    }
 
     private int getPointIndex(MouseEvent e) {
         int idx = -1;
@@ -67,14 +68,21 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         } else {
             idx = 12 + n;
         }
+
         return idx;
+    }
+
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
         pointIdxPressed = getPointIndex(e);
         if (pointIdxPressed >-1){
-            gameControl.setPointSelectedIdx(pointIdxPressed);
+            gameControl.setStartPointSelectedIdx(pointIdxPressed);
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
         logger.debug("pressed on point idx: {}", pointIdxPressed);
@@ -82,18 +90,23 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        gameControl.setPointSelectedIdx(-1);
         int pointIdxReleased = getPointIndex(e);
         this.setCursor(Cursor.getDefaultCursor());
         if (pointIdxReleased >-1 && pointIdxPressed >-1){
                 moveRequest(pointIdxPressed,pointIdxReleased);
         }
         logger.debug("released on point idx: {}", pointIdxReleased);
+        gameControl.setStartPointSelectedIdx(-1);
     }
 
     private void moveRequest(int pointIdxPressed, int pointIdxReleased) {
-        logger.debug("moveRequest from: {} to: {}", pointIdxPressed,pointIdxReleased);
-        gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
+        logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
+        boolean isMoved=gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
+        if (!isMoved) {
+            game.message("piece not moved");
+        }else{
+            game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
+        }
     }
 
     @Override
@@ -113,11 +126,52 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        int newPointSelected = getPointIndex(e);
+        if (newPointSelected != pointSelectedIdx){
+            pointSelectedIdx =newPointSelected;
+            logger.debug("select point idx: {}", pointSelectedIdx);
+            gameControl.setPointSelectedIdx(pointSelectedIdx);
 
+        }
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        int newPointSelectedIdx = getPointIndex(e);
+        if (newPointSelectedIdx != pointSelectedIdx){
+            pointSelectedIdx =newPointSelectedIdx;
+            logger.debug("selected point idx: {}", pointSelectedIdx);
+            gameControl.setPointSelectedIdx(pointSelectedIdx);
+        }
+        int newPieceSelectedIdx = getPieceIdx(e, pointSelectedIdx);
+        if (newPieceSelectedIdx != pieceSelectedIdx){
+            pieceSelectedIdx =newPieceSelectedIdx;
+            logger.debug("selected piece idx: {}", pieceSelectedIdx);
+            gameControl.setPieceSelectedIdx(pieceSelectedIdx);
+        }
+    }
 
+    /**
+     *  1 for lowest piece 5 for highest piece
+     * @param e MouseEvent
+     * @param pointSelectedIdx
+     * @return
+     */
+    private int getPieceIdx(MouseEvent e, int pointSelectedIdx) {
+        int piece_stack_height =MAX_PIECES_ON_POINT* PIECE_WIDTH;
+        int piece_idx=-1;
+        if (pointSelectedIdx < 12) {
+            if (e.getY() <= piece_stack_height) {
+                piece_idx=MAX_PIECES_ON_POINT-(piece_stack_height-e.getY())/PIECE_WIDTH;
+            }
+        }else{
+            if (e.getY() >= BOARD_HEIGTH-piece_stack_height) {
+                piece_idx=MAX_PIECES_ON_POINT-(e.getY() -(BOARD_HEIGTH-piece_stack_height))/PIECE_WIDTH;
+            }
+        }
+        if (piece_idx > -1){
+            piece_idx--;
+        }
+        return piece_idx;
     }
 }

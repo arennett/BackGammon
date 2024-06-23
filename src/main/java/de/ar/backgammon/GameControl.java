@@ -3,6 +3,8 @@ package de.ar.backgammon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
+
 public class GameControl {
     private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
 
@@ -24,27 +26,52 @@ public class GameControl {
         this.buttonPanel = buttonPanel;
     }
 
-    public void moveRequest(int from,int to){
+    public boolean moveRequest(int from,int to){
         BPoint bpFrom = boardModel.getPoint(from);
-        if (!bpFrom.isEmpty()){
+        if (boardModel.getStartPointSelectedPiecesCount() > 0){
             if (bpFrom.getPieceColor()==turn){
                 BPoint bpTo = boardModel.getPoint(to);
                 if (bpTo.isEmpty() || bpTo.getPieceColor()==turn) {
-                    move(bpFrom,bpTo);
+                    return move(from,to);
                 }
             }
         }
-
+        return false;
     }
 
-    private void move(BPoint bpFrom, BPoint bpTo) {
-        bpFrom.setPieceCount(bpFrom.getPieceCount()-1);
-        bpTo.setPieceCount(bpTo.getPieceCount()+1);
+    private boolean move(int from, int to) {
+        if (!validateMove(from,to)){
+            return false;
+        }
+        BPoint bpFrom=boardModel.getPoint(from);
+        BPoint bpTo=boardModel.getPoint(to);
+        int spc= boardModel.getStartPointSelectedPiecesCount();
+        bpFrom.setPieceCount(bpFrom.getPieceCount()-spc);
+        bpTo.setPieceCount(bpTo.getPieceCount()+spc);
         bpTo.setPieceColor(bpFrom.getPieceColor());
         logger.debug("moved from {} to {}",bpFrom,bpTo);
         switch_turn();
         boardPanel.repaint();
-        buttonPanel.updateComponents();
+        return true;
+
+    }
+
+    private boolean validateMove(int from, int to) {
+        boolean ret=false;
+        BPoint bpFrom=boardModel.getPoint(from);
+        BPoint bpTo=boardModel.getPoint(to);
+
+        if(bpTo.getPieceCount()>= MAX_PIECES_ON_POINT){
+            return false;
+        }
+
+        if (bpFrom.getPieceColor()==BColor.WHITE){
+            ret = to > from;
+        }else{
+            ret = to < from;
+        }
+
+        return ret;
     }
 
     private void switch_turn() {
@@ -53,6 +80,7 @@ public class GameControl {
         }else {
             turn = BColor.RED;
         }
+        buttonPanel.updateComponents();
     }
 
 
@@ -75,8 +103,22 @@ public class GameControl {
 
     }
 
-    public void setPointSelectedIdx(int pointIdxPressed) {
-        boardModel.setPointSelectedIdx(pointIdxPressed);
+    public void setStartPointSelectedIdx(int pointIdxPressed) {
+        boardModel.setStartPointSelectedIdx(pointIdxPressed);
+        boardPanel.repaint();
+    }
+
+    public void setPointSelectedIdx(int pointIdxSelected) {
+        boardModel.setPointSelectedIdx(pointIdxSelected);
+        boardPanel.repaint();
+    }
+
+    public BColor getTurn() {
+        return turn;
+    }
+
+    public void setPieceSelectedIdx(int pieceIdxSelected) {
+        boardModel.setPieceSelectedIdx(pieceIdxSelected);
         boardPanel.repaint();
     }
 }

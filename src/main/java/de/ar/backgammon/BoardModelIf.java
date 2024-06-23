@@ -2,6 +2,10 @@ package de.ar.backgammon;
 
 public interface BoardModelIf {
 
+
+
+    int getStartPointSelectedPiecesCount();
+
     void setPoint(int pidx, int psize, BColor bcolor);
 
     BPoint getPoint(int i);
@@ -11,7 +15,12 @@ public interface BoardModelIf {
 
     void clear();
 
+    int getStartPointSelectedIdx();
     int getPointSelectedIdx();
 
-    void setPointSelectedIdx(int pointIdxPressed);
+    void setStartPointSelectedIdx(int pointIdx);
+    void setPointSelectedIdx(int pointIdx);
+
+    int getPieceSelectedIdx();
+    void setPieceSelectedIdx(int pieceSelectedIdx);
 }

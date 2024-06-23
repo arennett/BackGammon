@@ -12,4 +12,6 @@ public interface ConstIf {
     String BOARDMAP_FILENAME = "src/main/resources/boardmap_";
     String BOARDMAP_SETUP ="setup";
 
+    int MAX_PIECES_ON_POINT = 5;
+
 }

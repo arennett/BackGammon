@@ -2,12 +2,34 @@ package de.ar.backgammon;
 
 public class BPoint {
     private final int index;
+    private final BoardModelIf bModel;
     BColor pieceColor;
     
-    public BPoint(int index){
-
+    public BPoint(int index,BoardModelIf bModel){
         this.index = index;
+        this.bModel = bModel;
     }
+
+    public boolean isSelected() {
+        return bModel.getPointSelectedIdx()==index;
+    }
+
+    /**
+     *
+     * @return the nr of selected pieces for the current selection
+     */
+    public int getSelectedPiecesCount() {
+        if (isSelected() && !isEmpty()) {
+            int psidx=bModel.getPieceSelectedIdx();
+            if(psidx >= 0){
+                int count = pieceCount-psidx;
+                return count;
+            }
+        }
+        return 0;
+    }
+
+
 
     public int getPieceCount() {
         return pieceCount;

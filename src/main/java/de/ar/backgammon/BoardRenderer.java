@@ -62,7 +62,7 @@ public class BoardRenderer implements BoardRendererIf {
             y1 = 0;
             x2 = x1;
             y2 = POINT_HEIGTH;
-            drawPointTriangle(x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
+            drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
         } else if (idx < 12) {
             int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
@@ -70,14 +70,14 @@ public class BoardRenderer implements BoardRendererIf {
             y1 = 0;
             x2 = x1;
             y2 = POINT_HEIGTH;
-            drawPointTriangle(x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
+            drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
         } else if (idx < 18) {
             x1 = POINT_WIDTH / 2 + (idx - 12) * POINT_WIDTH;
             y1 = BOARD_HEIGTH - POINT_HEIGTH;
             x2 = x1;
             y2 = BOARD_HEIGTH;
-            drawPointTriangle(x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
+            drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
         } else if (idx < 24) {
             int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
@@ -85,19 +85,20 @@ public class BoardRenderer implements BoardRendererIf {
             y1 = BOARD_HEIGTH - POINT_HEIGTH;
             x2 = x1;
             y2 = BOARD_HEIGTH;
-            drawPointTriangle(x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
+            drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
         }
         g2d.drawLine(x1, y1, x2, y2);
         if(!point.isEmpty()){
             for (int i=0;i <point.getPieceCount();i++){
-                if (bModel.getPointSelectedIdx()==idx && i==point.getPieceCount()-1){
+                if (bModel.getStartPointSelectedIdx()==idx && i==point.getPieceCount()-1){
                     continue;
                 }
                 if (idx < 12){
-                    drawPiece(x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                    drawPiece(idx,i,x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
+
                 }else {
-                    drawPiece(x2,y2-25-PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                    drawPiece(idx,i,x2,y2-25-PIECE_WIDTH*i,point.getPieceColor(),g2d);
                 }
             }
 
@@ -116,7 +117,7 @@ public class BoardRenderer implements BoardRendererIf {
         }
     }
 
-    private void drawPointTriangle(int x1, int y1, int x2, int y2, boolean up, boolean fill, int stroke_width, Graphics2D g2d) {
+    private void drawPointTriangle(int idx,int x1, int y1, int x2, int y2, boolean up, boolean fill, int stroke_width, Graphics2D g2d) {
         int x_down[] = {x1 - POINT_WIDTH / 2, x1 + POINT_WIDTH / 2, x2};
         int y_down[] = {y1, y1, y2};
         int x_up[] = {x2 - POINT_WIDTH / 2, x2 + POINT_WIDTH / 2, x1};
@@ -138,13 +139,32 @@ public class BoardRenderer implements BoardRendererIf {
         drawPolygon(x, y, stroke_width, fill, g2d);
 
         g2d.setColor(Color.BLACK);
-        drawPolygon(x, y, stroke_width, false, g2d);
+        int psidx=bModel.getPointSelectedIdx();
+        if ( psidx > -1 && psidx==idx) {
+            g2d.setColor(Color.GREEN);
+            drawPolygon(x, y, stroke_width+1, false, g2d);
+        }else{
+            g2d.setColor(Color.BLACK);
+            drawPolygon(x, y, stroke_width, false, g2d);
+        }
+
+
+        g2d.setColor(Color.BLACK);
     }
 
-    private void drawPiece(int x1,int y1,BColor color,Graphics2D g2d){
+    private void drawPiece(int pointidx, int pieceidx,int x1, int y1, BColor color, Graphics2D g2d){
+
         g2d.setStroke(new BasicStroke(3));
         g2d.drawOval(x1-PIECE_WIDTH/2,y1-PIECE_WIDTH/2,PIECE_WIDTH,PIECE_WIDTH);
         g2d.setColor(color.getColor());
+        BPoint bpoint = bModel.getPoint(pointidx);
+        int spc=bpoint.getSelectedPiecesCount();
+        if (spc > 0) {
+            if (bpoint.getPieceCount()- (pieceidx+1) < spc ){
+                   g2d.setColor(Color.GREEN);
+            }
+        }
+
         int w1=PIECE_WIDTH-2;
         g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);
         g2d.setColor(Color.BLACK);

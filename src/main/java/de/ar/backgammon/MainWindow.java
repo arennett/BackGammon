@@ -26,7 +26,7 @@ public class MainWindow extends JFrame {
 
         BoardModelIf bModel= new BoardModel();
         BoardRenderer bRenderer = new BoardRenderer(bModel);
-        BoardPanel boardPanel = new BoardPanel(bRenderer);
+        BoardPanel boardPanel = new BoardPanel(bRenderer,game);
 
         BoardModelReaderIf bmReader=new BoardModelReader();
 
@@ -41,7 +41,7 @@ public class MainWindow extends JFrame {
                 bmReader,
                 gameControl
         );
-        ButtonPanel buttonPanel= new ButtonPanel(bpController,game);
+        ButtonPanel buttonPanel= new ButtonPanel(bpController,game,gameControl);
         gameControl.setButtonPanel(buttonPanel);
 
 
