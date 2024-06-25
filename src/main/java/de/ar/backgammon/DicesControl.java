@@ -17,6 +17,14 @@ public class DicesControl {
     int dice1=0;
     int dice2=0;
 
+    public void clear() {
+        dice1=0;
+        dice2=0;
+        pointStack.clear();
+        dicesState=DicesState.READY;
+        dicesPanel.updateComponents();
+    }
+
     public enum DicesState  {READY,THROWN};
 
     public DicesState getDicesState() {
@@ -26,7 +34,7 @@ public class DicesControl {
     DicesState dicesState = DicesState.READY;
 
     public void throwDices(){
-        pointStack.clear();
+        clear();
         dice1=random.nextInt(6)+1;
         dice2=random.nextInt(6)+1;;
         pointStack.add(dice1);
@@ -57,25 +65,36 @@ public class DicesControl {
     }
 
     /**
-     * removes the the moved pieces points from stack, if stack contains all moved points
-     * @param pieceMoves
+     * check if stack contains all moved points
+     * @param point point of one piece move
+     *        count nr of peces moved
      * @return
      */
-    public boolean removePoints(Vector<Integer> pieceMoves){
+
+    public boolean checkPoints(int point, int count) {
         boolean allOnStack = true;
-        for (int pieceMove:pieceMoves){
-            if (!pointStack.contains(pieceMove)) {
-                allOnStack=false;
+        for (int i = 0; i < count; i++) {
+            if (!pointStack.contains(point)) {
+                allOnStack = false;
             }
         }
+        return allOnStack;
+    }
+
+    /**
+     * removes the the moved pieces points from stack, if stack contains all moved points
+     * @param point point of one piece move
+     *        count nr of peces moved
+     * @return
+     */
+    public boolean removePoints(int point, int count){
+        boolean allOnStack =checkPoints(point,count);
         if (allOnStack){
-            for (int pieceMove:pieceMoves){
-                pointStack.remove(pieceMove);
+            for (int i=0;i<count;i++){
+                pointStack.removeElement(point);
             }
             if(pointStack.isEmpty()){
-                dice1=0;
-                dice2=0;
-                dicesState =DicesState.READY;
+                clear();
             }
             dicesPanel.updateComponents();
         }

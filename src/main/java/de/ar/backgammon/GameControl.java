@@ -56,7 +56,17 @@ public class GameControl {
         bpTo.setPieceCount(bpTo.getPieceCount()+spc);
         bpTo.setPieceColor(bpFrom.getPieceColor());
         logger.debug("moved from {} to {}",bpFrom,bpTo);
-        switch_turn();
+        int distance = 0;
+        if(turn==BColor.WHITE){
+            distance=to-from;
+        }else{
+            distance=from-to;
+        }
+        dicesControl.removePoints(distance,spc);
+        if(dicesControl.getDicesState()== DicesControl.DicesState.READY){
+            switch_turn();
+        }
+
         boardPanel.repaint();
         return true;
 
@@ -85,11 +95,12 @@ public class GameControl {
             return false;
         }
 
-        if (bpFrom.getPieceColor()==BColor.WHITE){
+        if (turn==BColor.WHITE){
             ret = to > from;
         }else{
             ret = to < from;
         }
+
         if (!ret) {
             game.message_error("wrong direction");
             return false;
@@ -104,7 +115,12 @@ public class GameControl {
         for (int i=0; i<spc;i++){
             logger.debug("dice point request: {} {}",i,distance);
         }
+        ret=dicesControl.checkPoints(distance,spc);
 
+        if (!ret) {
+            game.message_error("not allowed, look at the dices");
+            return false;
+        }
 
         return true;
     }
@@ -129,6 +145,7 @@ public class GameControl {
         try {
             bmReader.readSetupMap(boardModel);
             game.message("Game Started");
+            dicesControl.clear();
         } catch (Exception ex) {
             logger.error("start failed",ex);
             game.error("start failed!",ex);
