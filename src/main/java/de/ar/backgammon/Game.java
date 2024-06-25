@@ -20,4 +20,9 @@ public class Game {
     }
 
 
+    public void message_error(String message) {
+        mpanel.message_error(message);
+    }
+
+
 }

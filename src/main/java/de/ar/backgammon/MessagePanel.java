@@ -27,9 +27,11 @@ public class MessagePanel extends JPanel {
         this.add(scrollPane);
   }
   public void message(String message){
+        this.setBackground(Color.WHITE);
         textArea.setText(message);
   }
     public void append(String message){
+        this.setBackground(Color.WHITE);
         textArea.append("\n"+message);
         //test
     }
@@ -42,4 +44,9 @@ public class MessagePanel extends JPanel {
 
     }
 
+    public void message_error(String message) {
+        this.setBackground(Color.YELLOW);
+        textArea.setText(message);
+
+    }
 }

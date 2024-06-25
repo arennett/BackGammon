@@ -30,8 +30,9 @@ public class MainWindow extends JFrame {
 
         BoardModelReaderIf bmReader=new BoardModelReader();
 
+        DicesControl dicesControl = new DicesControl();
 
-        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader);
+        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,dicesControl);
         boardPanel.setGameControl(gameControl);
 
         ButtonPanelController bpController= new ButtonPanelController(
@@ -41,7 +42,9 @@ public class MainWindow extends JFrame {
                 bmReader,
                 gameControl
         );
-        ButtonPanel buttonPanel= new ButtonPanel(bpController,game,gameControl);
+
+        DicesPanel dicesPanel = new DicesPanel(dicesControl);
+        ButtonPanel buttonPanel= new ButtonPanel(bpController,game,gameControl,dicesPanel);
         gameControl.setButtonPanel(buttonPanel);
 
 

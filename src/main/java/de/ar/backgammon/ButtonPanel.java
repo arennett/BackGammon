@@ -14,14 +14,16 @@ public class ButtonPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(ButtonPanel.class);
     private final ButtonPanelController bpController;
     private final GameControl gControl;
+    private final DicesPanel dicesPanel;
 
     JButton jButton_start;
 
     JLabel lbTurnText, lbTurnColor;
 
-    public ButtonPanel(ButtonPanelController bpController,Game game,GameControl gControl){
+    public ButtonPanel(ButtonPanelController bpController,Game game,GameControl gControl,DicesPanel dicesPanel){
         this.bpController = bpController;
         this.gControl = gControl;
+        this.dicesPanel = dicesPanel;
 
         initUi();
     }
@@ -53,6 +55,9 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 2;
         add(jButton_start,c);
 
+        c.gridx = 0;
+        c.gridy = 3;
+        add(dicesPanel,c);
         updateComponents();
     }
 public void updateComponents(){

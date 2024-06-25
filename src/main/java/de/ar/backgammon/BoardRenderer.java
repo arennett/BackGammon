@@ -91,9 +91,7 @@ public class BoardRenderer implements BoardRendererIf {
         g2d.drawLine(x1, y1, x2, y2);
         if(!point.isEmpty()){
             for (int i=0;i <point.getPieceCount();i++){
-                if (bModel.getStartPointSelectedIdx()==idx && i==point.getPieceCount()-1){
-                    continue;
-                }
+
                 if (idx < 12){
                     drawPiece(idx,i,x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
 
@@ -159,11 +157,24 @@ public class BoardRenderer implements BoardRendererIf {
         g2d.setColor(color.getColor());
         BPoint bpoint = bModel.getPoint(pointidx);
         int spc=bpoint.getSelectedPiecesCount();
+        /*highlight hovered pieces*/
         if (spc > 0) {
             if (bpoint.getPieceCount()- (pieceidx+1) < spc ){
                    g2d.setColor(Color.GREEN);
             }
         }
+
+        /* highlight the selected (dragged) pieces of a move*/
+        if (pointidx == bModel.getStartPointSelectedIdx()) {
+            int spsc=bModel.getStartPointSelectedPiecesCount();
+            if (spsc > 0) {
+                if (bpoint.getPieceCount()- (pieceidx+1) < spsc ){
+                    g2d.setColor(Color.GREEN);
+                }
+            }
+        }
+
+
 
         int w1=PIECE_WIDTH-2;
         g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);

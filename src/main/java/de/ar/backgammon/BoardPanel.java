@@ -102,10 +102,8 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
     private void moveRequest(int pointIdxPressed, int pointIdxReleased) {
         logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
         boolean isMoved=gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
-        if (!isMoved) {
-            game.message("piece not moved");
-        }else{
-            game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
+        if (isMoved) {
+           game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
         }
     }
 
@@ -129,7 +127,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         int newPointSelected = getPointIndex(e);
         if (newPointSelected != pointSelectedIdx){
             pointSelectedIdx =newPointSelected;
-            logger.debug("select point idx: {}", pointSelectedIdx);
+            //logger.debug("select point idx: {}", pointSelectedIdx);
             gameControl.setPointSelectedIdx(pointSelectedIdx);
 
         }
@@ -140,13 +138,13 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         int newPointSelectedIdx = getPointIndex(e);
         if (newPointSelectedIdx != pointSelectedIdx){
             pointSelectedIdx =newPointSelectedIdx;
-            logger.debug("selected point idx: {}", pointSelectedIdx);
+            //logger.debug("selected point idx: {}", pointSelectedIdx);
             gameControl.setPointSelectedIdx(pointSelectedIdx);
         }
         int newPieceSelectedIdx = getPieceIdx(e, pointSelectedIdx);
         if (newPieceSelectedIdx != pieceSelectedIdx){
             pieceSelectedIdx =newPieceSelectedIdx;
-            logger.debug("selected piece idx: {}", pieceSelectedIdx);
+            //logger.debug("selected piece idx: {}", pieceSelectedIdx);
             gameControl.setPieceSelectedIdx(pieceSelectedIdx);
         }
     }
