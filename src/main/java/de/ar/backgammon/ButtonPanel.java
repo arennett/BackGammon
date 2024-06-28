@@ -8,19 +8,19 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class ButtonPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(ButtonPanel.class);
-    private final ButtonPanelController bpController;
+    private final ButtonPanelControl bpController;
     private final GameControl gControl;
     private final DicesPanel dicesPanel;
 
     JButton jButton_start;
+    JToggleButton jtbSetMode;
 
     JLabel lbTurnText, lbTurnColor;
 
-    public ButtonPanel(ButtonPanelController bpController,Game game,GameControl gControl,DicesPanel dicesPanel){
+    public ButtonPanel(ButtonPanelControl bpController, Game game, GameControl gControl, DicesPanel dicesPanel){
         this.bpController = bpController;
         this.gControl = gControl;
         this.dicesPanel = dicesPanel;
@@ -55,8 +55,14 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 2;
         add(jButton_start,c);
 
+        jtbSetMode=new JToggleButton("SetMode");
+        jtbSetMode.addActionListener(this);
         c.gridx = 0;
         c.gridy = 3;
+        add(jtbSetMode,c);
+
+        c.gridx = 0;
+        c.gridy = 4;
         add(dicesPanel,c);
         updateComponents();
     }
@@ -70,6 +76,9 @@ public void updateComponents(){
         if (e.getSource()==jButton_start){
 
             bpController.start();
+
+        }else if (e.getSource()==jtbSetMode){
+            bpController.setSetMode(jtbSetMode.isSelected());
 
         }
     }

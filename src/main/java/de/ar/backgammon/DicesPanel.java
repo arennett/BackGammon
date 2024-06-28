@@ -55,7 +55,7 @@ public class DicesPanel extends JPanel implements ActionListener {
         StringBuffer sb = new StringBuffer("");
         for (int i=0; i< 4 ; i++){
             if (i< dc.getPointStack().size()){
-                sb.append("["+dc.getPointStack().elementAt(i)+"]");
+                sb.append("["+dc.getPointStack().get(i)+"]");
             }else{
                 sb.append("[  ]");
             }
