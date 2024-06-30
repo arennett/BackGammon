@@ -30,7 +30,7 @@ public class MainWindow extends JFrame {
 
         BoardModelReaderIf bmReader=new BoardModelReader();
 
-        DicesControl dicesControl = new DicesControl(game);
+        DicesControl dicesControl = new DicesControl(game,bModel);
 
         GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,dicesControl);
         dicesControl.setGameControl(gameControl);

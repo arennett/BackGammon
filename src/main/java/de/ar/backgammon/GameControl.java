@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
 
 public class GameControl {
-    private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
+    private static final Logger logger = LoggerFactory.getLogger(GameControl.class);
 
 
     private boolean running = false;
@@ -31,7 +31,7 @@ public class GameControl {
     }
 
     public boolean moveRequest(int from, int to) {
-        if(bpControl.isSetMode()){
+        if (bpControl.isSetMode()) {
             move(from, to);
             return true;
         }
@@ -49,8 +49,6 @@ public class GameControl {
         return move(from, to);
 
 
-
-
     }
 
     private boolean move(int from, int to) {
@@ -60,29 +58,41 @@ public class GameControl {
                 return false;
             }
         }
+
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
+        int distance = 0;
+        if (turn == BColor.WHITE) {
+            distance = to - from;
+        } else {
+            distance = from - to;
+        }
+        DicesControl.PointSequence ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
+
         bpFrom.setPieceCount(bpFrom.getPieceCount() - spc);
-        bpTo.setPieceColor(bpFrom.getPieceColor());
-        if (bpTo.getPieceCount()== 1){
+
+        if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
             // blot
             bpTo.setPieceCount(spc);
             logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
-        }else{
+        } else {
             // no blot
             bpTo.setPieceCount(bpTo.getPieceCount() + spc);
             logger.debug("moved from {} to {}", bpFrom, bpTo);
         }
+        bpTo.setPieceColor(bpFrom.getPieceColor());
 
 
         if (!bpControl.isSetMode()) {
-            int distance = 0;
-            if (turn == BColor.WHITE) {
-                distance = to - from;
-            } else {
-                distance = from - to;
+            // try to remove points from stack
+            boolean removed = dicesControl.removePointsFromStack(distance, spc);
+            if (!removed) {
+                // it must be a sequence
+                assert ps != null;
+                dicesControl.removeSequencePointsFromStack(ps, spc);
+
             }
-            dicesControl.removePoints(distance, spc);
+
             if (dicesControl.getDicesState() == DicesControl.DicesState.READY) {
                 switch_turn();
             }
@@ -96,11 +106,11 @@ public class GameControl {
         boolean ret = false;
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
-        if (bpTo.getPieceCount()>1) {
-                if (bpTo.getPieceColor() != turn) {
-                    game.message_error("wrong color on target field");
-                    return false;
-                }
+        if (bpTo.getPieceCount() > 1) {
+            if (bpTo.getPieceColor() != turn) {
+                game.message_error("wrong color on target field");
+                return false;
+            }
         }
 
         if (bpFrom.getPieceColor() != turn) {
@@ -139,14 +149,15 @@ public class GameControl {
         } else {
             distance = from - to;
         }
-        for (int i = 0; i < spc; i++) {
-            logger.debug("dice point request: {} {}", i, distance);
-        }
-        ret = dicesControl.checkPoints(distance, spc);
+
+        ret = dicesControl.checkPointsOnStack(distance, spc);
 
         if (!ret) {
-            game.message_error("not allowed, look at the dices");
-            return false;
+            DicesControl.PointSequence ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
+            if (ps == null) {
+                game.message_error("not allowed, look at the dices");
+                return false;
+            }
         }
 
         return true;
@@ -211,4 +222,6 @@ public class GameControl {
 
         this.bpControl = bpControl;
     }
+
+
 }
