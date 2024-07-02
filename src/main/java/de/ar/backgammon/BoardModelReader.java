@@ -43,7 +43,7 @@ public class BoardModelReader implements BoardModelReaderIf{
                 }
                 String scol=strs[2];
                 BColor bColor =BColor.getBColor(scol);
-                bModel.setBar(psize,bColor);
+                bModel.getBar().setCount(psize,bColor);
             }
        }
 

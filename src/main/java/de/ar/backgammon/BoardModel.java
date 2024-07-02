@@ -3,13 +3,33 @@ package de.ar.backgammon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Vector;
 
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
     static int MAX_POINTS=24;
     Vector<BPoint> points =new Vector<>();
-    BPoint bar;
+    class Bar extends HashMap<BColor,Integer> {
+        public Bar(){
+           clear();
+        }
+
+        public void clear(){
+            super.clear();
+            put(BColor.RED,0);
+            put(BColor.WHITE,0);
+        }
+
+        public void addCount(int pcount, BColor bcolor) {
+            replace(bcolor,bar.get(bcolor)+pcount);
+        }
+
+        public void setCount(int pcount, BColor bcolor) {
+            replace(bcolor,pcount);
+        }
+    }
+    Bar bar;
     int startPointSelectedIdx = -1;
     int pointSelectedIdx = -1;
     private int pieceSelectedIdx=0;
@@ -27,7 +47,7 @@ public class BoardModel implements BoardModelIf {
             points.add(point);
             setPoint(i,0,null);
         }
-        bar = new BPoint(-1,this);
+        bar=new Bar();
     }
 
     /* the nr of selected pieces by start of a move */
@@ -50,10 +70,10 @@ public class BoardModel implements BoardModelIf {
         return points.elementAt(i);
     }
 
+
     @Override
-    public void setBar(int pcount, BColor bcolor) {
-        bar.setPieceColor(bcolor);
-        bar.setPieceCount(pcount);
+    public Bar getBar() {
+        return bar;
     }
 
     @Override
@@ -62,8 +82,7 @@ public class BoardModel implements BoardModelIf {
             point.setPieceColor(null);
             point.setPieceCount(0);
         }
-        bar.setPieceColor(null);
-        bar.setPieceCount(0);
+        bar.clear();
 
     }
 

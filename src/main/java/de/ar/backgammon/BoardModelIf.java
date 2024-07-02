@@ -11,7 +11,7 @@ public interface BoardModelIf {
     BPoint getPoint(int i);
 
 
-    void setBar(int pcount, BColor bcolor);
+    BoardModel.Bar getBar();
 
     void clear();
 

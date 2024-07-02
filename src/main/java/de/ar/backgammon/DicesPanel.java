@@ -8,8 +8,6 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
-import java.util.Vector;
 
 public class DicesPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(DicesPanel.class);
@@ -23,7 +21,8 @@ public class DicesPanel extends JPanel implements ActionListener {
     }
 
 
-    JLabel jlDice1,jlDice2,jlStack;
+    JLabel jlDice1,jlDice2;
+    JTextArea jtaStack;
     JButton jbThrow;
 
     private void initUi() {
@@ -43,8 +42,8 @@ public class DicesPanel extends JPanel implements ActionListener {
         JPanel spanel= new JPanel();
         spanel.setBorder(new TitledBorder(("Stack")));
         spanel.setLayout(new BorderLayout());
-        jlStack=new JLabel("[ ][ ][ ][ ]");
-        spanel.add(jlStack);
+        jtaStack=new JTextArea("[ ][ ][ ][ ]");
+        spanel.add(jtaStack);
 
         add(spanel);
         updateComponents();
@@ -60,7 +59,12 @@ public class DicesPanel extends JPanel implements ActionListener {
                 sb.append("[  ]");
             }
         }
-        jlStack.setText(sb.toString());
+        for (DicesControl.PointSequence ps:dc.getPointSequences()){
+            sb.append("\n"+ps);
+        }
+
+
+            jtaStack.setText(sb.toString());
     }
 
     @Override

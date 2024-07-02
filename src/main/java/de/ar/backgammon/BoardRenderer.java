@@ -9,10 +9,12 @@ public class BoardRenderer implements BoardRendererIf {
 
 
     private final BoardModelIf bModel;
+    private BarRenderer barRenderer ;
 
     public BoardRenderer(BoardModelIf bModel){
 
         this.bModel = bModel;
+        barRenderer = new BarRenderer(bModel);
     }
 
     public void render(Graphics g, JPanel panel) {
@@ -20,7 +22,7 @@ public class BoardRenderer implements BoardRendererIf {
 
         drawRect(0, 0, BOARD_WIDTH, BOARD_HEIGTH, 2, g2d);
         // drawLine(PLAY_AREA_WIDTH/2,0,PLAY_AREA_WIDTH/2,PLAY_AREA_HEIGHT,g2d);
-        draw_bar(g2d);
+        barRenderer.render(g2d);
 
         for (int i = 0; i < 24; i++) {
             drawPoint(i, g2d,bModel.getPoint(i));
@@ -48,9 +50,7 @@ public class BoardRenderer implements BoardRendererIf {
     }
 
 
-    void draw_bar(Graphics2D g2d) {
-        drawRect(BOARD_WIDTH / 2 - BAR_WIDTH / 2, 0, BAR_WIDTH, BOARD_HEIGTH, 2, g2d);
-    }
+
 
     void drawPoint(int idx, Graphics2D g2d, BPoint point) {
         int x1 = 0;
@@ -104,9 +104,9 @@ public class BoardRenderer implements BoardRendererIf {
 
 
         String str=""+point.getIndex();
-        if(point.getPieceCount()> 0) {
-            str = str+"/"+point.getPieceCount() + point.getPieceColor().getShortString();
-        }
+        //if(point.getPieceCount()> 0) {
+           // str = str+"/"+point.getPieceCount() + point.getPieceColor().getShortString();
+        //}
 
         if (idx < 12){
             g2d.drawString(str,x1-10,y1+15);
@@ -173,8 +173,6 @@ public class BoardRenderer implements BoardRendererIf {
                 }
             }
         }
-
-
 
         int w1=PIECE_WIDTH-2;
         g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);

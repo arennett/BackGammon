@@ -12,9 +12,9 @@ public class GameControl {
     private boolean running = false;
     private BColor turn = BColor.WHITE;
 
-    private Game game;
-    private BoardModelIf boardModel;
-    private BoardPanel boardPanel;
+    private final Game game;
+    private final BoardModelIf boardModel;
+    private final BoardPanel boardPanel;
     private final BoardModelReaderIf bmReader;
     private final DicesControl dicesControl;
     private ButtonPanel buttonPanel;
@@ -27,7 +27,7 @@ public class GameControl {
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
         this.dicesControl = dicesControl;
-        this.buttonPanel = buttonPanel;
+
     }
 
     public boolean moveRequest(int from, int to) {
@@ -43,11 +43,8 @@ public class GameControl {
             game.message_error("throw the dices!");
             return false;
         }
-        BPoint bpFrom = boardModel.getPoint(from);
 
-        BPoint bpTo = boardModel.getPoint(to);
         return move(from, to);
-
 
     }
 
@@ -62,26 +59,28 @@ public class GameControl {
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
         int distance = 0;
+        int direction = 0;
         if (turn == BColor.WHITE) {
+            direction = 1;
             distance = to - from;
         } else {
+            direction = -1;
             distance = from - to;
         }
-        DicesControl.PointSequence ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
+        DicesControl.PointSequence ps = null;
 
-        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc);
-
-        if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
-            // blot
-            bpTo.setPieceCount(spc);
-            logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
+        ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
+        if (ps != null) {
+            int old_to = 0;
+            int oldpos =from;
+            for (int p : ps) {
+                int subto = oldpos + p * direction;
+                sub_move(oldpos, subto, spc);
+                oldpos=subto;
+            }
         } else {
-            // no blot
-            bpTo.setPieceCount(bpTo.getPieceCount() + spc);
-            logger.debug("moved from {} to {}", bpFrom, bpTo);
+            sub_move(from, to, spc);
         }
-        bpTo.setPieceColor(bpFrom.getPieceColor());
-
 
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
@@ -100,6 +99,25 @@ public class GameControl {
         boardPanel.repaint();
         return true;
 
+    }
+
+    public void sub_move(int from, int to, int spc) {
+        BPoint bpFrom = boardModel.getPoint(from);
+        BPoint bpTo = boardModel.getPoint(to);
+
+        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc);
+
+        if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
+            // blot
+            bpTo.setPieceCount(spc);
+            boardModel.getBar().addCount(spc, bpTo.getPieceColor());
+            logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
+        } else {
+            // no blot
+            bpTo.setPieceCount(bpTo.getPieceCount() + spc);
+            logger.debug("moved from {} to {}", bpFrom, bpTo);
+        }
+        bpTo.setPieceColor(bpFrom.getPieceColor());
     }
 
     private boolean validateMove(int from, int to) {

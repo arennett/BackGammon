@@ -132,10 +132,11 @@ public class DicesControl {
         } else if (pointStack.size() == 2) {
             p = new PointSequence(pointStack);
             pointSequences.add(p);
-            p = new PointSequence(pointStack);
-            p.flipFirst2();
-            pointSequences.add(p);
-
+            if(pointStack.get(0)!=pointStack.get(1)) {
+                p = new PointSequence(pointStack);
+                p.flipFirst2();
+                pointSequences.add(p);
+            }
         } else if (pointStack.size() == 3) {
             assert pointStack.get(0) == pointStack.get(1);
             assert pointStack.get(1) == pointStack.get(2);
@@ -186,6 +187,9 @@ public class DicesControl {
     public ArrayList<Integer> getPointStack() {
         return pointStack;
     }
+    public ArrayList<PointSequence> getPointSequences() {
+        return pointSequences;
+    }
 
     /**
      * check if stack contains all moved points
@@ -225,9 +229,10 @@ public class DicesControl {
             if (pointStack.isEmpty()) {
                 clear();
             }
-            dicesPanel.updateComponents();
+
         }
         updatePointSequences(pointStack);
+        dicesPanel.updateComponents();
         return allOnStack;
     }
 
