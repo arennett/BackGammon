@@ -17,17 +17,17 @@ public class DicesControl {
 
     private GameControl gameControl;
 
-    /**
-     * remove the point of the sequence from the dice point stack
-     * @param ps
-     * @param count piece count
-     */
-    public void removeSequencePointsFromStack(PointSequence ps, int count) {
-        for (int point:ps){
-            removePointsFromStack(point,count);
-        }
-    }
 
+    int dice1 = 0;
+    int dice2 = 0;
+
+    public void setDice1(int point) {
+        dice1=point;
+    }
+    public void setDice2(int point) {
+        dice2=point;
+        updateStack();
+    }
 
     class PointSequence extends ArrayList<Integer> {
         public PointSequence(ArrayList<Integer> pointStack) {
@@ -76,8 +76,6 @@ public class DicesControl {
     ArrayList<Integer> pointStack = new ArrayList<>();
     ArrayList<PointSequence> pointSequences = new ArrayList<>();
 
-    int dice1 = 0;
-    int dice2 = 0;
 
     public DicesControl(Game game, BoardModelIf bModel) {
 
@@ -113,6 +111,10 @@ public class DicesControl {
         dice1 = random.nextInt(6) + 1;
         dice2 = random.nextInt(6) + 1;
         ;
+        updateStack();
+    }
+
+    private void updateStack() {
         pointStack.add(dice1);
         pointStack.add(dice2);
         if (dice1 == dice2) {
@@ -206,7 +208,8 @@ public class DicesControl {
                 allOnStack = false;
             }
         }
-        logger.debug("checkPointsOnStack point:{} count:{} ok:{}",point,count,allOnStack);
+        logger.debug("point:{} count:{} {}"
+                ,point,count,allOnStack?"on stack":"NOT on stack!!!");
         return allOnStack;
     }
 
@@ -220,7 +223,7 @@ public class DicesControl {
     public boolean removePointsFromStack(int point, int count) {
         boolean allOnStack = checkPointsOnStack(point, count);
         if (allOnStack) {
-
+            logger.debug("remove {}x [{}] from stack",count,point);
             for (int k = 0; k < count; k++) {
                 //remove point from pointStack
                 pointStack.remove(Integer.valueOf(point));

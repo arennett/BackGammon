@@ -72,30 +72,20 @@ public class GameControl {
         ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
         if (ps != null) {
             int old_to = 0;
-            int oldpos =from;
+            int oldpos = from;
             for (int p : ps) {
                 int subto = oldpos + p * direction;
                 sub_move(oldpos, subto, spc);
-                oldpos=subto;
+                oldpos = subto;
             }
         } else {
             sub_move(from, to, spc);
         }
 
-        if (!bpControl.isSetMode()) {
-            // try to remove points from stack
-            boolean removed = dicesControl.removePointsFromStack(distance, spc);
-            if (!removed) {
-                // it must be a sequence
-                assert ps != null;
-                dicesControl.removeSequencePointsFromStack(ps, spc);
-
-            }
-
-            if (dicesControl.getDicesState() == DicesControl.DicesState.READY) {
-                switch_turn();
-            }
+        if (dicesControl.getDicesState() == DicesControl.DicesState.READY) {
+            switch_turn();
         }
+
         boardPanel.repaint();
         return true;
 
@@ -118,6 +108,10 @@ public class GameControl {
             logger.debug("moved from {} to {}", bpFrom, bpTo);
         }
         bpTo.setPieceColor(bpFrom.getPieceColor());
+        if (!bpControl.isSetMode()) {
+            // try to remove points from stack
+            dicesControl.removePointsFromStack(Math.abs(to - from), spc);
+        }
     }
 
     private boolean validateMove(int from, int to) {

@@ -21,7 +21,7 @@ public class DicesPanel extends JPanel implements ActionListener {
     }
 
 
-    JLabel jlDice1,jlDice2;
+    JButton jbDice1, jbDice2;
     JTextArea jtaStack;
     JButton jbThrow;
 
@@ -31,10 +31,12 @@ public class DicesPanel extends JPanel implements ActionListener {
         JPanel dpanel= new JPanel();
         dpanel.setBorder(new TitledBorder(("")));
         dpanel.setLayout(new GridLayout(1,2));
-        jlDice1=new JLabel();
-        jlDice2=new JLabel();
-        dpanel.add(jlDice1);
-        dpanel.add(jlDice2);
+        jbDice1 =new JButton("[ ]");
+        jbDice1.addActionListener(this);
+        jbDice2 =new JButton("[ ]");
+        jbDice2.addActionListener(this);
+        dpanel.add(jbDice1);
+        dpanel.add(jbDice2);
         add(dpanel);
         jbThrow = new JButton("throw");
         jbThrow.addActionListener(this);
@@ -44,14 +46,15 @@ public class DicesPanel extends JPanel implements ActionListener {
         spanel.setLayout(new BorderLayout());
         jtaStack=new JTextArea("[ ][ ][ ][ ]");
         spanel.add(jtaStack);
-
         add(spanel);
         updateComponents();
     }
     public void updateComponents(){
-        jlDice1.setText("["+dc.getDice1()+"]");
-        jlDice2.setText("["+dc.getDice2()+"]");
-        StringBuffer sb = new StringBuffer("");
+        jbDice1.setText("["+dc.getDice1()+"]");
+
+        jbDice2.setText("["+dc.getDice2()+"]");
+
+        StringBuffer sb = new StringBuffer("    ");
         for (int i=0; i< 4 ; i++){
             if (i< dc.getPointStack().size()){
                 sb.append("["+dc.getPointStack().get(i)+"]");
@@ -71,6 +74,18 @@ public class DicesPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==jbThrow){
             dc.throwDices();
+        }
+        if(e.getSource()==jbDice1){
+            String s = JOptionPane.showInputDialog("Point (1-6): ");
+            int point =Integer.parseInt(s);
+            dc.setDice1(point);
+            updateComponents();
+        }
+        if(e.getSource()==jbDice2){
+            String s = JOptionPane.showInputDialog("Point (1-6): ");
+            int point =Integer.parseInt(s);
+            dc.setDice2(point);
+            updateComponents();
         }
 
     }
