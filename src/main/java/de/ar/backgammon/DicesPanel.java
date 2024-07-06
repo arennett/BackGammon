@@ -29,7 +29,10 @@ public class DicesPanel extends JPanel implements ActionListener {
 
     private void initUi() {
         setBorder(new TitledBorder(("Dices")));
-        setLayout(new GridLayout(3,1));
+        setLayout(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+
         JPanel dpanel= new JPanel();
         dpanel.setBorder(new TitledBorder(("")));
         dpanel.setLayout(new GridLayout(1,2));
@@ -39,22 +42,32 @@ public class DicesPanel extends JPanel implements ActionListener {
         jbDice2.addActionListener(this);
         dpanel.add(jbDice1);
         dpanel.add(jbDice2);
-        add(dpanel);
+        c.gridx = 0;
+        c.gridy = 0;
+        add(dpanel,c);
         jbThrow = new JButton("throw");
         jbThrow.addActionListener(this);
-        add(jbThrow);
+        c.gridx = 0;
+        c.gridy = 1;
+        add(jbThrow,c);
         JPanel spanel= new JPanel();
         spanel.setBorder(new TitledBorder(("Stack")));
         spanel.setLayout(new BorderLayout());
         jtaStack=new JTextArea("[ ][ ][ ][ ]");
         spanel.add(jtaStack);
-        add(spanel);
+        c.gridx = 0;
+        c.gridy = 2;
+        add(spanel,c);
         updateComponents();
     }
     public void updateComponents(){
-        jbDice1.setText("["+dc.getDice1()+"]");
-
-        jbDice2.setText("["+dc.getDice2()+"]");
+        if (dc.getDicesState()== DicesControl.DicesState.THROWN) {
+            jbDice1.setText("["+dc.getDice1()+"]");
+            jbDice2.setText("["+dc.getDice2()+"]");
+        }else{
+            jbDice1.setText("[ ]");
+            jbDice2.setText("[ ]");
+        }
 
         StringBuffer sb = new StringBuffer("    ");
         for (int i=0; i< 4 ; i++){

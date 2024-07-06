@@ -24,7 +24,7 @@ public class GameControl {
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
-    ArrayList<PipSequence> psArray;
+    ArrayList<PipSequence> psArray=new ArrayList<>();
 
 
     public GameControl(Game game, BoardModelIf boardModel, BoardPanel boardPanel, BoardModelReaderIf bmReader, DicesControl dicesControl, PipSequenceControl pointSequenceControl) {
@@ -84,6 +84,7 @@ public class GameControl {
         boolean hasBlot = false;
 
         assert psArray !=null;
+
         for (PipSequence ps : psArray) {
             hasBlot= pipSequenceControl.psHasBlots(ps,from,to);
             if (hasBlot){
