@@ -37,4 +37,8 @@ public class ButtonPanelControl {
 
         this.setMode = setMode;
     }
+
+    public void switchTurn() {
+        gameControl.switch_turn();
+    }
 }

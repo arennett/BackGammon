@@ -13,6 +13,13 @@ import static de.ar.backgammon.ConstIf.BOARDMAP_SETUP;
 public class BoardModelReader implements BoardModelReaderIf{
     private static final Logger logger = LoggerFactory.getLogger(BoardModelReader.class);
 
+    /**
+     * read a model map and writes it into the boardModel
+     * @param modelName
+     * @param bModel
+     * @throws IOException
+     * @throws BException
+     */
     @Override
     public void read(String modelName, BoardModelIf bModel) throws IOException, BException {
         FileReader filereader;

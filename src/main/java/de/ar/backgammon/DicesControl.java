@@ -5,104 +5,47 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
-
 public class DicesControl {
     private static final Logger logger = LoggerFactory.getLogger(DicesControl.class);
     private final Game game;
     private final BoardModelIf bModel;
+    private PipSequenceControl psControl;
 
     Random random = new Random();
     private DicesPanel dicesPanel;
 
     private GameControl gameControl;
 
-
     int dice1 = 0;
     int dice2 = 0;
 
-    public void setDice1(int point) {
-        dice1=point;
-    }
-    public void setDice2(int point) {
-        dice2=point;
-        updateStack();
-    }
-
-    class PointSequence extends ArrayList<Integer> {
-        public PointSequence(ArrayList<Integer> pointStack) {
-            super();
-            this.addAll(pointStack);
-        }
-
-        public PointSequence() {
-            super();
-        }
-
-        /**
-         * sum of all points
-         *
-         * @return
-         */
-        int getSum() {
-            int sum = 0;
-            for (int point : this) {
-                sum += point;
-            }
-            return sum;
-        }
-
-        public Integer removeLast() {
-            return super.remove(size() - 1);
-        }
-
-        public void flipFirst2() {
-            assert size() == 2;
-            int k = get(0);
-            set(0, get(1));
-            set(1, k);
-        }
-
-        public String toString() {
-            StringBuffer str = new StringBuffer("" + getSum() + ": ");
-            for (int point : this) {
-                str.append("[" + point + "] ");
-            }
-            return str.toString();
-        }
-
-    }
-
-    ArrayList<Integer> pointStack = new ArrayList<>();
-    ArrayList<PointSequence> pointSequences = new ArrayList<>();
-
+    ArrayList<Integer> pipStack = new ArrayList<>();
 
     public DicesControl(Game game, BoardModelIf bModel) {
-
-        this.game = game;
+         this.game = game;
         this.bModel = bModel;
-    }
+   }
 
+    /**
+     * clear pip stack and pip sequences
+     */
     public void clear() {
-        dice1 = 0;
-        dice2 = 0;
-        pointStack.clear();
-        pointSequences.clear();
+        pipStack.clear();
+        psControl.clear();
         dicesState = DicesState.READY;
         dicesPanel.updateComponents();
     }
 
-    public enum DicesState {READY, THROWN}
-
-    ;
-
-    public DicesState getDicesState() {
-        return dicesState;
+    public void setPsControl(PipSequenceControl psControl) {
+        this.psControl = psControl;
     }
 
+
+
+    public enum DicesState {READY, THROWN};
     DicesState dicesState = DicesState.READY;
 
-    public void throwDices() {
+    public void rollDices() {
         if (!gameControl.isRunning()) {
             game.message_error("start a new game!");
             return;
@@ -110,70 +53,100 @@ public class DicesControl {
         clear();
         dice1 = random.nextInt(6) + 1;
         dice2 = random.nextInt(6) + 1;
-        ;
         updateStack();
     }
 
+    /**
+     * update the stack after a dices roll
+     * followed by updating the pip sequences
+     */
     private void updateStack() {
-        pointStack.add(dice1);
-        pointStack.add(dice2);
+        clear();
+        pipStack.add(dice1);
+        pipStack.add(dice2);
         if (dice1 == dice2) {
-            pointStack.add(dice1);
-            pointStack.add(dice2);
+            pipStack.add(dice1);
+            pipStack.add(dice2);
         }
-        updatePointSequences(pointStack);
+        psControl.updateSequences(pipStack);
         dicesState = DicesState.THROWN;
         dicesPanel.updateComponents();
     }
 
-    private void updatePointSequences(ArrayList<Integer> pointStack) {
-        pointSequences.clear();
-        PointSequence p;
-        if (pointStack.size() == 1) {
-            //no sequences
-        } else if (pointStack.size() == 2) {
-            p = new PointSequence(pointStack);
-            pointSequences.add(p);
-            if(pointStack.get(0)!=pointStack.get(1)) {
-                p = new PointSequence(pointStack);
-                p.flipFirst2();
-                pointSequences.add(p);
+ /**
+     * check if stack contains all moved points
+     * if not, point might be a sequence distance
+     * @param move_range move range
+     *              count nr of peces moved
+     * @return true if all points on stack
+     */
+
+    public boolean checkIfMoveIsOnStack(int move_range, int count) {
+        boolean allOnStack = true;
+        for (int i = 0; i < count; i++) {
+            if (!pipStack.contains(move_range)) {
+                allOnStack = false;
             }
-        } else if (pointStack.size() == 3) {
-            assert pointStack.get(0) == pointStack.get(1);
-            assert pointStack.get(1) == pointStack.get(2);
-
-            p = new PointSequence(pointStack);
-            pointSequences.add(p);
-            p = new PointSequence(pointStack);
-            p.removeLast();
-            pointSequences.add(p);
-
-        } else if (pointStack.size() == 4) {
-            assert pointStack.get(0) == pointStack.get(1);
-            assert pointStack.get(1) == pointStack.get(2);
-            assert pointStack.get(2) == pointStack.get(3);
-
-            p = new PointSequence(pointStack);
-            pointSequences.add(p);
-            p = new PointSequence(pointStack);
-            p.removeLast();
-            pointSequences.add(p);
-            p = new PointSequence(p);
-            p.removeLast();
-            pointSequences.add(p);
-
         }
-        logger.debug("--------PointSequences: -------------");
-        for (PointSequence ps : pointSequences) {
-            logger.debug("{}", ps.toString());
-        }
-        logger.debug("-------------------------------------");
+        logger.debug("move_range:{} {}x {}"
+                ,move_range,count,allOnStack?"on stack":"NOT on stack, probably a sequence");
+        return allOnStack;
+    }
 
+    /**
+     * removes the the moved pips from stack, if stack contains all moved pips
+     *
+     * @param pip pip of one submove
+     *              count nr of pieces moved
+     * @return true if all points where removed
+     */
+    public boolean removePipsFromStack(int pip, int count) {
+        boolean allOnStack = checkIfMoveIsOnStack(pip, count);
+        if (allOnStack) {
+            logger.debug("remove pips {}x [{}] from stack",count,pip);
+            for (int k = 0; k < count; k++) {
+                //remove pip from pointStack
+                pipStack.remove(Integer.valueOf(pip));
+            }
+            if (pipStack.isEmpty()) {
+                clear();
+            }
+
+        } else {
+            assert true;
+            String msg = "not all points on stack, points not removed !!!";
+            logger.error(msg);
+            game.message_error(msg);
+            logger.error("pip:{} {}x {}"
+                    , pip, count, "NOT on stack, points not removed");
+        }
+
+        psControl.updateSequences(pipStack);
+        dicesPanel.updateComponents();
+        return allOnStack;
 
     }
 
-    /* setter and getter */
+
+
+    /*setter and getter*******************************************************************/
+
+    public void setGameControl(GameControl gameControl) {
+        this.gameControl = gameControl;
+    }
+    public ArrayList<Integer> getPipStack() {
+        return pipStack;
+    }
+
+    public void setDice1(int point) {
+        dice1=point;
+        updateStack();
+    }
+    public void setDice2(int point) {
+        dice2=point;
+        updateStack();
+    }
+
     public void setDicesPanel(DicesPanel dicesPanel) {
         this.dicesPanel = dicesPanel;
     }
@@ -186,111 +159,8 @@ public class DicesControl {
         return dice2;
     }
 
-    public ArrayList<Integer> getPointStack() {
-        return pointStack;
-    }
-    public ArrayList<PointSequence> getPointSequences() {
-        return pointSequences;
+    public DicesState getDicesState() {
+        return dicesState;
     }
 
-    /**
-     * check if stack contains all moved points
-     *
-     * @param point point of one piece move
-     *              count nr of peces moved
-     * @return
-     */
-
-    public boolean checkPointsOnStack(int point, int count) {
-        boolean allOnStack = true;
-        for (int i = 0; i < count; i++) {
-            if (!pointStack.contains(point)) {
-                allOnStack = false;
-            }
-        }
-        logger.debug("point:{} count:{} {}"
-                ,point,count,allOnStack?"on stack":"NOT on stack!!!");
-        return allOnStack;
-    }
-
-    /**
-     * removes the the moved pieces points from stack, if stack contains all moved points
-     *
-     * @param point point of one piece move
-     *              count nr of peces moved
-     * @return
-     */
-    public boolean removePointsFromStack(int point, int count) {
-        boolean allOnStack = checkPointsOnStack(point, count);
-        if (allOnStack) {
-            logger.debug("remove {}x [{}] from stack",count,point);
-            for (int k = 0; k < count; k++) {
-                //remove point from pointStack
-                pointStack.remove(Integer.valueOf(point));
-            }
-
-            if (pointStack.isEmpty()) {
-                clear();
-            }
-
-        }
-        updatePointSequences(pointStack);
-        dicesPanel.updateComponents();
-        return allOnStack;
-    }
-
-    public PointSequence checkSequences(BPoint from, BPoint to, int point, int spc) {
-        nextps:
-        for (PointSequence ps : pointSequences) {
-            if (ps.getSum() == point) {
-                logger.debug("check seq {}", ps);
-                int nextpos = from.getIndex();
-                for (int s : ps) {
-                    if (from.getIndex() < to.getIndex()) {
-                        nextpos += s;
-                    } else {
-                        nextpos -= s;
-                    }
-                    BPoint nextPoint = bModel.getPoint(nextpos);
-                    logger.debug("check seq next point: {}", nextPoint);
-                    if (!isValidSeqPoint(nextPoint, spc)) {
-                        continue nextps;
-                    }
-                }
-                logger.debug("check seq {} true", ps);
-                return ps;
-            }
-        }
-        logger.debug("check seq false");
-        return null;
-    }
-
-    /**
-     * validition for sequence fields
-     *
-     * @param nextPoint
-     * @return
-     */
-    public boolean isValidSeqPoint(BPoint nextPoint, int spc) {
-        if (nextPoint.getPieceCount() > 1) {
-            if (nextPoint.getPieceColor() != gameControl.getTurn()) {
-                game.message_error("wrong color on sequence field");
-                logger.debug("valid seq point: {} {}", nextPoint, false);
-                return false;
-            }
-        }
-        if (nextPoint.getPieceCount() > 4) {
-            if (nextPoint.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
-                game.message_error("you can only put up to 5 pieces on a field");
-                logger.debug("valid seq point: {} {}", nextPoint, false);
-                return false;
-            }
-        }
-        logger.debug("valid seq point: {} {}", nextPoint, true);
-        return true;
-    }
-
-    public void setGameControl(GameControl gameControl) {
-        this.gameControl = gameControl;
-    }
 }

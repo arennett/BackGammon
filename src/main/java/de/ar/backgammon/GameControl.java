@@ -3,6 +3,8 @@ package de.ar.backgammon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+
 import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
 
 public class GameControl {
@@ -17,19 +19,31 @@ public class GameControl {
     private final BoardPanel boardPanel;
     private final BoardModelReaderIf bmReader;
     private final DicesControl dicesControl;
+
+    private final PipSequenceControl pipSequenceControl;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
+    ArrayList<PipSequence> psArray;
 
-    public GameControl(Game game, BoardModelIf boardModel, BoardPanel boardPanel, BoardModelReaderIf bmReader, DicesControl dicesControl) {
+
+    public GameControl(Game game, BoardModelIf boardModel, BoardPanel boardPanel, BoardModelReaderIf bmReader, DicesControl dicesControl, PipSequenceControl pointSequenceControl) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
         this.dicesControl = dicesControl;
-
+        this.pipSequenceControl = pointSequenceControl;
     }
 
+    /**
+     * user move request by dragging one or more pieces to a target point
+     * after throwing the dices
+     * in set mode no dices throwing necessary
+     * @param from index of from point
+     * @param to  index of to point
+     * @return
+     */
     public boolean moveRequest(int from, int to) {
         if (bpControl.isSetMode()) {
             move(from, to);
@@ -48,6 +62,13 @@ public class GameControl {
 
     }
 
+    /**
+     * moves one or more pieces to a target point
+     * after validating the move
+     * @param from
+     * @param to
+     * @return true if pieces where moved
+     */
     private boolean move(int from, int to) {
         int spc = boardModel.getStartPointSelectedPiecesCount();
         if (!bpControl.isSetMode()) {
@@ -56,29 +77,64 @@ public class GameControl {
             }
         }
 
-        BPoint bpFrom = boardModel.getPoint(from);
-        BPoint bpTo = boardModel.getPoint(to);
-        int distance = 0;
+        // psArray is set by move validation
+        // if psArray.size == 2 and sequences have equal sum
+        // and at least one ps has blots, the user has to choose a pointSequence
+        // otherwise we take the first sequence
+        boolean hasBlot = false;
+
+        assert psArray !=null;
+        for (PipSequence ps : psArray) {
+            hasBlot= pipSequenceControl.psHasBlots(ps,from,to);
+            if (hasBlot){
+                break;
+            }
+        }
+        PipSequence psSelect = null;
+
+        //default
+        if (!psArray.isEmpty()){
+            psSelect=psArray.get(0);
+        }
+
+        // two move sequences are possible
+
+        if (psArray.size() == 2) {
+            psSelect = psArray.get(0);
+            if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
+                if (hasBlot) {
+                    logger.debug("user sequence selection requested !");
+                    SeqSelectDialog sq = new SeqSelectDialog();
+                    sq.setSequences(psArray);
+                    sq.setVisible(true);
+                    logger.debug("OPTION : {}",sq.getOption());
+                    if(sq.getOption() < 0){
+                        return false;
+                    }else {
+                        psSelect=psArray.get(sq.getOption());
+                    }
+
+                }
+            }
+
+        }
+
         int direction = 0;
         if (turn == BColor.WHITE) {
             direction = 1;
-            distance = to - from;
         } else {
             direction = -1;
-            distance = from - to;
         }
-        DicesControl.PointSequence ps = null;
 
-        ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
-        if (ps != null) {
-            int old_to = 0;
-            int oldpos = from;
-            for (int p : ps) {
-                int subto = oldpos + p * direction;
-                sub_move(oldpos, subto, spc);
-                oldpos = subto;
+        if (psSelect!=null) {
+             int pos = from;
+            for (int p : psSelect) {
+                int subto = pos + p * direction;
+                sub_move(pos, subto, spc);
+                pos = subto;
             }
         } else {
+            // no sequence
             sub_move(from, to, spc);
         }
 
@@ -91,6 +147,14 @@ public class GameControl {
 
     }
 
+    /**
+     * a submove distance is maximum one pip long. If the main move is
+     * longer than a maximum pip (6) a pip sequence devides the move
+     * into sub moves
+     * @param from
+     * @param to
+     * @param spc
+     */
     public void sub_move(int from, int to, int spc) {
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
@@ -110,7 +174,7 @@ public class GameControl {
         bpTo.setPieceColor(bpFrom.getPieceColor());
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
-            dicesControl.removePointsFromStack(Math.abs(to - from), spc);
+            dicesControl.removePipsFromStack(Math.abs(to - from), spc);
         }
     }
 
@@ -118,18 +182,9 @@ public class GameControl {
         boolean ret = false;
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
-        if (bpTo.getPieceCount() > 1) {
-            if (bpTo.getPieceColor() != turn) {
-                game.message_error("wrong color on target field");
-                return false;
-            }
-        }
 
-        if (bpFrom.getPieceColor() != turn) {
-            game.message_error(turn.getString() + " is expected");
-            return false;
-        }
         int spc = boardModel.getStartPointSelectedPiecesCount();
+
         if (spc < 1) {
             game.message_error("no pieces selected");
             return false;
@@ -139,8 +194,10 @@ public class GameControl {
             return false;
         }
 
-        if (bpTo.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
-            game.message_error("you can only put up to 5 pieces on a field");
+        ret = isValidPoint(bpTo,spc);
+
+        if(!ret){
+            // unvalid point
             return false;
         }
 
@@ -162,20 +219,49 @@ public class GameControl {
             distance = from - to;
         }
 
-        ret = dicesControl.checkPointsOnStack(distance, spc);
+        assert distance > 0;
 
-        if (!ret) {
-            DicesControl.PointSequence ps = dicesControl.checkSequences(bpFrom, bpTo, distance, spc);
-            if (ps == null) {
+
+        psArray = pipSequenceControl.getValidSequences(from, to,  spc);
+        if (psArray.isEmpty()) {
+            // maybe only one pip on stack
+            ret = dicesControl.checkIfMoveIsOnStack(distance, spc);
+            if (!ret) {
                 game.message_error("not allowed, look at the dices");
                 return false;
             }
         }
 
+
         return true;
     }
 
-    private void switch_turn() {
+    /**
+     * basic validation, used for sequence and target points
+     * @param point
+     * @param spc
+     * @return
+     */
+    public boolean isValidPoint(BPoint point, int spc) {
+        if (point.getPieceCount() > 1) {
+            if (point.getPieceColor() != getTurn()) {
+                game.message_error("wrong point color");
+                logger.debug("validate point: {} ,wrong point color",point);
+                return false;
+            }
+        }
+        if (point.getPieceCount() > 4) {
+            if (point.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
+                game.message_error("you can only put up to 5 pieces on a field");
+                logger.debug("validate point: {} ,max 5 pieces",point);
+                return false;
+            }
+        }
+        logger.debug("validate point: {} ok", point);
+        return true;
+    }
+
+    public void switch_turn() {
         if (turn == BColor.RED) {
             turn = BColor.WHITE;
         } else {
@@ -185,10 +271,9 @@ public class GameControl {
     }
 
 
-    public void setButtonPanel(ButtonPanel buttonPanel) {
-        this.buttonPanel = buttonPanel;
-    }
-
+    /**
+     * starts a new game, setup map is loaded
+     */
     public void start() {
 
         boardModel.clear();
@@ -206,6 +291,15 @@ public class GameControl {
         }
 
     }
+
+
+
+    /*setter and getter*******************************************************************/
+
+    public void setButtonPanel(ButtonPanel buttonPanel) {
+        this.buttonPanel = buttonPanel;
+    }
+
 
     public void setStartPointSelectedIdx(int pointIdxPressed) {
         boardModel.setStartPointSelectedIdx(pointIdxPressed);
@@ -234,6 +328,4 @@ public class GameControl {
 
         this.bpControl = bpControl;
     }
-
-
 }

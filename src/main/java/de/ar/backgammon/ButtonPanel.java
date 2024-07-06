@@ -18,7 +18,9 @@ public class ButtonPanel extends JPanel implements ActionListener {
     JButton jButton_start;
     JToggleButton jtbSetMode;
 
-    JLabel lbTurnText, lbTurnColor;
+    JLabel lbTurnText;
+    JButton jbTurnColor;
+
 
     public ButtonPanel(ButtonPanelControl bpController, Game game, GameControl gControl, DicesPanel dicesPanel){
         this.bpController = bpController;
@@ -38,9 +40,10 @@ public class ButtonPanel extends JPanel implements ActionListener {
         JPanel panelTurn = new JPanel();
         panelTurn.setLayout(new BorderLayout());
         panelTurn.setBorder(BorderFactory.createTitledBorder("Turn"));
-        lbTurnColor = new JLabel(" ");
-        lbTurnColor.setOpaque(true);
-        panelTurn.add(lbTurnColor);
+        jbTurnColor = new JButton();
+        jbTurnColor.setOpaque(true);
+        jbTurnColor.addActionListener(this);
+        panelTurn.add(jbTurnColor);
         c.gridx = 0;
         c.gridy = 0;
         add(panelTurn,c);
@@ -67,7 +70,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
         updateComponents();
     }
 public void updateComponents(){
-   lbTurnColor.setBackground(gControl.getTurn().getColor());
+   jbTurnColor.setBackground(gControl.getTurn().getColor());
 }
 
 
@@ -79,6 +82,9 @@ public void updateComponents(){
 
         }else if (e.getSource()==jtbSetMode){
             bpController.setSetMode(jtbSetMode.isSelected());
+
+        }else if (e.getSource()==jbTurnColor){
+            bpController.switchTurn();
 
         }
     }

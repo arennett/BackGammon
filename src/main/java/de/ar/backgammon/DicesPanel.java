@@ -12,9 +12,11 @@ import java.awt.event.ActionListener;
 public class DicesPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(DicesPanel.class);
     private final DicesControl dc;
+    private final PipSequenceControl psc;
 
-    public DicesPanel(DicesControl dc) {
+    public DicesPanel(DicesControl dc, PipSequenceControl psc) {
         this.dc = dc;
+        this.psc = psc;
         dc.setDicesPanel(this);
 
         initUi();
@@ -56,13 +58,13 @@ public class DicesPanel extends JPanel implements ActionListener {
 
         StringBuffer sb = new StringBuffer("    ");
         for (int i=0; i< 4 ; i++){
-            if (i< dc.getPointStack().size()){
-                sb.append("["+dc.getPointStack().get(i)+"]");
+            if (i< dc.getPipStack().size()){
+                sb.append("["+dc.getPipStack().get(i)+"]");
             }else{
                 sb.append("[  ]");
             }
         }
-        for (DicesControl.PointSequence ps:dc.getPointSequences()){
+        for (PipSequence ps: psc.getPipSequences()){
             sb.append("\n"+ps);
         }
 
@@ -73,18 +75,18 @@ public class DicesPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==jbThrow){
-            dc.throwDices();
+            dc.rollDices();
         }
         if(e.getSource()==jbDice1){
-            String s = JOptionPane.showInputDialog("Point (1-6): ");
-            int point =Integer.parseInt(s);
-            dc.setDice1(point);
+            String s = JOptionPane.showInputDialog("Pip (1-6): ");
+            int pip =Integer.parseInt(s);
+            dc.setDice1(pip);
             updateComponents();
         }
         if(e.getSource()==jbDice2){
-            String s = JOptionPane.showInputDialog("Point (1-6): ");
-            int point =Integer.parseInt(s);
-            dc.setDice2(point);
+            String s = JOptionPane.showInputDialog("Pip (1-6): ");
+            int pip =Integer.parseInt(s);
+            dc.setDice2(pip);
             updateComponents();
         }
 

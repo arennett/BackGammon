@@ -1,5 +1,8 @@
 package de.ar.backgammon;
 
+/**
+ * A BPoint represents the field where the pieces on
+ */
 public class BPoint {
     private final int index;
     private final BoardModelIf bModel;
