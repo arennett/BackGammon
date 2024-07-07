@@ -50,6 +50,7 @@ public class PipSequenceControl {
                     }
 
                 }
+                logger.debug("add to valid sequences {}", ps);
                 retList.add(ps);
             }
         }

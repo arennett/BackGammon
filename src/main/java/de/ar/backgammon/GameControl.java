@@ -24,7 +24,7 @@ public class GameControl {
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
-    ArrayList<PipSequence> psArray=new ArrayList<>();
+    ArrayList<PipSequence> psArray = new ArrayList<>();
 
 
     public GameControl(Game game, BoardModelIf boardModel, BoardPanel boardPanel, BoardModelReaderIf bmReader, DicesControl dicesControl, PipSequenceControl pointSequenceControl) {
@@ -40,8 +40,9 @@ public class GameControl {
      * user move request by dragging one or more pieces to a target point
      * after throwing the dices
      * in set mode no dices throwing necessary
+     *
      * @param from index of from point
-     * @param to  index of to point
+     * @param to   index of to point
      * @return
      */
     public boolean moveRequest(int from, int to) {
@@ -65,16 +66,23 @@ public class GameControl {
     /**
      * moves one or more pieces to a target point
      * after validating the move
+     *
      * @param from
      * @param to
      * @return true if pieces where moved
      */
     private boolean move(int from, int to) {
+
         int spc = boardModel.getStartPointSelectedPiecesCount();
+
         if (!bpControl.isSetMode()) {
             if (!validateMove(from, to)) {
                 return false;
             }
+        } else {
+            //setmode
+            sub_move(from,to,spc);
+            return true;
         }
 
         // psArray is set by move validation
@@ -83,19 +91,20 @@ public class GameControl {
         // otherwise we take the first sequence
         boolean hasBlot = false;
 
-        assert psArray !=null;
+        assert psArray != null;
+
 
         for (PipSequence ps : psArray) {
-            hasBlot= pipSequenceControl.psHasBlots(ps,from,to);
-            if (hasBlot){
+            hasBlot = pipSequenceControl.psHasBlots(ps, from, to);
+            if (hasBlot) {
                 break;
             }
         }
         PipSequence psSelect = null;
 
         //default
-        if (!psArray.isEmpty()){
-            psSelect=psArray.get(0);
+        if (!psArray.isEmpty()) {
+            psSelect = psArray.get(0);
         }
 
         // two move sequences are possible
@@ -108,11 +117,11 @@ public class GameControl {
                     SeqSelectDialog sq = new SeqSelectDialog();
                     sq.setSequences(psArray);
                     sq.setVisible(true);
-                    logger.debug("OPTION : {}",sq.getOption());
-                    if(sq.getOption() < 0){
+                    logger.debug("OPTION : {}", sq.getOption());
+                    if (sq.getOption() < 0) {
                         return false;
-                    }else {
-                        psSelect=psArray.get(sq.getOption());
+                    } else {
+                        psSelect = psArray.get(sq.getOption());
                     }
 
                 }
@@ -127,8 +136,8 @@ public class GameControl {
             direction = -1;
         }
 
-        if (psSelect!=null) {
-             int pos = from;
+        if (psSelect != null) {
+            int pos = from;
             for (int p : psSelect) {
                 int subto = pos + p * direction;
                 sub_move(pos, subto, spc);
@@ -152,6 +161,7 @@ public class GameControl {
      * a submove distance is maximum one pip long. If the main move is
      * longer than a maximum pip (6) a pip sequence devides the move
      * into sub moves
+     *
      * @param from
      * @param to
      * @param spc
@@ -164,9 +174,9 @@ public class GameControl {
 
         if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
             // blot
-            bpTo.setPieceCount(spc);
-            boardModel.getBar().addCount(spc, bpTo.getPieceColor());
+            boardModel.getBar().addCount(1, bpTo.getPieceColor());
             logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
+            bpTo.setPieceCount(spc);
         } else {
             // no blot
             bpTo.setPieceCount(bpTo.getPieceCount() + spc);
@@ -195,9 +205,9 @@ public class GameControl {
             return false;
         }
 
-        ret = isValidPoint(bpTo,spc);
+        ret = isValidPoint(bpTo, spc);
 
-        if(!ret){
+        if (!ret) {
             // unvalid point
             return false;
         }
@@ -223,22 +233,29 @@ public class GameControl {
         assert distance > 0;
 
 
-        psArray = pipSequenceControl.getValidSequences(from, to,  spc);
+        psArray = pipSequenceControl.getValidSequences(from, to, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
-            ret = dicesControl.checkIfMoveIsOnStack(distance, spc);
-            if (!ret) {
+            logger.debug("no valid sequences found");
+            if (distance <= 6) {
+                ret = dicesControl.checkIfMoveIsOnStack(distance, spc);
+                if (!ret) {
+                    game.message_error("not allowed, look at the dices");
+                    return false;
+                }
+            } else {
                 game.message_error("not allowed, look at the dices");
                 return false;
             }
         }
 
 
-        return true;
-    }
+    return true;
+}
 
     /**
      * basic validation, used for sequence and target points
+     *
      * @param point
      * @param spc
      * @return
@@ -247,17 +264,17 @@ public class GameControl {
         if (point.getPieceCount() > 1) {
             if (point.getPieceColor() != getTurn()) {
                 game.message_error("wrong point color");
-                logger.debug("validate point: {} ,wrong point color",point);
+                logger.debug("validate point: {} ,wrong point color", point);
                 return false;
             }
         }
-        if (point.getPieceCount() > 4) {
-            if (point.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
-                game.message_error("you can only put up to 5 pieces on a field");
-                logger.debug("validate point: {} ,max 5 pieces",point);
-                return false;
-            }
+
+        if (point.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
+            game.message_error("you can only put up to 5 pieces on a field");
+            logger.debug("validate point: {} ,max 5 pieces", point);
+            return false;
         }
+
         logger.debug("validate point: {} ok", point);
         return true;
     }
