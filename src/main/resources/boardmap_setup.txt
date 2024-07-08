@@ -8,4 +8,4 @@ p18,5,w
 p23,2,r
 bar,0,r
 bar,0,w
-turn,x
+turn,r

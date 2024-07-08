@@ -112,26 +112,42 @@ public class PipSequenceControl {
         this.gameControl = gameControl;
     }
 
-    public boolean psHasBlots(PipSequence ps, int from, int to){
+
+    /**
+     * creates a list of blot positions for a sequence and a move
+     * @param ps
+     * @param from
+     * @param to
+     * @return list of blot positions
+     */
+    public ArrayList<Integer> getBlotArray(PipSequence ps, int from, int to){
+        ArrayList<Integer> arr=new ArrayList<>();
         int direction = 0;
         if (gameControl.getTurn() == BColor.WHITE) {
             direction = 1;
         } else {
             direction = -1;
         }
-        int pos = from;
-        for (int p : ps) {
-            BPoint point = bModel.getPoint(p);
+
+        int prevpos=from;
+        for (int pip : ps) {
+            int pos = prevpos+ pip * direction;
+            BPoint point = bModel.getPoint(pos);
             if (point.getPieceColor() != gameControl.getTurn()) {
                 if (point.getPieceCount() == 1) {
                     logger.debug("blot detected");
-                    return true;
+                    arr.add(pos);
                 }
             }
-            int subto = pos + p * direction;
-            pos = subto;
+            prevpos=pos;
         }
-        return false;
+        return arr;
+    }
+
+
+    public boolean psHasBlots(PipSequence ps, int from, int to){
+
+        return !getBlotArray(ps,from,to).isEmpty();
 
     }
 

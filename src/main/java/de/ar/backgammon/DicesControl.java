@@ -16,8 +16,7 @@ public class DicesControl {
 
     private GameControl gameControl;
 
-    int dice1 = 0;
-    int dice2 = 0;
+
 
     ArrayList<Integer> pipStack = new ArrayList<>();
 
@@ -51,8 +50,8 @@ public class DicesControl {
             return;
         }
         clear();
-        dice1 = random.nextInt(6) + 1;
-        dice2 = random.nextInt(6) + 1;
+        setDice1(random.nextInt(6) + 1);
+        setDice2(random.nextInt(6) + 1);
         updateStack();
     }
 
@@ -60,13 +59,13 @@ public class DicesControl {
      * update the stack after a dices roll
      * followed by updating the pip sequences
      */
-    private void updateStack() {
+    public void updateStack() {
         clear();
-        pipStack.add(dice1);
-        pipStack.add(dice2);
-        if (dice1 == dice2) {
-            pipStack.add(dice1);
-            pipStack.add(dice2);
+        pipStack.add(getDice1());
+        pipStack.add(getDice2());
+        if (getDice1() == getDice2()) {
+            pipStack.add(getDice1());
+            pipStack.add(getDice2());
         }
         psControl.updateSequences(pipStack);
         dicesState = DicesState.THROWN;
@@ -138,29 +137,34 @@ public class DicesControl {
         return pipStack;
     }
 
-    public void setDice1(int point) {
-        dice1=point;
-        updateStack();
-    }
-    public void setDice2(int point) {
-        dice2=point;
-        updateStack();
-    }
+
 
     public void setDicesPanel(DicesPanel dicesPanel) {
         this.dicesPanel = dicesPanel;
     }
 
-    public int getDice1() {
-        return dice1;
-    }
 
-    public int getDice2() {
-        return dice2;
-    }
 
     public DicesState getDicesState() {
         return dicesState;
+    }
+
+    public int getDice1() {
+        return bModel.getDice1();
+    }
+
+    public void setDice1(int dice1) {
+        bModel.setDice1(dice1);
+        updateStack();
+    }
+
+    public int getDice2() {
+        return bModel.getDice2();
+    }
+
+    public void setDice2(int dice2) {
+        bModel.setDice2(dice2);
+        updateStack();
     }
 
 }

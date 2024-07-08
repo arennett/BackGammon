@@ -10,19 +10,7 @@ import static de.ar.backgammon.ConstIf.*;
 public class BoardModelWriter implements BoardModelWriterIf{
     private static final Logger logger = LoggerFactory.getLogger(BoardModelWriter.class);
     @Override
-/*
-p0,2,w
-p5,5,r
-p7,3,r
-p11,5,w
-p12,5,r
-p16,3,w
-p18,5,w
-p23,2,r
-bar,0,r
-bar,0,w
-turn,x
- */
+
     public void write(String modelName, BoardModelIf bmodel) throws IOException {
         FileWriter filewriter;
         filewriter = new FileWriter(BOARDMAP_FILENAME+modelName+".txt");
@@ -45,6 +33,12 @@ turn,x
         bufferedWriter.newLine();
         cnt =bmodel.getBar().getCount(BColor.WHITE);
         bufferedWriter.write("bar,"+cnt+",w");
+        bufferedWriter.newLine();
+        bufferedWriter.write("turn,"+bmodel.getTurn().getShortString());
+        bufferedWriter.newLine();
+        bufferedWriter.write("dice1,"+bmodel.getDice1());
+        bufferedWriter.newLine();
+        bufferedWriter.write("dice2,"+bmodel.getDice2());
         bufferedWriter.newLine();
 
         bufferedWriter.close();

@@ -40,8 +40,7 @@ public class BoardModelReader implements BoardModelReaderIf{
                 String scol=strs[2];
                 BColor bColor =BColor.getBColor(scol);
                 bModel.setPoint(pidx,psize,bColor);
-            }
-            if (strs[0].startsWith("bar")){
+            }else if (strs[0].startsWith("bar")){
                 try{
                    psize =Integer.parseInt(strs[1]);
                 }catch (NumberFormatException nfe){
@@ -50,6 +49,24 @@ public class BoardModelReader implements BoardModelReaderIf{
                 String scol=strs[2];
                 BColor bColor =BColor.getBColor(scol);
                 bModel.getBar().setCount(psize,bColor);
+            }else if (strs[0].startsWith("turn")){
+                String scol=strs[1];
+                BColor bColor =BColor.getBColor(scol);
+                bModel.setTurn(bColor);
+            }else if (strs[0].startsWith("dice1")) {
+                try {
+                    int count = Integer.parseInt(strs[1]);
+                    bModel.setDice1(count);
+                } catch (NumberFormatException nfe) {
+                    throw new BException("read failed", nfe);
+                }
+            }else if (strs[0].startsWith("dice2")) {
+                try {
+                    int count = Integer.parseInt(strs[1]);
+                    bModel.setDice2(count);
+                } catch (NumberFormatException nfe) {
+                    throw new BException("read failed", nfe);
+                }
             }
        }
 

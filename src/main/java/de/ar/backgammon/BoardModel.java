@@ -10,6 +10,11 @@ public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
     static int MAX_POINTS=24;
     Vector<BPoint> points =new Vector<>();
+
+    private BColor turn = BColor.WHITE;
+    int dice1 = 0;
+    int dice2 = 0;
+
     class Bar extends HashMap<BColor,Integer> {
         public Bar(){
            clear();
@@ -137,5 +142,30 @@ public class BoardModel implements BoardModelIf {
 
     public void setStartPieceSelectedIdx(int startPieceSelectedIdx) {
         this.startPieceSelectedIdx = startPieceSelectedIdx;
+    }
+
+    public BColor getTurn() {
+        return turn;
+    }
+
+    public void setTurn(BColor turn) {
+        this.turn = turn;
+    }
+    @Override
+    public int getDice1() {
+        return dice1;
+    }
+    @Override
+    public void setDice1(int dice1) {
+        this.dice1 = dice1;
+    }
+    @Override
+    public int getDice2() {
+        return dice2;
+    }
+
+    @Override
+    public void setDice2(int dice2) {
+        this.dice2 = dice2;
     }
 }

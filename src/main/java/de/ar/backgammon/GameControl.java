@@ -12,7 +12,7 @@ public class GameControl {
 
 
     private boolean running = false;
-    private BColor turn = BColor.WHITE;
+
 
     private final Game game;
     private final BoardModelIf boardModel;
@@ -53,6 +53,7 @@ public class GameControl {
      * @return
      */
     public boolean moveRequest(int from, int to) {
+        logger.debug("moveRequest from: {} to: {} ", from,to);
         if (bpControl.isSetMode()) {
             move(from, to);
             return true;
@@ -120,6 +121,7 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
+
                     logger.debug("user sequence selection requested !");
                     SeqSelectDialog sq = new SeqSelectDialog();
                     sq.setSequences(psArray);
@@ -137,7 +139,7 @@ public class GameControl {
         }
 
         int direction = 0;
-        if (turn == BColor.WHITE) {
+        if (getTurn() == BColor.WHITE) {
             direction = 1;
         } else {
             direction = -1;
@@ -219,7 +221,7 @@ public class GameControl {
             return false;
         }
 
-        if (turn == BColor.WHITE) {
+        if (getTurn() == BColor.WHITE) {
             ret = to > from;
         } else {
             ret = to < from;
@@ -231,7 +233,7 @@ public class GameControl {
         }
         //check dices
         int distance = 0;
-        if (turn == BColor.WHITE) {
+        if (getTurn() == BColor.WHITE) {
             distance = to - from;
         } else {
             distance = from - to;
@@ -287,10 +289,10 @@ public class GameControl {
     }
 
     public void switch_turn() {
-        if (turn == BColor.RED) {
-            turn = BColor.WHITE;
+        if (getTurn() == BColor.RED) {
+            boardModel.setTurn(BColor.WHITE);
         } else {
-            turn = BColor.RED;
+            boardModel.setTurn(BColor.RED);
         }
         buttonPanel.updateComponents();
     }
@@ -300,22 +302,41 @@ public class GameControl {
      * starts a new game, setup map is loaded
      */
     public void start() {
-
         boardModel.clear();
         try {
             bmReader.readSetupMap(boardModel);
             game.message("Game Started");
-            game.message_append("turn: " + turn);
+            game.message_append("turn: " + getTurn());
             dicesControl.clear();
             running = true;
         } catch (Exception ex) {
             logger.error("start failed", ex);
             game.error("start failed!", ex);
         } finally {
+            buttonPanel.updateComponents();
             boardPanel.repaint();
         }
 
     }
+    /** load the saved map */
+    public void loadModel() {
+        boardModel.clear();
+        try {
+            bmReader.readSaveMap(boardModel);
+            game.message("game loaded");
+            game.message_append("turn: " + getTurn());
+            dicesControl.updateStack();
+            running = true;
+        } catch (Exception ex) {
+            logger.error("loadModel failed", ex);
+            game.error("loadModel failed!", ex);
+        } finally {
+            buttonPanel.updateComponents();
+            boardPanel.repaint();
+        }
+    }
+
+
 
 
 
@@ -337,7 +358,7 @@ public class GameControl {
     }
 
     public BColor getTurn() {
-        return turn;
+        return boardModel.getTurn();
     }
 
     public void setPieceSelectedIdx(int pieceIdxSelected) {
@@ -354,21 +375,7 @@ public class GameControl {
         this.bpControl = bpControl;
     }
 
-    public void loadModel() {
-        boardModel.clear();
-        try {
-            bmReader.readSaveMap(boardModel);
-            game.message("game loaded");
-            game.message_append("turn: " + turn);
-            dicesControl.clear();
-            running = true;
-        } catch (Exception ex) {
-            logger.error("loadModel failed", ex);
-            game.error("loadModel failed!", ex);
-        } finally {
-            boardPanel.repaint();
-        }
-    }
+
 
     public void saveModel() {
          try {

@@ -85,7 +85,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
             gameControl.setStartPointSelectedIdx(pointIdxPressed);
             this.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         }
-        logger.debug("pressed on point idx: {}", pointIdxPressed);
+        //logger.debug("pressed on point idx: {}", pointIdxPressed);
     }
 
     @Override
@@ -95,12 +95,12 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         if (pointIdxReleased >-1 && pointIdxPressed >-1){
                 moveRequest(pointIdxPressed,pointIdxReleased);
         }
-        logger.debug("released on point idx: {}", pointIdxReleased);
+        //logger.debug("released on point idx: {}", pointIdxReleased);
         gameControl.setStartPointSelectedIdx(-1);
     }
 
     private void moveRequest(int pointIdxPressed, int pointIdxReleased) {
-        logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
+       //logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
         boolean isMoved=gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
         if (isMoved) {
            game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);

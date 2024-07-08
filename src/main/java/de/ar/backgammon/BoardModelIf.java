@@ -23,4 +23,16 @@ public interface BoardModelIf {
 
     int getPieceSelectedIdx();
     void setPieceSelectedIdx(int pieceSelectedIdx);
+
+    BColor getTurn();
+
+    void setTurn(BColor bColor);
+
+    int getDice1();
+
+    void setDice1(int dice1);
+
+    int getDice2();
+
+    void setDice2(int dice2);
 }
