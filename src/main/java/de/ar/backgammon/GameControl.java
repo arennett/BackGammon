@@ -18,6 +18,7 @@ public class GameControl {
     private final BoardModelIf boardModel;
     private final BoardPanel boardPanel;
     private final BoardModelReaderIf bmReader;
+    private final BoardModelWriterIf bmWriter;
     private final DicesControl dicesControl;
 
     private final PipSequenceControl pipSequenceControl;
@@ -27,11 +28,17 @@ public class GameControl {
     ArrayList<PipSequence> psArray = new ArrayList<>();
 
 
-    public GameControl(Game game, BoardModelIf boardModel, BoardPanel boardPanel, BoardModelReaderIf bmReader, DicesControl dicesControl, PipSequenceControl pointSequenceControl) {
+    public GameControl(Game game, BoardModelIf boardModel,
+                       BoardPanel boardPanel,
+                       BoardModelReaderIf bmReader,
+                       BoardModelWriterIf bmWriter,
+                       DicesControl dicesControl,
+                       PipSequenceControl pointSequenceControl) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
+        this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
         this.pipSequenceControl = pointSequenceControl;
     }
@@ -345,5 +352,32 @@ public class GameControl {
     public void setButtonPanelControl(ButtonPanelControl bpControl) {
 
         this.bpControl = bpControl;
+    }
+
+    public void loadModel() {
+        boardModel.clear();
+        try {
+            bmReader.readSaveMap(boardModel);
+            game.message("game loaded");
+            game.message_append("turn: " + turn);
+            dicesControl.clear();
+            running = true;
+        } catch (Exception ex) {
+            logger.error("loadModel failed", ex);
+            game.error("loadModel failed!", ex);
+        } finally {
+            boardPanel.repaint();
+        }
+    }
+
+    public void saveModel() {
+         try {
+            bmWriter.writeSaveMap(boardModel);
+            game.message("game saved");
+            running = true;
+        } catch (Exception ex) {
+            logger.error("saveModel failed", ex);
+            game.error("saveModel failed!", ex);
+        }
     }
 }

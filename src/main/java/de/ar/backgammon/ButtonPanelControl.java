@@ -41,4 +41,13 @@ public class ButtonPanelControl {
     public void switchTurn() {
         gameControl.switch_turn();
     }
+
+    public void saveModel() {
+        gameControl.saveModel();
+    }
+
+    public void loadModel() {
+
+        gameControl.loadModel();
+    }
 }

@@ -7,8 +7,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-import static de.ar.backgammon.ConstIf.BOARDMAP_FILENAME;
-import static de.ar.backgammon.ConstIf.BOARDMAP_SETUP;
+import static de.ar.backgammon.ConstIf.*;
 
 public class BoardModelReader implements BoardModelReaderIf{
     private static final Logger logger = LoggerFactory.getLogger(BoardModelReader.class);
@@ -60,5 +59,8 @@ public class BoardModelReader implements BoardModelReaderIf{
     @Override
     public void readSetupMap(BoardModelIf bmodel) throws IOException, BException {
         read(BOARDMAP_SETUP,bmodel);
+    }
+    public void readSaveMap(BoardModelIf bmodel) throws IOException, BException {
+        read(BOARDMAP_SAVE,bmodel);
     }
 }

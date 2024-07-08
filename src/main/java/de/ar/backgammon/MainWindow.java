@@ -29,12 +29,13 @@ public class MainWindow extends JFrame {
         BoardPanel boardPanel = new BoardPanel(bRenderer,game);
 
         BoardModelReaderIf bmReader=new BoardModelReader();
+        BoardModelWriterIf bmWriter=new BoardModelWriter();
 
 
         DicesControl dicesControl = new DicesControl(game,bModel);
         PipSequenceControl pointSequenceControl=new PipSequenceControl(bModel);
 
-        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,dicesControl,pointSequenceControl);
+        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl,pointSequenceControl);
         dicesControl.setPsControl(pointSequenceControl);
         dicesControl.setGameControl(gameControl);
         pointSequenceControl.setGameControl(gameControl);

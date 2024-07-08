@@ -15,7 +15,7 @@ public class ButtonPanel extends JPanel implements ActionListener {
     private final GameControl gControl;
     private final DicesPanel dicesPanel;
 
-    JButton jButton_start;
+    JButton jButtonStart, jbSave, jbLoad;
     JToggleButton jtbSetMode;
 
     JLabel lbTurnText;
@@ -52,11 +52,11 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 1;
         add(new JSeparator(),c);
 
-        jButton_start=new JButton("Start");
-        jButton_start.addActionListener(this);
+        jButtonStart =new JButton("Start");
+        jButtonStart.addActionListener(this);
         c.gridx = 0;
         c.gridy = 2;
-        add(jButton_start,c);
+        add(jButtonStart,c);
 
         jtbSetMode=new JToggleButton("SetMode");
         jtbSetMode.addActionListener(this);
@@ -64,8 +64,20 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 3;
         add(jtbSetMode,c);
 
+        jbSave =new JButton("Save");
+        jbSave.addActionListener(this);
         c.gridx = 0;
         c.gridy = 4;
+        add(jbSave,c);
+
+        jbLoad =new JButton("Load");
+        jbLoad.addActionListener(this);
+        c.gridx = 0;
+        c.gridy = 5;
+        add(jbLoad,c);
+
+        c.gridx = 0;
+        c.gridy = 6;
         add(dicesPanel,c);
         updateComponents();
     }
@@ -76,7 +88,7 @@ public void updateComponents(){
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource()==jButton_start){
+        if (e.getSource()== jButtonStart){
 
             bpController.start();
 
@@ -85,6 +97,12 @@ public void updateComponents(){
 
         }else if (e.getSource()==jbTurnColor){
             bpController.switchTurn();
+
+        }else if (e.getSource()== jbSave){
+            bpController.saveModel();
+
+        }else if (e.getSource()== jbLoad){
+            bpController.loadModel();
 
         }
     }

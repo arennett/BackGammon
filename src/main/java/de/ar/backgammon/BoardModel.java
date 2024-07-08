@@ -21,6 +21,10 @@ public class BoardModel implements BoardModelIf {
             put(BColor.WHITE,0);
         }
 
+        public int getCount(BColor color) {
+            return get(color);
+        }
+
         public void addCount(int pcount, BColor bcolor) {
             replace(bcolor,bar.get(bcolor)+pcount);
         }
