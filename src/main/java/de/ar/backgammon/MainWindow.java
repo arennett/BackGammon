@@ -33,7 +33,7 @@ public class MainWindow extends JFrame {
 
 
         DicesControl dicesControl = new DicesControl(game,bModel);
-        PipSequenceControl pointSequenceControl=new PipSequenceControl(bModel);
+        SequenceControl pointSequenceControl=new SequenceControl(bModel);
 
         GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl,pointSequenceControl);
         dicesControl.setPsControl(pointSequenceControl);

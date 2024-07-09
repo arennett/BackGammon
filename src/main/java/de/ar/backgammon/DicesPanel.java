@@ -12,9 +12,9 @@ import java.awt.event.ActionListener;
 public class DicesPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(DicesPanel.class);
     private final DicesControl dc;
-    private final PipSequenceControl psc;
+    private final SequenceControl psc;
 
-    public DicesPanel(DicesControl dc, PipSequenceControl psc) {
+    public DicesPanel(DicesControl dc, SequenceControl psc) {
         this.dc = dc;
         this.psc = psc;
         dc.setDicesPanel(this);

@@ -9,7 +9,7 @@ public class DicesControl {
     private static final Logger logger = LoggerFactory.getLogger(DicesControl.class);
     private final Game game;
     private final BoardModelIf bModel;
-    private PipSequenceControl psControl;
+    private SequenceControl psControl;
 
     Random random = new Random();
     private DicesPanel dicesPanel;
@@ -35,7 +35,7 @@ public class DicesControl {
         dicesPanel.updateComponents();
     }
 
-    public void setPsControl(PipSequenceControl psControl) {
+    public void setPsControl(SequenceControl psControl) {
         this.psControl = psControl;
     }
 

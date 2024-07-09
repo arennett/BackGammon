@@ -15,6 +15,8 @@ import static de.ar.backgammon.ConstIf.*;
 public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener {
     private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
 
+    int POINT_IDX_BAR_WHITE = 24;
+    int POINT_IDX_BAR_RED   = 25;
 
     private final BoardRendererIf boardRenderer;
     private final Game game;
@@ -55,19 +57,35 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     private int getPointIndex(MouseEvent e) {
         int idx = -1;
-        int n;
+        int n=-1;
         if (e.getX() > BOARD_WIDTH / 2 + BAR_WIDTH / 2) {
             n = (e.getX() - BAR_WIDTH) / POINT_WIDTH;
         } else if (e.getX() < BOARD_WIDTH / 2 - BAR_WIDTH / 2) {
             n = e.getX() / POINT_WIDTH;
-        } else {
+        }
+        if (n>-1) {
+            if (e.getY() >= 0 && e.getY() <= BOARD_HEIGTH / 2) {
+                idx = 11 - n;
+            } else {
+                idx = 12 + n;
+            }
             return idx;
         }
-        if (e.getY() >= 0 && e.getY() <= BOARD_HEIGTH / 2) {
-            idx = 11 - n;
-        } else {
-            idx = 12 + n;
+        // we are on the bar
+        int x1 = BOARD_WIDTH / 2 - BAR_WIDTH / 2 + (BAR_WIDTH-PIECE_WIDTH) / 2;
+        int y1 = BOARD_HEIGTH / 2 -PIECE_WIDTH-5;
+        int y2 = BOARD_HEIGTH / 2 +5;
+        if (e.getX() > x1
+        && e.getX() < x1 + PIECE_WIDTH) {
+            logger.debug("BAR x {}",idx);
+
+
+
+
+
+
         }
+
 
         return idx;
     }

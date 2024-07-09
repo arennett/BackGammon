@@ -21,7 +21,7 @@ public class GameControl {
     private final BoardModelWriterIf bmWriter;
     private final DicesControl dicesControl;
 
-    private final PipSequenceControl pipSequenceControl;
+    private final SequenceControl sequenceControl;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
@@ -33,14 +33,14 @@ public class GameControl {
                        BoardModelReaderIf bmReader,
                        BoardModelWriterIf bmWriter,
                        DicesControl dicesControl,
-                       PipSequenceControl pointSequenceControl) {
+                       SequenceControl pointSequenceControl) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
         this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
-        this.pipSequenceControl = pointSequenceControl;
+        this.sequenceControl = pointSequenceControl;
     }
 
     /**
@@ -103,11 +103,15 @@ public class GameControl {
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = pipSequenceControl.psHasBlots(ps, from, to);
+            hasBlot = sequenceControl.psHasBlots(ps, from, to);
             if (hasBlot) {
                 break;
             }
         }
+
+
+
+
         PipSequence psSelect = null;
 
         //default
@@ -121,16 +125,31 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
+                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0),from,to);
+                    if(!ba0.isEmpty()){
+                        logger.debug("blots detected on: {}",""+ba0);
+                    }
 
-                    logger.debug("user sequence selection requested !");
-                    SeqSelectDialog sq = new SeqSelectDialog();
-                    sq.setSequences(psArray);
-                    sq.setVisible(true);
-                    logger.debug("OPTION : {}", sq.getOption());
-                    if (sq.getOption() < 0) {
-                        return false;
-                    } else {
-                        psSelect = psArray.get(sq.getOption());
+                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1),from,to);
+                    if(!ba1.isEmpty()){
+                        logger.debug("blots detected on: {}",""+ba1);
+                    }
+
+                    if(!ba0.equals(ba1)) {
+                        logger.debug("user sequence selection requested !");
+                        SeqSelectDialog sq = new SeqSelectDialog();
+                        sq.setSequences(psArray);
+                        sq.setVisible(true);
+                        logger.debug("OPTION : {}", sq.getOption());
+                        if (sq.getOption() < 0) {
+                            return false;
+                        } else {
+                            psSelect = psArray.get(sq.getOption());
+                        }
+                    }else{
+                        logger.debug("equal BlotArrays ba0: {}", ba0);
+                        logger.debug("equal BlotArrays ba1: {}", ba1);
+
                     }
 
                 }
@@ -242,7 +261,7 @@ public class GameControl {
         assert distance > 0;
 
 
-        psArray = pipSequenceControl.getValidSequences(from, to, spc);
+        psArray = sequenceControl.getValidSequences(from, to, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
             logger.debug("no valid sequences found");

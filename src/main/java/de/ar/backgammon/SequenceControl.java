@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-public class PipSequenceControl {
-    static Logger logger = LoggerFactory.getLogger(PipSequenceControl.class);
+public class SequenceControl {
+    static Logger logger = LoggerFactory.getLogger(SequenceControl.class);
     private final BoardModelIf bModel;
     private GameControl gameControl;
 
-    public PipSequenceControl(BoardModelIf bModel){
+    public SequenceControl(BoardModelIf bModel){
         this.bModel = bModel;
     }
 
@@ -113,6 +113,36 @@ public class PipSequenceControl {
     }
 
 
+    class BlotArray extends ArrayList<Integer> {
+        @Override
+        public boolean equals(Object o) {
+            boolean ret = false;
+            if (o instanceof  BlotArray) {
+                BlotArray other= (BlotArray) o;
+                if (this.size()==other.size()){
+                    for (int i=0;i<this.size();i++){
+                        if(this.get(i)!=other.get(i)) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+
+            }
+            return ret;
+        }
+
+        @Override
+        public String toString() {
+            StringBuffer str = new StringBuffer("");
+            for (int pos : this) {
+                str.append("|P" + pos + "| ");
+            }
+            return str.toString();
+
+        }
+    }
+
     /**
      * creates a list of blot positions for a sequence and a move
      * @param ps
@@ -120,8 +150,8 @@ public class PipSequenceControl {
      * @param to
      * @return list of blot positions
      */
-    public ArrayList<Integer> getBlotArray(PipSequence ps, int from, int to){
-        ArrayList<Integer> arr=new ArrayList<>();
+    public BlotArray getBlotArray(PipSequence ps, int from, int to){
+        BlotArray arr=new BlotArray();
         int direction = 0;
         if (gameControl.getTurn() == BColor.WHITE) {
             direction = 1;
@@ -135,14 +165,17 @@ public class PipSequenceControl {
             BPoint point = bModel.getPoint(pos);
             if (point.getPieceColor() != gameControl.getTurn()) {
                 if (point.getPieceCount() == 1) {
-                    logger.debug("blot detected");
+
                     arr.add(pos);
                 }
             }
             prevpos=pos;
         }
+
         return arr;
     }
+
+
 
 
     public boolean psHasBlots(PipSequence ps, int from, int to){
