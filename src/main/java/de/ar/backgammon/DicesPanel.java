@@ -88,7 +88,7 @@ public class DicesPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource()==jbThrow){
-            dc.rollDices();
+            dc.throwDices();
         }
         if(e.getSource()==jbDice1){
             String s = JOptionPane.showInputDialog("Pip (1-6): ");

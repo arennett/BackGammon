@@ -15,9 +15,6 @@ import static de.ar.backgammon.ConstIf.*;
 public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener {
     private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
 
-    int POINT_IDX_BAR_WHITE = 24;
-    int POINT_IDX_BAR_RED   = 25;
-
     private final BoardRendererIf boardRenderer;
     private final Game game;
     JPanel innerBoard;
@@ -65,9 +62,9 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         }
         if (n>-1) {
             if (e.getY() >= 0 && e.getY() <= BOARD_HEIGTH / 2) {
-                idx = 11 - n;
+                idx = 12 - n;
             } else {
-                idx = 12 + n;
+                idx = 13 + n;
             }
             return idx;
         }
@@ -75,18 +72,14 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         int x1 = BOARD_WIDTH / 2 - BAR_WIDTH / 2 + (BAR_WIDTH-PIECE_WIDTH) / 2;
         int y1 = BOARD_HEIGTH / 2 -PIECE_WIDTH-5;
         int y2 = BOARD_HEIGTH / 2 +5;
-        if (e.getX() > x1
-        && e.getX() < x1 + PIECE_WIDTH) {
-            logger.debug("BAR x {}",idx);
-
-
-
-
-
-
+        if (e.getX() > x1 && e.getX() < x1 + PIECE_WIDTH) {
+            if (e.getY() > y1 && e.getY() < y1 + PIECE_WIDTH) {
+                idx = BoardModel.POINT_IDX_BAR_WHITE;
+            }
+            if (e.getY() > y2 && e.getY() < y2 + PIECE_WIDTH) {
+                idx = BoardModel.POINT_IDX_BAR_RED;
+            }
         }
-
-
         return idx;
     }
 
@@ -176,7 +169,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
     private int getPieceIdx(MouseEvent e, int pointSelectedIdx) {
         int piece_stack_height =MAX_PIECES_ON_POINT* PIECE_WIDTH;
         int piece_idx=-1;
-        if (pointSelectedIdx < 12) {
+        if (pointSelectedIdx < 13) {
             if (e.getY() <= piece_stack_height) {
                 piece_idx=MAX_PIECES_ON_POINT-(piece_stack_height-e.getY())/PIECE_WIDTH;
             }

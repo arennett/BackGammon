@@ -5,7 +5,7 @@ import java.awt.*;
 public enum BColor {
     WHITE, RED;
 
-    static final String[] STR_COLORS = {"WHITE", "Red"};
+    static final String[] STR_COLORS = {"white", "red"};
     static final String[] SHORTSTR_COLORS = {"w", "r"};
     static final Color[] COLORS = {Color.WHITE, Color.RED};
 

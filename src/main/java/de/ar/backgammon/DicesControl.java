@@ -44,7 +44,7 @@ public class DicesControl {
     public enum DicesState {READY, THROWN};
     DicesState dicesState = DicesState.READY;
 
-    public void rollDices() {
+    public void throwDices() {
         if (!gameControl.isRunning()) {
             game.message_error("start a new game!");
             return;
@@ -53,6 +53,7 @@ public class DicesControl {
         setDice1(random.nextInt(6) + 1);
         setDice2(random.nextInt(6) + 1);
         updateStack();
+
     }
 
     /**
@@ -70,6 +71,7 @@ public class DicesControl {
         psControl.updateSequences(pipStack);
         dicesState = DicesState.THROWN;
         dicesPanel.updateComponents();
+        gameControl.dicesThrown();
     }
 
  /**
@@ -87,7 +89,7 @@ public class DicesControl {
                 allOnStack = false;
             }
         }
-        logger.debug("move_range:{} {}x {}"
+        logger.debug("move range:{} {}x {}"
                 ,move_range,count,allOnStack?"on stack":"NOT on stack, probably a sequence");
         return allOnStack;
     }
@@ -151,6 +153,13 @@ public class DicesControl {
 
     public int getDice1() {
         return bModel.getDice1();
+    }
+
+    Vector <Integer> getDices() {
+        Vector<Integer> vec = new Vector<>();
+        vec.add(getDice1());
+        vec.add(getDice2());
+        return vec;
     }
 
     public void setDice1(int dice1) {

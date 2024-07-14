@@ -26,16 +26,12 @@ public class SequenceControl {
      * @return an array of valid sequences for the move
      */
     ArrayList<PipSequence> getValidSequences(int from, int to, int spc) {
-        int distance = 0;
-        if (gameControl.getTurn() == BColor.WHITE) {
-            distance = to - from;
-        } else {
-            distance = from - to;
-        }
+        int range = gameControl.getRange(from,to);
+
         ArrayList<PipSequence> retList = new ArrayList<PipSequence>();
         nextps:
         for (PipSequence ps : pipSequences) {
-            if (ps.getSum() == distance) {
+            if (ps.getSum() == range) {
                 logger.debug("check seq {}", ps);
                 int nextpos = from;
                 for (int s : ps) {

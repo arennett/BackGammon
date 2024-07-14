@@ -9,33 +9,74 @@ import java.util.Vector;
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
     static int MAX_POINTS=24;
+
+    public static int POINT_IDX_BAR_WHITE = 0;
+    public static int POINT_IDX_BAR_RED   = 25;
+
     Vector<BPoint> points =new Vector<>();
 
     private BColor turn = BColor.WHITE;
     int dice1 = 0;
     int dice2 = 0;
 
-    class Bar extends HashMap<BColor,Integer> {
-        public Bar(){
-           clear();
+    class Bar  {
+
+        BPoint barRed;
+        BPoint barWhite;
+
+
+
+        public Bar(BoardModelIf bmodel){
+            barRed= points.get(POINT_IDX_BAR_RED);
+            barWhite=points.get(POINT_IDX_BAR_WHITE);
+            clear();
         }
 
         public void clear(){
-            super.clear();
-            put(BColor.RED,0);
-            put(BColor.WHITE,0);
+            barRed.clear();
+            barWhite.clear();
         }
 
+        public BPoint getBarRed() {
+            return barRed;
+        }
+
+        public BPoint getBarWhite() {
+            return barWhite;
+        }
         public int getCount(BColor color) {
-            return get(color);
+            if (color==BColor.RED){
+                return barRed.getPieceCount();
+            }else{
+                return barWhite.getPieceCount();
+            }
         }
 
-        public void addCount(int pcount, BColor bcolor) {
-            replace(bcolor,bar.get(bcolor)+pcount);
+        public void addCount(int pcount, BColor color) {
+            if (color==BColor.RED){
+                 barRed.setPieceCount(barRed.getPieceCount()+pcount);
+            }else{
+                barWhite.setPieceCount(barWhite.getPieceCount()+pcount);
+            }
+
         }
 
-        public void setCount(int pcount, BColor bcolor) {
-            replace(bcolor,pcount);
+        public void setCount(int pcount, BColor color) {
+            if (color==BColor.RED){
+                barRed.setPieceCount(pcount);
+                barRed.setPieceColor(BColor.RED);
+            }else{
+                barWhite.setPieceCount(pcount);
+                barWhite.setPieceColor(BColor.WHITE);
+            }
+        }
+
+        public BPoint get(BColor color) {
+            if (color==BColor.RED){
+                return barRed;
+            }else{
+                return barWhite;
+            }
         }
     }
     Bar bar;
@@ -51,12 +92,14 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-        for (int i=0;i<MAX_POINTS;i++){
+        for (int i=0;i<MAX_POINTS+2;i++){
             BPoint point =new BPoint(i,this);
             points.add(point);
             setPoint(i,0,null);
         }
-        bar=new Bar();
+        bar=new Bar(this);
+
+
     }
 
     /* the nr of selected pieces by start of a move */

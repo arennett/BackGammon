@@ -13,8 +13,19 @@ public class BarRenderer {
         this.bModel = bModel;
     }
 
+    boolean isSelected(BColor color) {
+        if(color==BColor.WHITE
+                && bModel.getPointSelectedIdx()==BoardModel.POINT_IDX_BAR_WHITE) {
+              return true;
+        }
+        if(color==BColor.RED
+                && bModel.getPointSelectedIdx()==BoardModel.POINT_IDX_BAR_RED) {
+             return true;
+        }
+        return false;
+    }
     public void draw(BColor color, Graphics2D g2d){
-        int points=bModel.getBar().get(color);
+        int points=bModel.getBar().get(color).getPieceCount();
         if (points==0){
             return;
         }
@@ -22,18 +33,32 @@ public class BarRenderer {
         int y1 = BOARD_HEIGTH / 2 -PIECE_WIDTH-5;
         int y2 = BOARD_HEIGTH / 2 +5;
         int w1 = PIECE_WIDTH;
+
         if (color==BColor.RED){
             y1=y2;
         }
-        g2d.setColor(Color.BLACK);
+
+        if (isSelected(color)) {
+            g2d.setColor(Color.GREEN);
+        }else {
+            g2d.setColor(Color.BLACK);
+        }
+
         g2d.setStroke(new BasicStroke(3));
+
+
         g2d.drawOval(x1,y1,w1,w1);
 
         g2d.setColor(color.getColor());
         w1=PIECE_WIDTH-2;
         g2d.fillOval(x1+1,y1+1,w1,w1);
 
-        g2d.setColor(Color.BLACK);
+        if (isSelected(color)) {
+            g2d.setColor(Color.GREEN);
+        }else {
+            g2d.setColor(Color.BLACK);
+        }
+
         w1=PIECE_WIDTH-10;
         g2d.setStroke(new BasicStroke(1));
         g2d.drawOval(x1+5,y1+5,w1,w1);

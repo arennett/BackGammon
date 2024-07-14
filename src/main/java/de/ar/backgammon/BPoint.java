@@ -65,4 +65,8 @@ public class BPoint {
     public String toString() {
         return "<" + getIndex()+ ">";
     }
+
+    public void clear() {
+        setPieceCount(0);
+    }
 }

@@ -24,7 +24,7 @@ public class BoardRenderer implements BoardRendererIf {
         // drawLine(PLAY_AREA_WIDTH/2,0,PLAY_AREA_WIDTH/2,PLAY_AREA_HEIGHT,g2d);
         barRenderer.render(g2d);
 
-        for (int i = 0; i < 24; i++) {
+        for (int i = 1; i <= 24; i++) {
             drawPoint(i, g2d,bModel.getPoint(i));
         }
     }
@@ -57,42 +57,43 @@ public class BoardRenderer implements BoardRendererIf {
         int y1 = 0;
         int x2 = 0;
         int y2 = 0;
-        if (idx < 6) {
-            x1 = BOARD_WIDTH - POINT_WIDTH / 2 - idx * POINT_WIDTH;
+        if (idx <= 6) {
+            x1 = BOARD_WIDTH - POINT_WIDTH / 2 - (idx-1) * POINT_WIDTH;
             y1 = 0;
             x2 = x1;
             y2 = POINT_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
-        } else if (idx < 12) {
+        } else if (idx <= 12) {
             int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
-            x1 = BOARD_WIDTH - offset - (idx - 6) * POINT_WIDTH;
+            x1 = BOARD_WIDTH - offset - (idx-1 - 6) * POINT_WIDTH;
             y1 = 0;
             x2 = x1;
             y2 = POINT_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
-        } else if (idx < 18) {
-            x1 = POINT_WIDTH / 2 + (idx - 12) * POINT_WIDTH;
+        } else if (idx <= 18) {
+            x1 = POINT_WIDTH / 2 + (idx-1 - 12) * POINT_WIDTH;
             y1 = BOARD_HEIGTH - POINT_HEIGTH;
             x2 = x1;
             y2 = BOARD_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
-        } else if (idx < 24) {
+        } else if (idx <= 24) {
             int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
-            x1 = offset + (idx - 18) * POINT_WIDTH;
+            x1 = offset + (idx-1 - 18) * POINT_WIDTH;
             y1 = BOARD_HEIGTH - POINT_HEIGTH;
             x2 = x1;
             y2 = BOARD_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
         }
-        g2d.drawLine(x1, y1, x2, y2);
+
+        //g2d.drawLine(x1, y1, x2, y2);
         if(!point.isEmpty()){
             for (int i=0;i <point.getPieceCount();i++){
 
-                if (idx < 12){
+                if (idx < 13){
                     drawPiece(idx,i,x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
 
                 }else {
@@ -108,7 +109,7 @@ public class BoardRenderer implements BoardRendererIf {
            // str = str+"/"+point.getPieceCount() + point.getPieceColor().getShortString();
         //}
 
-        if (idx < 12){
+        if (idx <= 12){
             g2d.drawString(str,x1-10,y1+15);
         }else {
             g2d.drawString(str, x2-10, y2-5);
@@ -167,12 +168,18 @@ public class BoardRenderer implements BoardRendererIf {
         /* highlight the selected (dragged) pieces of a move*/
         if (pointidx == bModel.getStartPointSelectedIdx()) {
             int spsc=bModel.getStartPointSelectedPiecesCount();
+
             if (spsc > 0) {
+                if (pointidx==8 ) {
+                    int test=0;
+                }
                 if (bpoint.getPieceCount()- (pieceidx+1) < spsc ){
+
                     g2d.setColor(Color.GREEN);
                 }
             }
         }
+
 
         int w1=PIECE_WIDTH-2;
         g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);
