@@ -15,6 +15,9 @@ public interface BoardModelIf {
 
     void clear();
 
+    int getBoardPiecesCount();
+    int getBoardPiecesCount(BColor bcolor);
+
     int getStartPointSelectedIdx();
     int getPointSelectedIdx();
 
@@ -35,4 +38,6 @@ public interface BoardModelIf {
     int getDice2();
 
     void setDice2(int dice2);
+
+    boolean isAllPiecesAtHome(BColor pieceColor);
 }

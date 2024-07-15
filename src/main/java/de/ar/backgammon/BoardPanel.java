@@ -54,7 +54,23 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     private int getPointIndex(MouseEvent e) {
         int idx = -1;
+
+        if ( e.getX() > BOARD_WIDTH
+            || e.getX() < 0
+            ||e.getY() > BOARD_HEIGTH
+            || e.getY() < 0){
+            return BoardModel.POINT_IDX_OFF;
+//            if (e.getY() < BOARD_HEIGTH /2) {
+//                return BoardModel.POINT_IDX_OFF_RED;
+//            }else{
+//                return BoardModel.POINT_IDX_OFF_WHITE;
+//            }
+        }
+
+
+
         int n=-1;
+
         if (e.getX() > BOARD_WIDTH / 2 + BAR_WIDTH / 2) {
             n = (e.getX() - BAR_WIDTH) / POINT_WIDTH;
         } else if (e.getX() < BOARD_WIDTH / 2 - BAR_WIDTH / 2) {

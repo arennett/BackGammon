@@ -55,9 +55,18 @@ public class GameControl {
      * @return
      */
     public boolean moveRequest(int from, int to) {
+        if (to==BoardModel.POINT_IDX_OFF) {
+            BPoint bfrom= boardModel.getPoint(from);
+            if (bfrom.getPieceColor()==BColor.RED) {
+                to=BoardModel.POINT_IDX_OFF_RED;
+            }else{
+                to=BoardModel.POINT_IDX_OFF_WHITE;
+            }
+        }
         logger.debug("moveRequest from: {} to: {} ", from, to);
         if (bpControl.isSetMode()) {
             move(from, to);
+            buttonPanel.updateComponents();
             return true;
         }
         if (!running) {
@@ -69,7 +78,9 @@ public class GameControl {
             return false;
         }
 
-        return move(from, to);
+        boolean ret= move(from, to);
+        buttonPanel.updateComponents();
+        return ret;
 
     }
 
@@ -242,6 +253,14 @@ public class GameControl {
         boolean isBarMove = from == BoardModel.POINT_IDX_BAR_WHITE || from == BoardModel.POINT_IDX_BAR_RED;
         return isBarMove;
     }
+    public boolean isOffMove(int from,int to) {
+        boolean isOffMove =   from > BoardModel.POINT_IDX_BAR_WHITE
+                            && from < BoardModel.POINT_IDX_BAR_RED
+                            && ( to == BoardModel.POINT_IDX_OFF_WHITE
+                               ||to ==BoardModel.POINT_IDX_OFF_RED );
+        return isOffMove;
+    }
+
 
 
 
@@ -260,9 +279,12 @@ public class GameControl {
         int spc;
         if (isBarMove(from)) {
             spc = 1;
+
         }else{
             spc = boardModel.getStartPointSelectedPiecesCount();
         }
+
+
 
         if (spc < 1) {
             game.message_error("no pieces selected");
@@ -271,6 +293,14 @@ public class GameControl {
         if (spc > 4) {
             game.message_error("you can only select up to 4 pieces");
             return false;
+        }
+
+        if (isOffMove(from,to)){
+            logger.debug ("offmove detected");
+            if (!boardModel.isAllPiecesAtHome(bpFrom.getPieceColor())){
+                game.message_error("not all pieces at home");
+                return false;
+            }
         }
 
         if (getTurn() == BColor.RED && !boardModel.getBar().getBarRed().isEmpty()){
@@ -501,5 +531,9 @@ public class GameControl {
         }else{
             game.message("move is possible");
         }
+    }
+
+    public BoardModelIf getBoardModel() {
+        return boardModel;
     }
 }

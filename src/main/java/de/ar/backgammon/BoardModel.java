@@ -13,6 +13,12 @@ public class BoardModel implements BoardModelIf {
     public static int POINT_IDX_BAR_WHITE = 0;
     public static int POINT_IDX_BAR_RED   = 25;
 
+    public static int POINT_IDX_OFF       = 99;
+
+    public static int POINT_IDX_OFF_RED    = 26;
+    public static int POINT_IDX_OFF_WHITE  = 27;
+
+
     Vector<BPoint> points =new Vector<>();
 
     private BColor turn = BColor.WHITE;
@@ -23,6 +29,8 @@ public class BoardModel implements BoardModelIf {
 
         BPoint barRed;
         BPoint barWhite;
+
+        BPoint barOff;
 
 
 
@@ -92,7 +100,7 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-        for (int i=0;i<MAX_POINTS+2;i++){
+        for (int i=0;i<MAX_POINTS+4;i++){
             BPoint point =new BPoint(i,this);
             points.add(point);
             setPoint(i,0,null);
@@ -136,6 +144,33 @@ public class BoardModel implements BoardModelIf {
         }
         bar.clear();
 
+    }
+
+    /**
+     *
+     * @return count of all pieces on the board
+     */
+    @Override
+    public int getBoardPiecesCount() {
+        int sum = 0;
+        for ( int i = POINT_IDX_BAR_WHITE; i <= POINT_IDX_BAR_RED;i++){
+            BPoint point = getPoint(i);
+            sum+=point.getPieceCount();
+        }
+        return sum;
+    }
+
+    @Override
+    public int getBoardPiecesCount(BColor bcolor) {
+        int sum = 0;
+        for ( int i = POINT_IDX_BAR_WHITE; i <= POINT_IDX_BAR_RED;i++){
+            BPoint point = getPoint(i);
+            if (point.getPieceColor()==bcolor) {
+                sum+=point.getPieceCount();
+            }
+
+        }
+        return sum;
     }
 
     public int getPieceSelectedIdx() {
@@ -210,5 +245,10 @@ public class BoardModel implements BoardModelIf {
     @Override
     public void setDice2(int dice2) {
         this.dice2 = dice2;
+    }
+
+    @Override
+    public boolean isAllPiecesAtHome(BColor pieceColor) {
+        return false;
     }
 }

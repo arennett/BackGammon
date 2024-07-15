@@ -50,4 +50,8 @@ public class ButtonPanelControl {
 
         gameControl.loadModel();
     }
+    public BoardModelIf getBoardModel() {
+
+        return gameControl.getBoardModel();
+    }
 }

@@ -17,8 +17,9 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
     JButton jButtonStart, jbSave, jbLoad;
     JToggleButton jtbSetMode;
+    JTextArea jtaStatistics;
 
-    JLabel lbTurnText;
+
     JButton jbTurnColor;
 
 
@@ -79,10 +80,35 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridx = 0;
         c.gridy = 6;
         add(dicesPanel,c);
+
+        jtaStatistics=new JTextArea();
+        JPanel jpStat = new JPanel();
+        jpStat.setBorder(new TitledBorder("Statistics"));
+        jpStat.add(jtaStatistics);
+
+        c.gridx = 0;
+        c.gridy = 7;
+        add(jpStat,c);
+
         updateComponents();
     }
 public void updateComponents(){
    jbTurnColor.setBackground(gControl.getTurn().getColor());
+
+    int wout=bpController.getBoardModel().getPoint(BoardModel.POINT_IDX_OFF_WHITE).getPieceCount();
+    int rout=bpController.getBoardModel().getPoint(BoardModel.POINT_IDX_OFF_RED).getPieceCount();
+    int win  = bpController.getBoardModel().getBoardPiecesCount(BColor.WHITE);
+    int rin = bpController.getBoardModel().getBoardPiecesCount(BColor.RED);
+
+
+
+    String wstr=String.format("WHITE \tIN/OUT: %d/%d",win,wout);
+    String rstr=String.format("\nRED \tIN/OUT: %d/%d",rin,rout);
+    jtaStatistics.setText(wstr);
+    jtaStatistics.append(rstr);
+
+
+
 }
 
 
