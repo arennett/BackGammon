@@ -1,12 +1,15 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
+import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.model.BoardModelReaderIf;
+import de.ar.backgammon.model.BoardModelWriterIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Vector;
 
-import static de.ar.backgammon.BoardModel.MAX_POINTS;
 import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
 
 public class GameControl {
@@ -55,7 +58,7 @@ public class GameControl {
      * @return
      */
     public boolean moveRequest(int from, int to) {
-        if (to==BoardModel.POINT_IDX_OFF) {
+        if (to== BoardModel.POINT_IDX_OFF) {
             BPoint bfrom= boardModel.getPoint(from);
             if (bfrom.getPieceColor()==BColor.RED) {
                 to=BoardModel.POINT_IDX_OFF_RED;
@@ -85,11 +88,21 @@ public class GameControl {
     }
 
     public int getRange(int from, int to) {
+        //TODO consider off moves
         int range = 0;
-        if (getTurn() == BColor.WHITE) {
-            range = to - from;
-        } else {
-            range = from - to;
+
+        if (isOffMove(from,to)){
+            if (getTurn() == BColor.WHITE) {
+                range = from;
+            }else {
+                range = 25 - from;
+            }
+        }else {
+            if (getTurn() == BColor.WHITE) {
+                range = to - from;
+            } else {
+                range = from - to;
+            }
         }
         assert range > 0;
         return range;
@@ -323,21 +336,23 @@ public class GameControl {
             return false;
         }
 
-        if (getTurn() == BColor.WHITE) {
-            ret = to > from;
+        if(!isOffMove(from,to)){
+            if (getTurn() == BColor.WHITE) {
+                ret = to > from;
 
-        } else {
-            ret = to < from;
-        }
-        if (!ret) {
-            game.message_error("wrong direction");
-            return false;
+            } else {
+                ret = to < from;
+            }
+            if (!ret) {
+                game.message_error("wrong direction");
+                return false;
+            }
         }
 
         //check dices
 
         int range = getRange(from, to);
-
+        //TODO consider off moves
         psArray = sequenceControl.getValidSequences(from, to, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
@@ -404,7 +419,7 @@ public class GameControl {
     /**
      * check for possible moves
      * @return
-     */
+     * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
         BPoint barPoint= boardModel.getBar().get(getTurn());

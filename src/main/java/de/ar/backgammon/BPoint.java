@@ -1,5 +1,7 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModelIf;
+
 /**
  * A BPoint represents the field where the pieces on
  */

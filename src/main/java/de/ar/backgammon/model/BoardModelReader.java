@@ -1,5 +1,7 @@
-package de.ar.backgammon;
+package de.ar.backgammon.model;
 
+import de.ar.backgammon.BColor;
+import de.ar.backgammon.BException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,5 +1,8 @@
-package de.ar.backgammon;
+package de.ar.backgammon.model;
 
+import de.ar.backgammon.BColor;
+import de.ar.backgammon.BException;
+import de.ar.backgammon.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +19,7 @@ public class BoardModelWriter implements BoardModelWriterIf{
         filewriter = new FileWriter(BOARDMAP_FILENAME+modelName+".txt");
         BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
         logger.debug("writing...");
-        for(int idx=0;idx<BoardModel.MAX_POINTS;idx++){
+        for(int idx = 0; idx< BoardModel.MAX_POINTS; idx++){
             BPoint point = bmodel.getPoint(idx);
             if(!point.isEmpty()) {
                 bufferedWriter.write("p");

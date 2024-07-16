@@ -1,5 +1,8 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
+import de.ar.backgammon.model.BoardModelIf;
+
 import java.awt.*;
 
 import static de.ar.backgammon.ConstIf.*;
@@ -15,7 +18,7 @@ public class BarRenderer {
 
     boolean isSelected(BColor color) {
         if(color==BColor.WHITE
-                && bModel.getPointSelectedIdx()==BoardModel.POINT_IDX_BAR_WHITE) {
+                && bModel.getPointSelectedIdx()== BoardModel.POINT_IDX_BAR_WHITE) {
               return true;
         }
         if(color==BColor.RED

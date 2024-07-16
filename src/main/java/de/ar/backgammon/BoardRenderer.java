@@ -1,5 +1,7 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModelIf;
+
 import javax.swing.*;
 import java.awt.*;
 

@@ -1,8 +1,9 @@
-package de.ar.backgammon;
+package de.ar.backgammon.model;
+
+import de.ar.backgammon.BColor;
+import de.ar.backgammon.BPoint;
 
 public interface BoardModelIf {
-
-
 
     int getStartPointSelectedPiecesCount();
 
@@ -10,13 +11,11 @@ public interface BoardModelIf {
 
     BPoint getPoint(int i);
 
-
-    BoardModel.Bar getBar();
+    Bar getBar();
 
     void clear();
 
-    int getBoardPiecesCount();
-    int getBoardPiecesCount(BColor bcolor);
+    int getPiecesCount(BColor bcolor);
 
     int getStartPointSelectedIdx();
     int getPointSelectedIdx();
@@ -40,4 +39,6 @@ public interface BoardModelIf {
     void setDice2(int dice2);
 
     boolean isAllPiecesAtHome(BColor pieceColor);
+
+    int getHomePiecesCount(BColor pieceColor);
 }

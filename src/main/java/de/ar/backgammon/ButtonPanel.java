@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,8 +98,8 @@ public void updateComponents(){
 
     int wout=bpController.getBoardModel().getPoint(BoardModel.POINT_IDX_OFF_WHITE).getPieceCount();
     int rout=bpController.getBoardModel().getPoint(BoardModel.POINT_IDX_OFF_RED).getPieceCount();
-    int win  = bpController.getBoardModel().getBoardPiecesCount(BColor.WHITE);
-    int rin = bpController.getBoardModel().getBoardPiecesCount(BColor.RED);
+    int win  = bpController.getBoardModel().getPiecesCount(BColor.WHITE);
+    int rin = bpController.getBoardModel().getPiecesCount(BColor.RED);
 
 
 

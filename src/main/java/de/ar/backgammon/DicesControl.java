@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
