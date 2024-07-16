@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
-
+//todo direction red off moves wrong
 public class GameControl {
     private static final Logger logger = LoggerFactory.getLogger(GameControl.class);
 
@@ -93,9 +93,9 @@ public class GameControl {
 
         if (isOffMove(from,to)){
             if (getTurn() == BColor.WHITE) {
-                range = from;
-            }else {
                 range = 25 - from;
+            }else {
+                range = from;
             }
         }else {
             if (getTurn() == BColor.WHITE) {
@@ -235,6 +235,16 @@ public class GameControl {
      * @param spc
      */
     public void sub_move(int from, int to, int spc) {
+        logger.debug("sub move from {} to {}", from, to);
+
+        //TODO Points 0 and 25 delegating to OFF_POINTS 26 and 27
+        if (to == BoardModel.POINT_IDX_BAR_WHITE) {
+            to=BoardModel.POINT_IDX_OFF_RED;
+        }else if (to == BoardModel.POINT_IDX_BAR_RED) {
+            to = BoardModel.POINT_IDX_OFF_WHITE;
+        }
+
+
         BPoint bpFrom = boardModel.getPoint(from);
         BPoint bpTo = boardModel.getPoint(to);
 
@@ -352,11 +362,12 @@ public class GameControl {
         //check dices
 
         int range = getRange(from, to);
+        logger.debug("check dices for move range: {}",range);
         //TODO consider off moves
         psArray = sequenceControl.getValidSequences(from, to, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
-            logger.debug("no valid sequences found");
+            logger.debug("no sequences found");
             if (range <= 6) {
                 ret = dicesControl.checkIfMoveIsOnStack(range, spc);
                 if (!ret) {
@@ -381,6 +392,7 @@ public class GameControl {
      * @return
      */
     public boolean isValidPoint(BPoint point, int spc) {
+        logger.debug("validate point: {} ...", point);
         if (point.getPieceCount() > 1) {
             if (point.getPieceColor() != getTurn()) {
                 game.message_error("wrong point color");
@@ -397,7 +409,7 @@ public class GameControl {
 
         if (point == boardModel.getBar().getBarRed() || point == boardModel.getBar().getBarWhite()) {
             game.message_error("this is not a valid point");
-            logger.debug("validate point: bar point not valid", point);
+            logger.debug("validate point: {} bar point not valid", point);
             return false;
         }
 

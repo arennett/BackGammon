@@ -42,6 +42,8 @@ public class SequenceControl {
                         nextpos -= s;
                     }
                     BPoint nextPoint = bModel.getPoint(nextpos);
+                    // TODO delegate next point to offpoint if idx = 0 or 25
+
                     if (!gameControl.isValidPoint(nextPoint, spc)) {
                         continue nextps;
                     }
