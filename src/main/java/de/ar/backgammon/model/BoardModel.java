@@ -5,6 +5,7 @@ import de.ar.backgammon.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class BoardModel implements BoardModelIf {
@@ -201,5 +202,30 @@ public class BoardModel implements BoardModelIf {
         }
         logger.debug("Homeboard {} has {} pieces",pieceColor,count);
         return count;
+    }
+
+    @Override
+    public ArrayList<Integer> getHomePointMaxDuo(BColor bcolor){
+        int maxPoint1=-1;
+        int maxPoint2=-1;
+
+        HomeBoardIterator hit = new HomeBoardIterator(this,bcolor);
+        int pip=0; //1..6
+        while (hit.hasNext()){
+            BPoint point = hit.next();
+            pip++;
+            if (point.getPieceColor()==bcolor&& !point.isEmpty()){
+                maxPoint2=maxPoint1;
+                maxPoint1=pip;
+                if(point.getPieceCount()>1){
+                    maxPoint2=pip;
+                }
+            }
+        }
+        ArrayList<Integer> arr =new ArrayList<>();
+        arr.add(maxPoint1);
+        arr.add(maxPoint2);
+        return arr;
+
     }
 }

@@ -63,11 +63,31 @@ public class DicesControl {
      */
     public void updateStack() {
         clear();
-        pipStack.add(getDice1());
-        pipStack.add(getDice2());
-        if (getDice1() == getDice2()) {
-            pipStack.add(getDice1());
-            pipStack.add(getDice2());
+        int dice1=getDice1();
+        int dice2=getDice2();
+        if (gameControl.allPiecesAtHome()){
+            logger.debug("all at home, special stack handling");
+            ArrayList<Integer> max=bModel.getHomePointMaxDuo(gameControl.getTurn());
+            int maxPoint1 = max.get(0);
+            int maxPoint2 = max.get(1);
+
+            if (dice1 > maxPoint1 && maxPoint1 >-1) {
+                dice1 = maxPoint1;
+                if (dice2 > maxPoint2 && maxPoint2 >-1) {
+                    dice2 = maxPoint2;
+                }
+            }else if (dice2 > maxPoint1 && maxPoint1 >-1) {
+                dice2 = maxPoint1;
+                if (dice1 > maxPoint2 && maxPoint2 >-1) {
+                    dice1 = maxPoint2;
+                }
+            }
+        }
+        pipStack.add(dice1);
+        pipStack.add(dice2);
+        if (dice1 == dice2) {
+            pipStack.add(dice1);
+            pipStack.add(dice2);
         }
         psControl.updateSequences(pipStack);
         dicesState = DicesState.THROWN;

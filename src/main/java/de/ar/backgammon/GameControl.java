@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
-//todo direction red off moves wrong
+
 public class GameControl {
     private static final Logger logger = LoggerFactory.getLogger(GameControl.class);
 
@@ -88,7 +88,7 @@ public class GameControl {
     }
 
     public int getRange(int from, int to) {
-        //TODO consider off moves
+
         int range = 0;
 
         if (isOffMove(from,to)){
@@ -145,7 +145,7 @@ public class GameControl {
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = sequenceControl.psHasBlots(ps, from, to);
+            hasBlot = sequenceControl.psHasBlots(ps, from, to,spc);
             if (hasBlot) {
                 break;
             }
@@ -165,12 +165,12 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
-                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0), from, to);
+                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0), from, to,spc);
                     if (!ba0.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba0);
                     }
 
-                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1), from, to);
+                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1), from, to,spc);
                     if (!ba1.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba1);
                     }
@@ -206,10 +206,17 @@ public class GameControl {
 
         if (psSelect != null) {
             int pos = from;
-            for (int p : psSelect) {
-                int subto = pos + p * direction;
-                sub_move(pos, subto, spc);
-                pos = subto;
+            int pips=0;
+            for (int pip : psSelect) {
+                pips+=pip*spc;
+                if (pips <= psSelect.getSum()){
+                    int subto = pos + pip * direction;
+                    sub_move(pos, subto, spc);
+                    pos = subto;
+                }else{
+                    break;
+                }
+
             }
         } else {
             // no sequence
@@ -237,11 +244,13 @@ public class GameControl {
     public void sub_move(int from, int to, int spc) {
         logger.debug("sub move from {} to {}", from, to);
 
-        //TODO Points 0 and 25 delegating to OFF_POINTS 26 and 27
-        if (to == BoardModel.POINT_IDX_BAR_WHITE) {
-            to=BoardModel.POINT_IDX_OFF_RED;
-        }else if (to == BoardModel.POINT_IDX_BAR_RED) {
-            to = BoardModel.POINT_IDX_OFF_WHITE;
+        //if not is setmode delegate point 0/25 (bar points) to offpoints
+        if (!bpControl.isSetMode()) {
+            if (to == BoardModel.POINT_IDX_BAR_WHITE) {
+                to = BoardModel.POINT_IDX_OFF_RED;
+            } else if (to == BoardModel.POINT_IDX_BAR_RED) {
+                to = BoardModel.POINT_IDX_OFF_WHITE;
+            }
         }
 
 
@@ -363,7 +372,7 @@ public class GameControl {
 
         int range = getRange(from, to);
         logger.debug("check dices for move range: {}",range);
-        //TODO consider off moves
+
         psArray = sequenceControl.getValidSequences(from, to, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
@@ -562,5 +571,9 @@ public class GameControl {
 
     public BoardModelIf getBoardModel() {
         return boardModel;
+    }
+
+    public boolean allPiecesAtHome() {
+        return boardModel.isAllPiecesAtHome(getTurn());
     }
 }

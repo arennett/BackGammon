@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,23 +33,45 @@ public class SequenceControl {
         ArrayList<PipSequence> retList = new ArrayList<PipSequence>();
         nextps:
         for (PipSequence ps : pipSequences) {
-            if (ps.getSum() == range) {
-                logger.debug("check seq {}", ps);
+            if (ps.getSum() == range*spc) {
+                logger.debug("check seq {} for range:{} spc:{}", ps,range,spc);
                 int nextpos = from;
-                for (int s : ps) {
-                    if (from < to) {
-                        nextpos += s;
-                    } else {
-                        nextpos -= s;
-                    }
-                    BPoint nextPoint = bModel.getPoint(nextpos);
-                    // TODO delegate next point to offpoint if idx = 0 or 25
+                int pips=0;
+                for (int pip : ps) {
+                    pips += pip*spc;
+                    if (pips <= ps.getSum()) {
+                        if (gameControl.isOffMove(from, to)) {
+                            if (to == BoardModel.POINT_IDX_OFF_RED) {
+                                nextpos -= pip;
+                            } else {
+                                nextpos += pip;
+                            }
+                        } else {
+                            if (from < to) {
+                                nextpos += pip;
+                            } else {
+                                nextpos -= pip;
+                            }
+                        }
 
-                    if (!gameControl.isValidPoint(nextPoint, spc)) {
-                        continue nextps;
-                    }
 
-                }
+                        // TODO if offmove delegate next point 0/25 to offpoint
+                        if (gameControl.isOffMove(from, to)) {
+                            if (nextpos == BoardModel.POINT_IDX_BAR_WHITE) {
+                                nextpos = BoardModel.POINT_IDX_OFF_RED;
+                            } else if (nextpos == BoardModel.POINT_IDX_BAR_RED) {
+                                nextpos = BoardModel.POINT_IDX_OFF_WHITE;
+                            }
+                        }
+                        BPoint nextPoint = bModel.getPoint(nextpos);
+
+                        if (!gameControl.isValidPoint(nextPoint, spc)) {
+                            continue nextps;
+                        }
+                    }else { //if (pip*spc <= ps.getSum())
+                        break ;
+                    }
+                }//for (int pip : ps)
                 logger.debug("add to valid sequences {}", ps);
                 retList.add(ps);
             }
@@ -149,7 +172,7 @@ public class SequenceControl {
      * @param to
      * @return list of blot positions
      */
-    public BlotArray getBlotArray(PipSequence ps, int from, int to){
+    public BlotArray getBlotArray(PipSequence ps, int from, int to,int spc){
         BlotArray arr=new BlotArray();
         int direction = 0;
         if (gameControl.getTurn() == BColor.WHITE) {
@@ -159,16 +182,23 @@ public class SequenceControl {
         }
 
         int prevpos=from;
+        int pips = 0;
         for (int pip : ps) {
-            int pos = prevpos+ pip * direction;
-            BPoint point = bModel.getPoint(pos);
-            if (point.getPieceColor() != gameControl.getTurn()) {
-                if (point.getPieceCount() == 1) {
+            pips+=pip*spc;
+            if (pips <= ps.getSum()) {
+                int pos = prevpos+ pip * direction;
+                BPoint point = bModel.getPoint(pos);
+                if (point.getPieceColor() != gameControl.getTurn()) {
+                    if (point.getPieceCount() == 1) {
 
-                    arr.add(pos);
+                        arr.add(pos);
+                    }
                 }
+                prevpos=pos;
+            }else{
+                break;
             }
-            prevpos=pos;
+
         }
 
         return arr;
@@ -177,9 +207,9 @@ public class SequenceControl {
 
 
 
-    public boolean psHasBlots(PipSequence ps, int from, int to){
+    public boolean psHasBlots(PipSequence ps, int from, int to,int spc){
 
-        return !getBlotArray(ps,from,to).isEmpty();
+        return !getBlotArray(ps,from,to,spc).isEmpty();
 
     }
 

@@ -14,7 +14,7 @@ class HomeBoardIterator implements Iterator<BPoint> {
     int idx = 0;
 
     /**
-     * iterates through all points of bColor's homeboard
+     * iterates through all points of bColor's homeboard from pip 1 to 6
      * it doesn't check the piececolor of the point
      * @param boardModel
      * @param bColor

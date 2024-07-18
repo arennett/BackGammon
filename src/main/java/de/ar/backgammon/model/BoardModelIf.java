@@ -3,6 +3,8 @@ package de.ar.backgammon.model;
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.BPoint;
 
+import java.util.ArrayList;
+
 public interface BoardModelIf {
 
     int getStartPointSelectedPiecesCount();
@@ -41,4 +43,6 @@ public interface BoardModelIf {
     boolean isAllPiecesAtHome(BColor pieceColor);
 
     int getHomePiecesCount(BColor pieceColor);
+
+    ArrayList<Integer> getHomePointMaxDuo(BColor bcolor);
 }
