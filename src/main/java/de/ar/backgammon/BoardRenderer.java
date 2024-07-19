@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 
 import javax.swing.*;
@@ -26,7 +27,7 @@ public class BoardRenderer implements BoardRendererIf {
         // drawLine(PLAY_AREA_WIDTH/2,0,PLAY_AREA_WIDTH/2,PLAY_AREA_HEIGHT,g2d);
         barRenderer.render(g2d);
 
-        for (int i = 1; i <= 24; i++) {
+        for (int i = BoardModel.POINT_IDX_FIRST_BOARD_POINT; i <= BoardModel.POINT_IDX_LAST_BOARD_POINT; i++) {
             drawPoint(i, g2d,bModel.getPoint(i));
         }
     }

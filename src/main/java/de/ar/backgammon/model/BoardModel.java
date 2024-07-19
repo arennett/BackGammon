@@ -11,14 +11,17 @@ import java.util.Vector;
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
     static int MAX_POINTS = 24;
+    static int MAX_MODEL_POINTS = MAX_POINTS+4; //+2 barpoints +2 offpoints
 
-    public static int POINT_IDX_BAR_WHITE = 0;
-    public static int POINT_IDX_BAR_RED = 25;
+    public static int POINT_IDX_FIRST_BOARD_POINT = 1;
+    public static int POINT_IDX_LAST_BOARD_POINT = MAX_POINTS;
 
+    public static int POINT_IDX_BAR_WHITE = POINT_IDX_FIRST_BOARD_POINT-1;
+    public static int POINT_IDX_BAR_RED = POINT_IDX_LAST_BOARD_POINT+1;
+
+    public static int POINT_IDX_OFF_RED = MAX_POINTS+2;
+    public static int POINT_IDX_OFF_WHITE = MAX_POINTS+3;
     public static int POINT_IDX_OFF = 99;
-
-    public static int POINT_IDX_OFF_RED = 26;
-    public static int POINT_IDX_OFF_WHITE = 27;
 
 
     Vector<BPoint> points = new Vector<>();
@@ -39,7 +42,7 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-        for (int i = 0; i < MAX_POINTS + 4; i++) { //+2 barpoints +2 offpoints
+        for (int i = 0; i < MAX_MODEL_POINTS; i++) {
             BPoint point = new BPoint(i, this);
             points.add(point);
             setPoint(i, 0, null);

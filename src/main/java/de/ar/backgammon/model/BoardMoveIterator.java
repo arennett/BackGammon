@@ -20,9 +20,9 @@ class BoardMoveIterator implements Iterator<BPoint> {
 
         this.bColor = bColor;
         if (bColor == BColor.WHITE) {
-            idx = 0;
+            idx = BoardModel.POINT_IDX_FIRST_BOARD_POINT-1;
         } else {
-            idx = 25;
+            idx = BoardModel.POINT_IDX_LAST_BOARD_POINT+1;
         }
 
     }
@@ -30,9 +30,9 @@ class BoardMoveIterator implements Iterator<BPoint> {
     @Override
     public boolean hasNext() {
         if (bColor == BColor.WHITE) {
-            return idx + 1 <= 24;
+            return idx + 1 <= BoardModel.POINT_IDX_LAST_BOARD_POINT;
         } else {
-            return idx - 1 >= 1;
+            return idx - 1 >= BoardModel.POINT_IDX_FIRST_BOARD_POINT;
         }
     }
 
