@@ -81,6 +81,7 @@ public class SequenceControl {
 
     public void updateSequences(ArrayList<Integer> pipStack) {
         pipSequences.clear();
+        logger.debug("updating the sequences...");
         PipSequence p;
         if (pipStack.size() == 1) {
             //no sequences

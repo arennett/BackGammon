@@ -28,7 +28,7 @@ public class BarRenderer {
         return false;
     }
     public void draw(BColor color, Graphics2D g2d){
-        int points=bModel.getBar().get(color).getPieceCount();
+        int points=bModel.getBarPoint(color).getPieceCount();
         if (points==0){
             return;
         }

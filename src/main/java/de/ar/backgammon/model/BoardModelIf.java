@@ -13,8 +13,6 @@ public interface BoardModelIf {
 
     BPoint getPoint(int i);
 
-    Bar getBar();
-
     void clear();
 
     int getPiecesCount(BColor bcolor);
@@ -45,4 +43,8 @@ public interface BoardModelIf {
     int getHomePiecesCount(BColor pieceColor);
 
     ArrayList<Integer> getHomePointMaxDuo(BColor bcolor);
+
+     BPoint getOffPoint(BColor bColor);
+
+    BPoint getBarPoint(BColor bColor);
 }

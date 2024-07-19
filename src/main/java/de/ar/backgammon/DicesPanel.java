@@ -92,15 +92,23 @@ public class DicesPanel extends JPanel implements ActionListener {
         }
         if(e.getSource()==jbDice1){
             String s = JOptionPane.showInputDialog("Pip (1-6): ");
-            int pip =Integer.parseInt(s);
-            dc.setDice1(pip);
-            updateComponents();
+            try{
+                int pip =Integer.parseInt(s);
+                dc.setDice1(pip);
+                updateComponents();
+            }catch (NumberFormatException ne){
+                //
+            }
         }
         if(e.getSource()==jbDice2){
             String s = JOptionPane.showInputDialog("Pip (1-6): ");
-            int pip =Integer.parseInt(s);
-            dc.setDice2(pip);
-            updateComponents();
+            try{
+                int pip =Integer.parseInt(s);
+                dc.setDice2(pip);
+                updateComponents();
+            }catch (NumberFormatException ne){
+                //do noting
+            }
         }
 
     }

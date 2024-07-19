@@ -19,7 +19,7 @@ public class BoardModelWriter implements BoardModelWriterIf{
         filewriter = new FileWriter(BOARDMAP_FILENAME+modelName+".txt");
         BufferedWriter bufferedWriter = new BufferedWriter(filewriter);
         logger.debug("writing...");
-        for(int idx = 0; idx< BoardModel.MAX_POINTS; idx++){
+        for(int idx = 0; idx <= BoardModel.MAX_POINTS; idx++){
             BPoint point = bmodel.getPoint(idx);
             if(!point.isEmpty()) {
                 bufferedWriter.write("p");
@@ -31,12 +31,20 @@ public class BoardModelWriter implements BoardModelWriterIf{
                 bufferedWriter.newLine();
             }
         }
-        int cnt =bmodel.getBar().getCount(BColor.RED);
+        int  cnt =bmodel.getBarPoint(BColor.RED).getPieceCount();
         bufferedWriter.write("bar,"+cnt+",r");
         bufferedWriter.newLine();
-        cnt =bmodel.getBar().getCount(BColor.WHITE);
+        cnt =bmodel.getBarPoint(BColor.WHITE).getPieceCount();
         bufferedWriter.write("bar,"+cnt+",w");
         bufferedWriter.newLine();
+
+        cnt =bmodel.getOffPoint(BColor.RED).getPieceCount();
+        bufferedWriter.write("off,"+cnt+",r");
+        bufferedWriter.newLine();
+        cnt =bmodel.getOffPoint(BColor.WHITE).getPieceCount();
+        bufferedWriter.write("off,"+cnt+",w");
+        bufferedWriter.newLine();
+
         bufferedWriter.write("turn,"+bmodel.getTurn().getShortString());
         bufferedWriter.newLine();
         bufferedWriter.write("dice1,"+bmodel.getDice1());

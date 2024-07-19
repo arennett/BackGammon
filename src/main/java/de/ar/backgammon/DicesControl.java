@@ -63,6 +63,7 @@ public class DicesControl {
      */
     public void updateStack() {
         clear();
+        logger.debug("updating the stack...");
         int dice1=getDice1();
         int dice2=getDice2();
         if (gameControl.allPiecesAtHome()){
@@ -71,12 +72,12 @@ public class DicesControl {
             int maxPoint1 = max.get(0);
             int maxPoint2 = max.get(1);
 
-            if (dice1 > maxPoint1 && maxPoint1 >-1) {
+            if (dice1 >= maxPoint1 && maxPoint1 >-1) {
                 dice1 = maxPoint1;
                 if (dice2 > maxPoint2 && maxPoint2 >-1) {
                     dice2 = maxPoint2;
                 }
-            }else if (dice2 > maxPoint1 && maxPoint1 >-1) {
+            }else if (dice2 >= maxPoint1 && maxPoint1 >-1) {
                 dice2 = maxPoint1;
                 if (dice1 > maxPoint2 && maxPoint2 >-1) {
                     dice1 = maxPoint2;

@@ -223,8 +223,14 @@ public class GameControl {
             sub_move(from, to, spc);
         }
 
+
+
         if (dicesControl.getDicesState() == DicesControl.DicesState.READY) {
             switch_turn();
+        }else{
+            if (!isMovePossible()){
+                game.message_error(" no further moves possible, please switch turn");
+            }
         }
 
         boardPanel.repaint();
@@ -261,7 +267,7 @@ public class GameControl {
 
         if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
             // blot
-            boardModel.getBar().addCount(1, bpTo.getPieceColor());
+            boardModel.getBarPoint(bpTo.getPieceColor()).addCount(1);
             logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
             bpTo.setPieceCount(spc);
         } else {
@@ -269,7 +275,7 @@ public class GameControl {
             bpTo.setPieceCount(bpTo.getPieceCount() + spc);
             logger.debug("moved from {} to {}", bpFrom, bpTo);
         }
-        if (bpTo == boardModel.getBar().getBarRed() || bpTo == boardModel.getBar().getBarWhite()) {
+        if (bpTo.isBarPoint()) {
             // do nothing
         } else {
             bpTo.setPieceColor(bpFrom.getPieceColor());
@@ -303,7 +309,7 @@ public class GameControl {
         BPoint bpTo = boardModel.getPoint(to);
 
         if (bpFrom.getPieceColor() != getTurn()){
-            game.message_error("wrong color. Turn is "+getTurn().getString());
+            game.message_error("Wrong color! Turn is "+getTurn().getString());
 
             return false;
         }
@@ -319,31 +325,31 @@ public class GameControl {
 
 
         if (spc < 1) {
-            game.message_error("no pieces selected");
+            game.message_error("No pieces selected");
             return false;
         }
         if (spc > 4) {
-            game.message_error("you can only select up to 4 pieces");
+            game.message_error("You can only select up to 4 pieces.");
             return false;
         }
 
         if (isOffMove(from,to)){
             logger.debug ("offmove detected");
             if (!boardModel.isAllPiecesAtHome(bpFrom.getPieceColor())){
-                game.message_error("not all pieces at home");
+                game.message_error("Not all pieces at home");
                 return false;
             }
         }
 
-        if (getTurn() == BColor.RED && !boardModel.getBar().getBarRed().isEmpty()){
-            if (bpFrom!=boardModel.getBar().getBarRed()){
-                game.message_error("you have pieces on the bar");
+        if (getTurn() == BColor.RED && !boardModel.getBarPoint(BColor.RED).isEmpty()){
+            if (bpFrom!=boardModel.getBarPoint(BColor.RED)){
+                game.message_error("Red! You have pieces on the bar");
                 return false;
             }
         }
-        if (getTurn() == BColor.WHITE && !boardModel.getBar().getBarWhite().isEmpty()){
-            if (bpFrom!=boardModel.getBar().getBarWhite()){
-                game.message_error("you have pieces on the bar");
+        if (getTurn() == BColor.WHITE && !boardModel.getBarPoint(BColor.WHITE).isEmpty()){
+            if (bpFrom!=boardModel.getBarPoint(BColor.WHITE)){
+                game.message_error("White! You have pieces on the bar");
                 return false;
             }
         }
@@ -363,7 +369,7 @@ public class GameControl {
                 ret = to < from;
             }
             if (!ret) {
-                game.message_error("wrong direction");
+                game.message_error("Wrong direction !");
                 return false;
             }
         }
@@ -380,11 +386,11 @@ public class GameControl {
             if (range <= 6) {
                 ret = dicesControl.checkIfMoveIsOnStack(range, spc);
                 if (!ret) {
-                    game.message_error("not allowed, look at the dices");
+                    game.message_error("Not allowed! Look at the dices");
                     return false;
                 }
             } else {
-                game.message_error("not allowed, look at the dices");
+                game.message_error("Not allowed! Look at the dices");
                 return false;
             }
         }
@@ -402,22 +408,28 @@ public class GameControl {
      */
     public boolean isValidPoint(BPoint point, int spc) {
         logger.debug("validate point: {} ...", point);
+
+        if (point.isOffPoint()) {
+            logger.debug("validate offpoint: {} ok", point);
+            return true;
+        }
+
         if (point.getPieceCount() > 1) {
             if (point.getPieceColor() != getTurn()) {
-                game.message_error("wrong point color");
+                game.message_error("Wrong point color!");
                 logger.debug("validate point: {} ,wrong point color", point);
                 return false;
             }
         }
 
         if (point.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
-            game.message_error("you can only put up to 5 pieces on a field");
+            game.message_error("You can only put up to 5 pieces on a field");
             logger.debug("validate point: {} ,max 5 pieces", point);
             return false;
         }
 
-        if (point == boardModel.getBar().getBarRed() || point == boardModel.getBar().getBarWhite()) {
-            game.message_error("this is not a valid point");
+        if (point.isBarPoint()) {
+            game.message_error("This is not a valid point!");
             logger.debug("validate point: {} bar point not valid", point);
             return false;
         }
@@ -433,7 +445,8 @@ public class GameControl {
         } else {
             boardModel.setTurn(BColor.RED);
         }
-
+        dicesControl.clear();
+        logger.debug("################## TURN IS {} ############################",getTurn());
         buttonPanel.updateComponents();
     }
 
@@ -443,8 +456,8 @@ public class GameControl {
      * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
-        BPoint barPoint= boardModel.getBar().get(getTurn());
-        if (!boardModel.getBar().get(getTurn()).isEmpty()) {
+        BPoint barPoint= boardModel.getBarPoint(getTurn());
+        if (!barPoint.isEmpty()) {
             Vector<Integer> dices=dicesControl.getDices();
             for (int dice:dices) {
                 if (getTurn()==BColor.WHITE) {
@@ -457,6 +470,7 @@ public class GameControl {
                 }
             }
         }else{
+            //TODO  check if off moves possible
             valid=true;
         }
         return valid;
@@ -562,7 +576,7 @@ public class GameControl {
         // if not
         // switch back
         if (!isMovePossible()) {
-            game.message_error("no possible moves found, switch turn");
+            game.message_error("no possible moves found for "+getTurn()+ ", please switch turn");
             switch_turn();
         }else{
             game.message("move is possible");

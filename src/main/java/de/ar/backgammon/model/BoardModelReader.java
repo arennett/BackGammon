@@ -50,7 +50,16 @@ public class BoardModelReader implements BoardModelReaderIf{
                 }
                 String scol=strs[2];
                 BColor bColor =BColor.getBColor(scol);
-                bModel.getBar().setCount(psize,bColor);
+                bModel.getBarPoint(bColor).setPieceCount(psize);
+            }else if (strs[0].startsWith("off")){
+            try{
+                psize =Integer.parseInt(strs[1]);
+            }catch (NumberFormatException nfe){
+                throw new BException("read failed",nfe);
+            }
+            String scol=strs[2];
+            BColor bColor =BColor.getBColor(scol);
+            bModel.getOffPoint(bColor).setPieceCount(psize);
             }else if (strs[0].startsWith("turn")){
                 String scol=strs[1];
                 BColor bColor =BColor.getBColor(scol);

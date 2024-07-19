@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 
 /**
@@ -70,5 +71,17 @@ public class BPoint {
 
     public void clear() {
         setPieceCount(0);
+    }
+
+    public boolean isBarPoint() {
+        return getIndex()== BoardModel.POINT_IDX_BAR_WHITE || getIndex()==BoardModel.POINT_IDX_BAR_RED;
+    }
+
+    public boolean isOffPoint(){
+        return getIndex()== BoardModel.POINT_IDX_OFF_WHITE || getIndex()==BoardModel.POINT_IDX_OFF_RED;
+    }
+
+    public void addCount(int i) {
+        pieceCount+=i;
     }
 }

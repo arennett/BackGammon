@@ -27,10 +27,6 @@ public class BoardModel implements BoardModelIf {
     int dice1 = 0;
     int dice2 = 0;
 
-    ;
-
-
-    Bar bar;
     int startPointSelectedIdx = -1;
     int pointSelectedIdx = -1;
     private int pieceSelectedIdx = 0;
@@ -43,14 +39,11 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-        for (int i = 0; i < MAX_POINTS + 4; i++) {
+        for (int i = 0; i < MAX_POINTS + 4; i++) { //+2 barpoints +2 offpoints
             BPoint point = new BPoint(i, this);
             points.add(point);
             setPoint(i, 0, null);
         }
-        bar = new Bar(this);
-
-
     }
 
     /* the nr of selected pieces by start of a move */
@@ -74,10 +67,6 @@ public class BoardModel implements BoardModelIf {
     }
 
 
-    @Override
-    public Bar getBar() {
-        return bar;
-    }
 
     @Override
     public void clear() {
@@ -85,8 +74,6 @@ public class BoardModel implements BoardModelIf {
             point.setPieceColor(null);
             point.setPieceCount(0);
         }
-        bar.clear();
-
     }
 
 
@@ -227,5 +214,24 @@ public class BoardModel implements BoardModelIf {
         arr.add(maxPoint2);
         return arr;
 
+    }
+
+    @Override
+    public BPoint getOffPoint(BColor bColor) {
+        assert bColor != null;
+        if(bColor==BColor.RED){
+            return getPoint(BoardModel.POINT_IDX_OFF_RED);
+        }else{
+            return getPoint(BoardModel.POINT_IDX_OFF_WHITE);
+        }
+    }
+
+    public BPoint getBarPoint(BColor bColor) {
+        assert bColor != null;
+        if(bColor==BColor.RED){
+            return getPoint(BoardModel.POINT_IDX_BAR_RED);
+        }else{
+            return getPoint(BoardModel.POINT_IDX_BAR_WHITE);
+        }
     }
 }
