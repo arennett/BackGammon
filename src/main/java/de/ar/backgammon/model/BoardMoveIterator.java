@@ -7,7 +7,7 @@ import java.util.Iterator;
 
 /**
  * iterates in move direction
- * from start board to the homeboard of a player
+ * from start board to the homeboard of a player(bColor)
  * the bar is discounted
  */
 class BoardMoveIterator implements Iterator<BPoint> {

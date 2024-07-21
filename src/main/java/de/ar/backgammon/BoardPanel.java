@@ -7,13 +7,23 @@ import org.slf4j.LoggerFactory;
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
 import static de.ar.backgammon.ConstIf.*;
 
-public class BoardPanel extends JPanel implements MouseListener, MouseMotionListener {
+public class BoardPanel extends JPanel
+        implements  MouseListener,
+                    MouseMotionListener,
+                    ComponentListener {
+
+    public static  int BOARD_HEIGTH = 600;
+
+    public static  int BOARD_WIDTH  = BOARD_HEIGTH/3*4;
+    public static  int POINT_HEIGTH = BOARD_HEIGTH * 4 / 10;
+    public static  int BOARD_OFFSET = BOARD_HEIGTH/30;
+    public static  int BAR_WIDTH = BOARD_WIDTH/20;
+    public static  int POINT_WIDTH = (BOARD_WIDTH - BAR_WIDTH) / 12;
+    public static  int PIECE_WIDTH=BOARD_HEIGTH/12;
     private static final Logger logger = LoggerFactory.getLogger(BoardPanel.class);
 
     private final BoardRendererIf boardRenderer;
@@ -44,9 +54,11 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         };
         innerBoard.addMouseListener(this);
         innerBoard.addMouseMotionListener(this);
+        innerBoard.addComponentListener(this);
         setLayout(new BorderLayout());
         add(innerBoard, BorderLayout.CENTER);
         setPreferredSize(new Dimension(BOARD_WIDTH + BOARD_OFFSET, BOARD_HEIGTH + BOARD_OFFSET));
+        logger.debug("initialized");
     }
 
     // important! the mouse events come from the inner board panel
@@ -129,7 +141,7 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
 
     private void moveRequest(int pointIdxPressed, int pointIdxReleased) {
        //logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
-        boolean isMoved=gameControl.moveRequest(pointIdxPressed,pointIdxReleased);
+        boolean isMoved=gameControl.moveRequest(new Move(pointIdxPressed,pointIdxReleased));
         if (isMoved) {
            game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
         }
@@ -178,10 +190,10 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
     }
 
     /**
-     *  1 for lowest piece 5 for highest piece
+     *
      * @param e MouseEvent
-     * @param pointSelectedIdx
-     * @return
+     * @param  pointSelectedIdx the selected point(triangle)
+     * @return the piece idx 1 for lowest piece 5 for highest piece
      */
     private int getPieceIdx(MouseEvent e, int pointSelectedIdx) {
         int piece_stack_height =MAX_PIECES_ON_POINT* PIECE_WIDTH;
@@ -200,4 +212,38 @@ public class BoardPanel extends JPanel implements MouseListener, MouseMotionList
         }
         return piece_idx;
     }
+
+    @Override
+    public void componentResized(ComponentEvent e) {
+       Component comp= e.getComponent();
+       BOARD_HEIGTH=(int)(getSize().getHeight()-20);
+       recalcDimensions();
+       repaint();
+
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
+
+    private static void recalcDimensions(){
+        BOARD_WIDTH  = BOARD_HEIGTH/3*4;
+        POINT_HEIGTH = BOARD_HEIGTH * 4 / 10;
+        BOARD_OFFSET = BOARD_HEIGTH/30;
+        BAR_WIDTH = BOARD_WIDTH/20;
+        POINT_WIDTH = (BOARD_WIDTH - BAR_WIDTH) / 12;
+        PIECE_WIDTH=BOARD_HEIGTH/12;
+    }
+
 }

@@ -53,22 +53,21 @@ public class GameControl {
      * after throwing the dices
      * in set mode no dices throwing necessary
      *
-     * @param from index of from point
-     * @param to   index of to point
-     * @return
+     * @param move requested move
+     * @return true if moved
      */
-    public boolean moveRequest(int from, int to) {
-        if (to== BoardModel.POINT_IDX_OFF) {
-            BPoint bfrom= boardModel.getPoint(from);
+    public boolean moveRequest(Move move) {
+        if (move.to== BoardModel.POINT_IDX_OFF) {
+            BPoint bfrom= boardModel.getPoint(move.from);
             if (bfrom.getPieceColor()==BColor.RED) {
-                to=BoardModel.POINT_IDX_OFF_RED;
+                move.to=BoardModel.POINT_IDX_OFF_RED;
             }else{
-                to=BoardModel.POINT_IDX_OFF_WHITE;
+                move.to=BoardModel.POINT_IDX_OFF_WHITE;
             }
         }
-        logger.debug("moveRequest from: {} to: {} ", from, to);
+        logger.debug("moveRequest: {} ",move);
         if (bpControl.isSetMode()) {
-            move(from, to);
+            move(move);
             buttonPanel.updateComponents();
             return true;
         }
@@ -81,27 +80,27 @@ public class GameControl {
             return false;
         }
 
-        boolean ret= move(from, to);
+        boolean ret= move(move);
         buttonPanel.updateComponents();
         return ret;
 
     }
 
-    public int getRange(int from, int to) {
+    public int getRange(Move move) {
 
         int range = 0;
 
-        if (isOffMove(from,to)){
+        if (move.isOffMove()){
             if (getTurn() == BColor.WHITE) {
-                range = 25 - from;
+                range = BoardModel.POINT_IDX_LAST_BOARD_POINT+1 - move.from;
             }else {
-                range = from;
+                range = move.from;
             }
         }else {
             if (getTurn() == BColor.WHITE) {
-                range = to - from;
+                range = move.to - move.from;
             } else {
-                range = from - to;
+                range = move.from - move.to;
             }
         }
         assert range > 0;
@@ -114,24 +113,23 @@ public class GameControl {
      * moves one or more pieces to a target point
      * after validating the move
      *
-     * @param from
-     * @param to
+     * @param move
      * @return true if pieces where moved
      */
-    private boolean move(int from, int to) {
+    private boolean move(Move move) {
         int spc = boardModel.getStartPointSelectedPiecesCount();
-        if (isBarMove(from)) {
+        if (move.isBarMove()) {
             spc = 1;
         }
 
         if (!bpControl.isSetMode()) {
-            if (!validateMove(from, to)) {
+            if (!validateMove(move)) {
 
                 return false;
             }
         } else {
             //setmode
-            sub_move(from, to, spc);
+            sub_move(move, spc);
             return true;
         }
 
@@ -145,7 +143,7 @@ public class GameControl {
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = sequenceControl.psHasBlots(ps, from, to,spc);
+            hasBlot = sequenceControl.psHasBlots(ps, move,spc);
             if (hasBlot) {
                 break;
             }
@@ -165,12 +163,12 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
-                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0), from, to,spc);
+                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0), move,spc);
                     if (!ba0.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba0);
                     }
 
-                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1), from, to,spc);
+                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1), move,spc);
                     if (!ba1.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba1);
                     }
@@ -205,13 +203,13 @@ public class GameControl {
         }
 
         if (psSelect != null) {
-            int pos = from;
+            int pos = move.from;
             int pips=0;
             for (int pip : psSelect) {
                 pips+=pip*spc;
                 if (pips <= psSelect.getSum()){
                     int subto = pos + pip * direction;
-                    sub_move(pos, subto, spc);
+                    sub_move(new Move(pos, subto), spc);
                     pos = subto;
                 }else{
                     break;
@@ -220,7 +218,7 @@ public class GameControl {
             }
         } else {
             // no sequence
-            sub_move(from, to, spc);
+            sub_move(move, spc);
         }
 
 
@@ -243,37 +241,36 @@ public class GameControl {
      * longer than a maximum pip (6) a pip sequence devides the move
      * into sub moves
      *
-     * @param from
-     * @param to
-     * @param spc
+     * @param move
+     * @param spc count of pieces moved
      */
-    public void sub_move(int from, int to, int spc) {
-        logger.debug("sub move from {} to {}", from, to);
+    public void sub_move(Move move, int spc) {
+        logger.debug("sub move {}",move);
 
         //if not is setmode delegate point 0/25 (bar points) to offpoints
         if (!bpControl.isSetMode()) {
-            if (to == BoardModel.POINT_IDX_BAR_WHITE) {
-                to = BoardModel.POINT_IDX_OFF_RED;
-            } else if (to == BoardModel.POINT_IDX_BAR_RED) {
-                to = BoardModel.POINT_IDX_OFF_WHITE;
+            if (move.to == BoardModel.POINT_IDX_BAR_WHITE) {
+                move.to = BoardModel.POINT_IDX_OFF_RED;
+            } else if (move.to == BoardModel.POINT_IDX_BAR_RED) {
+                move.to = BoardModel.POINT_IDX_OFF_WHITE;
             }
         }
 
 
-        BPoint bpFrom = boardModel.getPoint(from);
-        BPoint bpTo = boardModel.getPoint(to);
+        BPoint bpFrom = boardModel.getPoint(move.from);
+        BPoint bpTo = boardModel.getPoint(move.to);
 
         bpFrom.setPieceCount(bpFrom.getPieceCount() - spc);
 
         if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
             // blot
             boardModel.getBarPoint(bpTo.getPieceColor()).addCount(1);
-            logger.debug("moved from {} to {} (blot)", bpFrom, bpTo);
+            logger.debug("moved {} (blot)", move);
             bpTo.setPieceCount(spc);
         } else {
             // no blot
             bpTo.setPieceCount(bpTo.getPieceCount() + spc);
-            logger.debug("moved from {} to {}", bpFrom, bpTo);
+            logger.debug("moved {}", move);
         }
         if (bpTo.isBarPoint()) {
             // do nothing
@@ -283,30 +280,18 @@ public class GameControl {
 
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
-            dicesControl.removePipsFromStack(getRange(from, to), spc);
+            dicesControl.removePipsFromStack(getRange(move), spc);
         }
     }
 
-    public boolean isBarMove(int from) {
-        boolean isBarMove = from == BoardModel.POINT_IDX_BAR_WHITE || from == BoardModel.POINT_IDX_BAR_RED;
-        return isBarMove;
-    }
-    public boolean isOffMove(int from,int to) {
-        boolean isOffMove =   from > BoardModel.POINT_IDX_BAR_WHITE
-                            && from < BoardModel.POINT_IDX_BAR_RED
-                            && ( to == BoardModel.POINT_IDX_OFF_WHITE
-                               ||to ==BoardModel.POINT_IDX_OFF_RED );
-        return isOffMove;
-    }
 
 
 
-
-    private boolean validateMove(int from, int to) {
+    private boolean validateMove(Move move) {
         boolean ret = false;
 
-        BPoint bpFrom = boardModel.getPoint(from);
-        BPoint bpTo = boardModel.getPoint(to);
+        BPoint bpFrom = boardModel.getPoint(move.from);
+        BPoint bpTo = boardModel.getPoint(move.to);
 
         if (bpFrom.getPieceColor() != getTurn()){
             game.message_error("Wrong color! Turn is "+getTurn().getString());
@@ -315,7 +300,7 @@ public class GameControl {
         }
 
         int spc;
-        if (isBarMove(from)) {
+        if (move.isBarMove()) {
             spc = 1;
 
         }else{
@@ -333,7 +318,7 @@ public class GameControl {
             return false;
         }
 
-        if (isOffMove(from,to)){
+        if (move.isOffMove()){
             logger.debug ("offmove detected");
             if (!boardModel.isAllPiecesAtHome(bpFrom.getPieceColor())){
                 game.message_error("Not all pieces at home");
@@ -361,12 +346,12 @@ public class GameControl {
             return false;
         }
 
-        if(!isOffMove(from,to)){
+        if(!move.isOffMove()){
             if (getTurn() == BColor.WHITE) {
-                ret = to > from;
+                ret = move.to > move.from;
 
             } else {
-                ret = to < from;
+                ret = move.to < move.from;
             }
             if (!ret) {
                 game.message_error("Wrong direction !");
@@ -376,10 +361,10 @@ public class GameControl {
 
         //check dices
 
-        int range = getRange(from, to);
+        int range = getRange(move);
         logger.debug("check dices for move range: {}",range);
 
-        psArray = sequenceControl.getValidSequences(from, to, spc);
+        psArray = sequenceControl.getValidSequences(move, spc);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
             logger.debug("no sequences found");
@@ -461,9 +446,9 @@ public class GameControl {
             Vector<Integer> dices=dicesControl.getDices();
             for (int dice:dices) {
                 if (getTurn()==BColor.WHITE) {
-                    valid = validateMove(barPoint.getIndex(), barPoint.getIndex()+dice);
+                    valid = validateMove(new Move(barPoint.getIndex(), barPoint.getIndex()+dice));
                 }else{
-                    valid = validateMove(barPoint.getIndex(), barPoint.getIndex()-dice);
+                    valid = validateMove(new Move(barPoint.getIndex(), barPoint.getIndex()-dice));
                 }
                 if (valid) {
                     break;

@@ -6,14 +6,17 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements ComponentListener {
     static Logger logger = LoggerFactory.getLogger(MainWindow.class);
 
-    public MainWindow(){
+    public MainWindow() {
         super("BackGammon V1.0");
         //setSize(new Dimension(FRAME_WIDTH,FRAME_HEIGTH));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        //this.setMaximumSize(new Dimension(600,800));
+        this.addComponentListener(this);
         initUi();
         setVisible(true);
     }
@@ -64,4 +67,32 @@ public class MainWindow extends JFrame {
         pack();
     }
 
+    @Override
+    public void componentResized(ComponentEvent e) {
+        double w = getSize().getWidth();
+        double h = getSize().getHeight();
+        int maxh=900;
+        int maxw=maxh*7/5;
+        if(w > maxw && h > maxh){
+            setSize(new Dimension(maxw, maxh));
+            repaint();
+            revalidate();
+        }
+
+    }
+
+    @Override
+    public void componentMoved(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentShown(ComponentEvent e) {
+
+    }
+
+    @Override
+    public void componentHidden(ComponentEvent e) {
+
+    }
 }

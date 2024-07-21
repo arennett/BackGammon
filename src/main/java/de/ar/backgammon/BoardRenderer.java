@@ -6,8 +6,6 @@ import de.ar.backgammon.model.BoardModelIf;
 import javax.swing.*;
 import java.awt.*;
 
-import static de.ar.backgammon.ConstIf.*;
-
 public class BoardRenderer implements BoardRendererIf {
 
 
@@ -23,7 +21,7 @@ public class BoardRenderer implements BoardRendererIf {
     public void render(Graphics g, JPanel panel) {
         Graphics2D g2d = (Graphics2D) g;
 
-        drawRect(0, 0, BOARD_WIDTH, BOARD_HEIGTH, 2, g2d);
+        drawRect(0, 0, BoardPanel.BOARD_WIDTH, BoardPanel.BOARD_HEIGTH, 2, g2d);
         // drawLine(PLAY_AREA_WIDTH/2,0,PLAY_AREA_WIDTH/2,PLAY_AREA_HEIGHT,g2d);
         barRenderer.render(g2d);
 
@@ -61,33 +59,33 @@ public class BoardRenderer implements BoardRendererIf {
         int x2 = 0;
         int y2 = 0;
         if (idx <= 6) {
-            x1 = BOARD_WIDTH - POINT_WIDTH / 2 - (idx-1) * POINT_WIDTH;
+            x1 = BoardPanel.BOARD_WIDTH - BoardPanel.POINT_WIDTH / 2 - (idx-1) * BoardPanel.POINT_WIDTH;
             y1 = 0;
             x2 = x1;
-            y2 = POINT_HEIGTH;
+            y2 = BoardPanel.POINT_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
         } else if (idx <= 12) {
-            int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
-            x1 = BOARD_WIDTH - offset - (idx-1 - 6) * POINT_WIDTH;
+            int offset = BoardPanel.BOARD_WIDTH / 2 + BoardPanel.BAR_WIDTH / 2 + BoardPanel.POINT_WIDTH / 2;
+            x1 = BoardPanel.BOARD_WIDTH - offset - (idx-1 - 6) * BoardPanel.POINT_WIDTH;
             y1 = 0;
             x2 = x1;
-            y2 = POINT_HEIGTH;
+            y2 = BoardPanel.POINT_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, false, idx % 2 == 0, 2, g2d);
 
         } else if (idx <= 18) {
-            x1 = POINT_WIDTH / 2 + (idx-1 - 12) * POINT_WIDTH;
-            y1 = BOARD_HEIGTH - POINT_HEIGTH;
+            x1 = BoardPanel.POINT_WIDTH / 2 + (idx-1 - 12) * BoardPanel.POINT_WIDTH;
+            y1 = BoardPanel.BOARD_HEIGTH - BoardPanel.POINT_HEIGTH;
             x2 = x1;
-            y2 = BOARD_HEIGTH;
+            y2 = BoardPanel.BOARD_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
         } else if (idx <= 24) {
-            int offset = BOARD_WIDTH / 2 + BAR_WIDTH / 2 + POINT_WIDTH / 2;
-            x1 = offset + (idx-1 - 18) * POINT_WIDTH;
-            y1 = BOARD_HEIGTH - POINT_HEIGTH;
+            int offset = BoardPanel.BOARD_WIDTH / 2 + BoardPanel.BAR_WIDTH / 2 + BoardPanel.POINT_WIDTH / 2;
+            x1 = offset + (idx-1 - 18) * BoardPanel.POINT_WIDTH;
+            y1 = BoardPanel.BOARD_HEIGTH - BoardPanel.POINT_HEIGTH;
             x2 = x1;
-            y2 = BOARD_HEIGTH;
+            y2 = BoardPanel.BOARD_HEIGTH;
             drawPointTriangle(idx,x1, y1, x2, y2, true, idx % 2 == 0, 2, g2d);
 
         }
@@ -97,10 +95,10 @@ public class BoardRenderer implements BoardRendererIf {
             for (int i=0;i <point.getPieceCount();i++){
 
                 if (idx < 13){
-                    drawPiece(idx,i,x1,y1+25+PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                    drawPiece(idx,i,x1,y1+BoardPanel.PIECE_WIDTH/2+ BoardPanel.PIECE_WIDTH*i,point.getPieceColor(),g2d);
 
                 }else {
-                    drawPiece(idx,i,x2,y2-25-PIECE_WIDTH*i,point.getPieceColor(),g2d);
+                    drawPiece(idx,i,x2,y2-BoardPanel.PIECE_WIDTH/2- BoardPanel.PIECE_WIDTH*i,point.getPieceColor(),g2d);
                 }
             }
 
@@ -120,9 +118,9 @@ public class BoardRenderer implements BoardRendererIf {
     }
 
     private void drawPointTriangle(int idx,int x1, int y1, int x2, int y2, boolean up, boolean fill, int stroke_width, Graphics2D g2d) {
-        int x_down[] = {x1 - POINT_WIDTH / 2, x1 + POINT_WIDTH / 2, x2};
+        int x_down[] = {x1 - BoardPanel.POINT_WIDTH / 2, x1 + BoardPanel.POINT_WIDTH / 2, x2};
         int y_down[] = {y1, y1, y2};
-        int x_up[] = {x2 - POINT_WIDTH / 2, x2 + POINT_WIDTH / 2, x1};
+        int x_up[] = {x2 - BoardPanel.POINT_WIDTH / 2, x2 + BoardPanel.POINT_WIDTH / 2, x1};
         int y_up[] = {y2, y2, y1};
         int x[];
         int y[];
@@ -157,7 +155,7 @@ public class BoardRenderer implements BoardRendererIf {
     private void drawPiece(int pointidx, int pieceidx,int x1, int y1, BColor color, Graphics2D g2d){
 
         g2d.setStroke(new BasicStroke(3));
-        g2d.drawOval(x1-PIECE_WIDTH/2,y1-PIECE_WIDTH/2,PIECE_WIDTH,PIECE_WIDTH);
+        g2d.drawOval(x1- BoardPanel.PIECE_WIDTH/2,y1- BoardPanel.PIECE_WIDTH/2, BoardPanel.PIECE_WIDTH, BoardPanel.PIECE_WIDTH);
         g2d.setColor(color.getColor());
         BPoint bpoint = bModel.getPoint(pointidx);
         int spc=bpoint.getSelectedPiecesCount();
@@ -184,10 +182,10 @@ public class BoardRenderer implements BoardRendererIf {
         }
 
 
-        int w1=PIECE_WIDTH-2;
+        int w1= BoardPanel.PIECE_WIDTH-2;
         g2d.fillOval(x1-w1/2,y1-w1/2,w1,w1);
         g2d.setColor(Color.BLACK);
-        w1=PIECE_WIDTH-10;
+        w1= BoardPanel.PIECE_WIDTH-10;
         g2d.setStroke(new BasicStroke(1));
         g2d.drawOval(x1-w1/2,y1-w1/2,w1,w1);
     }

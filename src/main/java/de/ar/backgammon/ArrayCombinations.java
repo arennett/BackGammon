@@ -6,7 +6,7 @@ import java.util.List;
 public class ArrayCombinations {
 
     public static void main(String[] args) {
-        int[] nums = {2, 2, 2,2};
+        int[] nums = {1, 2, 3,4};
         List<List<Integer>> result = generateCombinations(nums);
 
         for (List<Integer> combination : result) {

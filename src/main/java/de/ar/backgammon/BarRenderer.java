@@ -5,8 +5,7 @@ import de.ar.backgammon.model.BoardModelIf;
 
 import java.awt.*;
 
-import static de.ar.backgammon.ConstIf.*;
-import static de.ar.backgammon.ConstIf.PIECE_WIDTH;
+import static de.ar.backgammon.BoardPanel.PIECE_WIDTH;
 
 public class BarRenderer {
     private final BoardModelIf bModel;
@@ -32,9 +31,9 @@ public class BarRenderer {
         if (points==0){
             return;
         }
-        int x1 = BOARD_WIDTH / 2 - BAR_WIDTH / 2 + (BAR_WIDTH-PIECE_WIDTH) / 2;
-        int y1 = BOARD_HEIGTH / 2 -PIECE_WIDTH-5;
-        int y2 = BOARD_HEIGTH / 2 +5;
+        int x1 = BoardPanel.BOARD_WIDTH / 2 - BoardPanel.BAR_WIDTH / 2 + (BoardPanel.BAR_WIDTH-PIECE_WIDTH) / 2;
+        int y1 = BoardPanel.BOARD_HEIGTH / 2 -PIECE_WIDTH-5;
+        int y2 = BoardPanel.BOARD_HEIGTH / 2 +5;
         int w1 = PIECE_WIDTH;
 
         if (color==BColor.RED){
@@ -71,7 +70,7 @@ public class BarRenderer {
     }
 
     void render(Graphics2D g2d) {
-        drawRect(BOARD_WIDTH / 2 - BAR_WIDTH / 2, 0, BAR_WIDTH, BOARD_HEIGTH, 2, g2d);
+        drawRect(BoardPanel.BOARD_WIDTH / 2 - BoardPanel.BAR_WIDTH / 2, 0, BoardPanel.BAR_WIDTH, BoardPanel.BOARD_HEIGTH, 2, g2d);
         draw(BColor.WHITE,g2d);
         draw(BColor.RED,g2d);
 

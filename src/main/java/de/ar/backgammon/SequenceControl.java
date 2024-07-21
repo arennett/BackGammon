@@ -22,41 +22,40 @@ public class SequenceControl {
      * checks the sequences in the sequencebuffer which ar valid for
      * the given move and nr of pieces
      * if all points of a sequence are valid, the seauence is added to return array
-     * @param from start position index
-     * @param to to position index
+     * @param move
      * @param spc piece count
      * @return an array of valid sequences for the move
      */
-    ArrayList<PipSequence> getValidSequences(int from, int to, int spc) {
-        int range = gameControl.getRange(from,to);
+    ArrayList<PipSequence> getValidSequences(Move move, int spc) {
+        int range = gameControl.getRange(move);
 
         ArrayList<PipSequence> retList = new ArrayList<PipSequence>();
         nextps:
         for (PipSequence ps : pipSequences) {
             if (ps.getSum() == range*spc) {
                 logger.debug("check seq {} for range:{} spc:{}", ps,range,spc);
-                int nextpos = from;
+                int nextpos = move.from;
                 int pips=0;
                 for (int pip : ps) {
                     pips += pip*spc;
                     if (pips <= ps.getSum()) {
-                        if (gameControl.isOffMove(from, to)) {
-                            if (to == BoardModel.POINT_IDX_OFF_RED) {
+                        if (move.isOffMove()) {
+                            // off moves
+                            if (move.to == BoardModel.POINT_IDX_OFF_RED) {
                                 nextpos -= pip;
                             } else {
                                 nextpos += pip;
                             }
-                        } else {
-                            if (from < to) {
+                        } else { // normal moves
+                            if (move.from < move.to) {
                                 nextpos += pip;
                             } else {
                                 nextpos -= pip;
                             }
                         }
 
-
-                        // TODO if offmove delegate next point 0/25 to offpoint
-                        if (gameControl.isOffMove(from, to)) {
+                        // delegate next point 0/25 to offpoints 26/27
+                        if (move.isOffMove()) {
                             if (nextpos == BoardModel.POINT_IDX_BAR_WHITE) {
                                 nextpos = BoardModel.POINT_IDX_OFF_RED;
                             } else if (nextpos == BoardModel.POINT_IDX_BAR_RED) {
@@ -169,11 +168,10 @@ public class SequenceControl {
     /**
      * creates a list of blot positions for a sequence and a move
      * @param ps
-     * @param from
-     * @param to
+     * @param move
      * @return list of blot positions
      */
-    public BlotArray getBlotArray(PipSequence ps, int from, int to,int spc){
+    public BlotArray getBlotArray(PipSequence ps,Move move,int spc){
         BlotArray arr=new BlotArray();
         int direction = 0;
         if (gameControl.getTurn() == BColor.WHITE) {
@@ -182,7 +180,7 @@ public class SequenceControl {
             direction = -1;
         }
 
-        int prevpos=from;
+        int prevpos=move.from;
         int pips = 0;
         for (int pip : ps) {
             pips+=pip*spc;
@@ -208,9 +206,9 @@ public class SequenceControl {
 
 
 
-    public boolean psHasBlots(PipSequence ps, int from, int to,int spc){
+    public boolean psHasBlots(PipSequence ps, Move move,int spc){
 
-        return !getBlotArray(ps,from,to,spc).isEmpty();
+        return !getBlotArray(ps,move,spc).isEmpty();
 
     }
 
