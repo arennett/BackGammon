@@ -2,6 +2,7 @@ package de.ar.backgammon;
 
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.moves.Move;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

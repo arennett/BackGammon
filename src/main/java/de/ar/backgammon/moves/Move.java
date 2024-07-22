@@ -1,12 +1,12 @@
-package de.ar.backgammon;
+package de.ar.backgammon.moves;
 
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 
 public class Move {
 
-    int from;
-    int to;
+    public int from;
+    public int to;
 
     public Move(int from, int to) {
         this.from = from;

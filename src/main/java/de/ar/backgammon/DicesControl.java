@@ -177,11 +177,8 @@ public class DicesControl {
         return bModel.getDice1();
     }
 
-    Vector <Integer> getDices() {
-        Vector<Integer> vec = new Vector<>();
-        vec.add(getDice1());
-        vec.add(getDice2());
-        return vec;
+    Dices getDices() {
+        return new Dices(getDice1(),getDice2());
     }
 
     public void setDice1(int dice1) {

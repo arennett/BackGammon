@@ -4,6 +4,9 @@ import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.model.BoardModelWriterIf;
+import de.ar.backgammon.moves.Move;
+import de.ar.backgammon.moves.MovesGenerator;
+import de.ar.backgammon.moves.MovesGeneratorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,11 +275,7 @@ public class GameControl {
             bpTo.setPieceCount(bpTo.getPieceCount() + spc);
             logger.debug("moved {}", move);
         }
-        if (bpTo.isBarPoint()) {
-            // do nothing
-        } else {
-            bpTo.setPieceColor(bpFrom.getPieceColor());
-        }
+        bpTo.setPieceColor(bpFrom.getPieceColor());
 
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
@@ -287,7 +286,7 @@ public class GameControl {
 
 
 
-    private boolean validateMove(Move move) {
+    public boolean validateMove(Move move) {
         boolean ret = false;
 
         BPoint bpFrom = boardModel.getPoint(move.from);
@@ -443,17 +442,10 @@ public class GameControl {
         boolean valid = false;
         BPoint barPoint= boardModel.getBarPoint(getTurn());
         if (!barPoint.isEmpty()) {
-            Vector<Integer> dices=dicesControl.getDices();
-            for (int dice:dices) {
-                if (getTurn()==BColor.WHITE) {
-                    valid = validateMove(new Move(barPoint.getIndex(), barPoint.getIndex()+dice));
-                }else{
-                    valid = validateMove(new Move(barPoint.getIndex(), barPoint.getIndex()-dice));
-                }
-                if (valid) {
-                    break;
-                }
-            }
+            MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,this);
+            ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDices(),getTurn());
+            valid = !moves.isEmpty();
+
         }else{
             //TODO  check if off moves possible
             valid=true;
