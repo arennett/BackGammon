@@ -3,21 +3,24 @@ package de.ar.backgammon;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.moves.Move;
+import de.ar.backgammon.moves.PointValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
-public class SequenceControl {
-    static Logger logger = LoggerFactory.getLogger(SequenceControl.class);
+public class SequenceStack {
+    static Logger logger = LoggerFactory.getLogger(SequenceStack.class);
     private final BoardModelIf bModel;
     private GameControl gameControl;
 
-    public SequenceControl(BoardModelIf bModel){
+    public SequenceStack(BoardModelIf bModel){
         this.bModel = bModel;
     }
 
     ArrayList<PipSequence> pipSequences = new ArrayList<>();
+
+    PointValidator pointValidator = new PointValidator();
 
     /**
      * checks the sequences in the sequencebuffer which ar valid for
@@ -27,8 +30,8 @@ public class SequenceControl {
      * @param spc piece count
      * @return an array of valid sequences for the move
      */
-    ArrayList<PipSequence> getValidSequences(Move move, int spc) {
-        int range = gameControl.getRange(move);
+    public ArrayList<PipSequence> getValidSequences(Move move, int spc, BColor turn) {
+        int range = move.getRange(turn);
 
         ArrayList<PipSequence> retList = new ArrayList<PipSequence>();
         nextps:
@@ -65,7 +68,8 @@ public class SequenceControl {
                         }
                         BPoint nextPoint = bModel.getPoint(nextpos);
 
-                        if (!gameControl.isValidPoint(nextPoint, spc)) {
+
+                        if (!pointValidator.isValid(nextPoint, spc,turn)) {
                             continue nextps;
                         }
                     }else { //if (pip*spc <= ps.getSum())

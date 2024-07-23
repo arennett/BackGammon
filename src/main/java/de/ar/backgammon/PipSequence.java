@@ -14,7 +14,7 @@ import java.util.ArrayList;
  * [6][6][6]
  * [6][6]
  */
-class PipSequence extends ArrayList<Integer> {
+public class PipSequence extends ArrayList<Integer> {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
 
     public PipSequence(ArrayList<Integer> pointStack) {

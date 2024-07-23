@@ -66,7 +66,7 @@ public class BPoint {
 
     @Override
     public String toString() {
-        return "<" + getIndex()+ ">";
+        return "(" + getIndex()+ ")";
     }
 
     public void clear() {

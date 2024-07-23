@@ -7,4 +7,8 @@ public interface ConstIf {
 
     int MAX_PIECES_ON_POINT = 5;
 
+    int MIN_PIP = 1;
+    int MAX_PIP = 6;
+
+
 }

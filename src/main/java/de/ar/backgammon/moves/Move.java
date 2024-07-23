@@ -1,5 +1,6 @@
 package de.ar.backgammon.moves;
 
+import de.ar.backgammon.BColor;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 
@@ -37,5 +38,26 @@ public class Move {
         return isOffMove;
     }
 
+
+    public int getRange(BColor turn) {
+
+        int range = 0;
+
+        if (isOffMove()){
+            if (turn == BColor.WHITE) {
+                range = BoardModel.POINT_IDX_LAST_BOARD_POINT+1 - from;
+            }else {
+                range = from;
+            }
+        }else {
+            if (turn == BColor.WHITE) {
+                range = to - from;
+            } else {
+                range = from - to;
+            }
+        }
+        assert range > 0;
+        return range;
+    }
 
 }

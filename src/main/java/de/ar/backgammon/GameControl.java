@@ -5,15 +5,15 @@ import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.model.BoardModelWriterIf;
 import de.ar.backgammon.moves.Move;
+import de.ar.backgammon.moves.MoveValidator;
 import de.ar.backgammon.moves.MovesGenerator;
 import de.ar.backgammon.moves.MovesGeneratorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
-import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
+import static de.ar.backgammon.ConstIf.MAX_PIP;
 
 public class GameControl {
     private static final Logger logger = LoggerFactory.getLogger(GameControl.class);
@@ -29,26 +29,26 @@ public class GameControl {
     private final BoardModelWriterIf bmWriter;
     private final DicesControl dicesControl;
 
-    private final SequenceControl sequenceControl;
+    private final SequenceStack sequenceStack;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
-    ArrayList<PipSequence> psArray = new ArrayList<>();
-
+    private MoveValidator moveValidator;
 
     public GameControl(Game game, BoardModelIf boardModel,
                        BoardPanel boardPanel,
                        BoardModelReaderIf bmReader,
                        BoardModelWriterIf bmWriter,
                        DicesControl dicesControl,
-                       SequenceControl pointSequenceControl) {
+                       SequenceStack pointSequenceStack) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
         this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
-        this.sequenceControl = pointSequenceControl;
+        this.sequenceStack = pointSequenceStack;
+        this.moveValidator = new MoveValidator(boardModel, sequenceStack,dicesControl);
     }
 
     /**
@@ -89,27 +89,6 @@ public class GameControl {
 
     }
 
-    public int getRange(Move move) {
-
-        int range = 0;
-
-        if (move.isOffMove()){
-            if (getTurn() == BColor.WHITE) {
-                range = BoardModel.POINT_IDX_LAST_BOARD_POINT+1 - move.from;
-            }else {
-                range = move.from;
-            }
-        }else {
-            if (getTurn() == BColor.WHITE) {
-                range = move.to - move.from;
-            } else {
-                range = move.from - move.to;
-            }
-        }
-        assert range > 0;
-        return range;
-    }
-
 
 
     /**
@@ -136,17 +115,17 @@ public class GameControl {
             return true;
         }
 
-        // psArray is set by move validation
+        // get valid sequences from sequenceControl depending on the move range
         // if psArray.size == 2 and sequences have equal sum
         // and at least one ps has blots, the user has to choose a pointSequence
         // otherwise we take the first sequence
-        boolean hasBlot = false;
 
-        assert psArray != null;
+        ArrayList<PipSequence> psArray = sequenceStack.getValidSequences(move, spc, getTurn());
+        boolean hasBlot = false;
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = sequenceControl.psHasBlots(ps, move,spc);
+            hasBlot = sequenceStack.psHasBlots(ps, move,spc);
             if (hasBlot) {
                 break;
             }
@@ -166,12 +145,12 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
-                    SequenceControl.BlotArray ba0 = sequenceControl.getBlotArray(psArray.get(0), move,spc);
+                    SequenceStack.BlotArray ba0 = sequenceStack.getBlotArray(psArray.get(0), move,spc);
                     if (!ba0.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba0);
                     }
 
-                    SequenceControl.BlotArray ba1 = sequenceControl.getBlotArray(psArray.get(1), move,spc);
+                    SequenceStack.BlotArray ba1 = sequenceStack.getBlotArray(psArray.get(1), move,spc);
                     if (!ba1.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba1);
                     }
@@ -221,6 +200,7 @@ public class GameControl {
             }
         } else {
             // no sequence
+            assert move.getRange(getTurn()) <= MAX_PIP;
             sub_move(move, spc);
         }
 
@@ -248,6 +228,8 @@ public class GameControl {
      * @param spc count of pieces moved
      */
     public void sub_move(Move move, int spc) {
+        assert move.getRange(getTurn()) <= MAX_PIP;
+
         logger.debug("sub move {}",move);
 
         //if not is setmode delegate point 0/25 (bar points) to offpoints
@@ -279,149 +261,24 @@ public class GameControl {
 
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
-            dicesControl.removePipsFromStack(getRange(move), spc);
+            dicesControl.removePipsFromStack(move.getRange(getTurn()), spc);
         }
     }
 
-
-
-
-    public boolean validateMove(Move move) {
-        boolean ret = false;
-
-        BPoint bpFrom = boardModel.getPoint(move.from);
-        BPoint bpTo = boardModel.getPoint(move.to);
-
-        if (bpFrom.getPieceColor() != getTurn()){
-            game.message_error("Wrong color! Turn is "+getTurn().getString());
-
-            return false;
-        }
-
-        int spc;
-        if (move.isBarMove()) {
-            spc = 1;
-
-        }else{
-            spc = boardModel.getStartPointSelectedPiecesCount();
-        }
-
-
-
-        if (spc < 1) {
-            game.message_error("No pieces selected");
-            return false;
-        }
-        if (spc > 4) {
-            game.message_error("You can only select up to 4 pieces.");
-            return false;
-        }
-
-        if (move.isOffMove()){
-            logger.debug ("offmove detected");
-            if (!boardModel.isAllPiecesAtHome(bpFrom.getPieceColor())){
-                game.message_error("Not all pieces at home");
-                return false;
-            }
-        }
-
-        if (getTurn() == BColor.RED && !boardModel.getBarPoint(BColor.RED).isEmpty()){
-            if (bpFrom!=boardModel.getBarPoint(BColor.RED)){
-                game.message_error("Red! You have pieces on the bar");
-                return false;
-            }
-        }
-        if (getTurn() == BColor.WHITE && !boardModel.getBarPoint(BColor.WHITE).isEmpty()){
-            if (bpFrom!=boardModel.getBarPoint(BColor.WHITE)){
-                game.message_error("White! You have pieces on the bar");
-                return false;
-            }
-        }
-
-        ret = isValidPoint(bpTo, spc);
-
-        if (!ret) {
-            // unvalid point
-            return false;
-        }
-
-        if(!move.isOffMove()){
-            if (getTurn() == BColor.WHITE) {
-                ret = move.to > move.from;
-
-            } else {
-                ret = move.to < move.from;
-            }
-            if (!ret) {
-                game.message_error("Wrong direction !");
-                return false;
-            }
-        }
-
-        //check dices
-
-        int range = getRange(move);
-        logger.debug("check dices for move range: {}",range);
-
-        psArray = sequenceControl.getValidSequences(move, spc);
-        if (psArray.isEmpty()) {
-            // maybe only one pip on stack
-            logger.debug("no sequences found");
-            if (range <= 6) {
-                ret = dicesControl.checkIfMoveIsOnStack(range, spc);
-                if (!ret) {
-                    game.message_error("Not allowed! Look at the dices");
-                    return false;
-                }
-            } else {
-                game.message_error("Not allowed! Look at the dices");
-                return false;
-            }
-        }
-
-
-        return true;
-    }
 
     /**
-     * basic validation, used for sequence and target points
      *
-     * @param point
-     * @param spc
+     * @param move validation
      * @return
      */
-    public boolean isValidPoint(BPoint point, int spc) {
-        logger.debug("validate point: {} ...", point);
-
-        if (point.isOffPoint()) {
-            logger.debug("validate offpoint: {} ok", point);
-            return true;
-        }
-
-        if (point.getPieceCount() > 1) {
-            if (point.getPieceColor() != getTurn()) {
-                game.message_error("Wrong point color!");
-                logger.debug("validate point: {} ,wrong point color", point);
-                return false;
-            }
-        }
-
-        if (point.getPieceCount() + spc > MAX_PIECES_ON_POINT) {
-            game.message_error("You can only put up to 5 pieces on a field");
-            logger.debug("validate point: {} ,max 5 pieces", point);
-            return false;
-        }
-
-        if (point.isBarPoint()) {
-            game.message_error("This is not a valid point!");
-            logger.debug("validate point: {} bar point not valid", point);
-            return false;
-        }
-
-
-        logger.debug("validate point: {} ok", point);
-        return true;
+    public boolean validateMove(Move move) {
+        boolean ret=moveValidator.isValid(move,getTurn());
+        game.message_error(moveValidator.err.userMessage);
+        return ret;
     }
+
+
+
 
     public void switch_turn() {
         if (getTurn() == BColor.RED) {
