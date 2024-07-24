@@ -40,7 +40,7 @@ public class MainWindow extends JFrame implements ComponentListener {
         SequenceStack pointSequenceStack =new SequenceStack(bModel);
 
         GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl, pointSequenceStack);
-        dicesControl.setPsControl(pointSequenceStack);
+        dicesControl.setSequenceStack(pointSequenceStack);
         dicesControl.setGameControl(gameControl);
         pointSequenceStack.setGameControl(gameControl);
 

@@ -228,12 +228,13 @@ public class GameControl {
      * @param spc count of pieces moved
      */
     public void sub_move(Move move, int spc) {
-        assert move.getRange(getTurn()) <= MAX_PIP;
+
 
         logger.debug("sub move {}",move);
 
         //if not is setmode delegate point 0/25 (bar points) to offpoints
         if (!bpControl.isSetMode()) {
+            assert move.getRange(getTurn()) <= MAX_PIP;
             if (move.to == BoardModel.POINT_IDX_BAR_WHITE) {
                 move.to = BoardModel.POINT_IDX_OFF_RED;
             } else if (move.to == BoardModel.POINT_IDX_BAR_RED) {

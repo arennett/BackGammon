@@ -10,7 +10,7 @@ public class DicesControl {
     private static final Logger logger = LoggerFactory.getLogger(DicesControl.class);
     private final Game game;
     private final BoardModelIf bModel;
-    private SequenceStack psControl;
+    private SequenceStack sequenceStack;
 
     Random random = new Random();
     private DicesPanel dicesPanel;
@@ -18,25 +18,26 @@ public class DicesControl {
     private GameControl gameControl;
 
 
-    ArrayList<Integer> pipStack = new ArrayList<>();
+    DicesStack dicesStack;
 
     public DicesControl(Game game, BoardModelIf bModel) {
         this.game = game;
         this.bModel = bModel;
+        this.dicesStack = new DicesStack(bModel);
     }
 
     /**
      * clear pip stack and pip sequences
      */
     public void clear() {
-        pipStack.clear();
-        psControl.clear();
+        dicesStack.clear();
+        sequenceStack.clear();
         dicesState = DicesState.READY;
         dicesPanel.updateComponents();
     }
 
-    public void setPsControl(SequenceStack psControl) {
-        this.psControl = psControl;
+    public void setSequenceStack(SequenceStack sequenceStack) {
+        this.sequenceStack = sequenceStack;
     }
 
 
@@ -62,35 +63,8 @@ public class DicesControl {
      * followed by updating the pip sequences
      */
     public void updateStack() {
-        clear();
-        logger.debug("updating the stack...");
-        int dice1 = getDice1();
-        int dice2 = getDice2();
-        if (gameControl.allPiecesAtHome()) {
-            logger.debug("all at home, special stack handling");
-            ArrayList<Integer> max = bModel.getHomePointMaxDuo(gameControl.getTurn());
-            int maxPoint1 = max.get(0);
-            int maxPoint2 = max.get(1);
-
-            if (dice1 >= maxPoint1 && maxPoint1 > -1) {
-                dice1 = maxPoint1;
-                if (dice2 > maxPoint2 && maxPoint2 > -1) {
-                    dice2 = maxPoint2;
-                }
-            } else if (dice2 >= maxPoint1 && maxPoint1 > -1) {
-                dice2 = maxPoint1;
-                if (dice1 > maxPoint2 && maxPoint2 > -1) {
-                    dice1 = maxPoint2;
-                }
-            }
-        }
-        pipStack.add(dice1);
-        pipStack.add(dice2);
-        if (dice1 == dice2) {
-            pipStack.add(dice1);
-            pipStack.add(dice2);
-        }
-        psControl.updateSequences(pipStack);
+        dicesStack.update();
+        sequenceStack.updateSequences(dicesStack);
         dicesState = DicesState.THROWN;
         dicesPanel.updateComponents();
         gameControl.dicesThrown();
@@ -108,7 +82,7 @@ public class DicesControl {
     public boolean isMoveOnStack(int move_range, int count) {
         boolean allOnStack = true;
         for (int i = 0; i < count; i++) {
-            if (!pipStack.contains(move_range)) {
+            if (!dicesStack.contains(move_range)) {
                 allOnStack = false;
             }
         }
@@ -129,11 +103,11 @@ public class DicesControl {
         if (isMoveOnStack) {
             for (int k = 0; k < count; k++) {
                 //remove pip from pointStack
-                pipStack.remove(Integer.valueOf(pip));
+                dicesStack.remove(Integer.valueOf(pip));
             }
             logger.debug("removed pip {}x [{}] from stack", count, pip);
 
-            if (pipStack.isEmpty()) {
+            if (dicesStack.isEmpty()) {
                 clear();
             }
 
@@ -146,7 +120,7 @@ public class DicesControl {
                     , pip, count, "NOT on stack, points not removed");
         }
 
-        psControl.updateSequences(pipStack);
+        sequenceStack.updateSequences(dicesStack);
         dicesPanel.updateComponents();
         return isMoveOnStack;
 
@@ -160,8 +134,8 @@ public class DicesControl {
         this.gameControl = gameControl;
     }
 
-    public ArrayList<Integer> getPipStack() {
-        return pipStack;
+    public ArrayList<Integer> getDicesStack() {
+        return dicesStack;
     }
 
 
