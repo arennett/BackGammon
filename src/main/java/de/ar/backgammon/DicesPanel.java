@@ -12,11 +12,11 @@ import java.awt.event.ActionListener;
 public class DicesPanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(DicesPanel.class);
     private final DicesControl dc;
-    private final SequenceStack psc;
 
-    public DicesPanel(DicesControl dc, SequenceStack psc) {
+
+    public DicesPanel(DicesControl dc) {
         this.dc = dc;
-        this.psc = psc;
+
         dc.setDicesPanel(this);
 
         initUi();
@@ -61,9 +61,9 @@ public class DicesPanel extends JPanel implements ActionListener {
         updateComponents();
     }
     public void updateComponents(){
-        if (dc.getDicesState()== DicesControl.DicesState.THROWN) {
-            jbDice1.setText("["+dc.getDice1()+"]");
-            jbDice2.setText("["+dc.getDice2()+"]");
+        if (dc.getDicesStack().getState()== DicesStack.State.THROWN) {
+            jbDice1.setText("["+dc.getDicesStack().getDices().dice1+"]");
+            jbDice2.setText("["+dc.getDicesStack().getDices().dice2+"]");
         }else{
             jbDice1.setText("[ ]");
             jbDice2.setText("[ ]");
@@ -77,7 +77,7 @@ public class DicesPanel extends JPanel implements ActionListener {
                 sb.append("[  ]");
             }
         }
-        for (PipSequence ps: psc.getPipSequences()){
+        for (PipSequence ps: dc.dicesStack.getSequenceStack().getPipSequences()){
             sb.append("\n"+ps);
         }
 
@@ -94,7 +94,7 @@ public class DicesPanel extends JPanel implements ActionListener {
             String s = JOptionPane.showInputDialog("Pip (1-6): ");
             try{
                 int pip =Integer.parseInt(s);
-                dc.setDice1(pip);
+                dc.getDicesStack().getDices().dice1=pip;
                 updateComponents();
             }catch (NumberFormatException ne){
                 //
@@ -104,7 +104,7 @@ public class DicesPanel extends JPanel implements ActionListener {
             String s = JOptionPane.showInputDialog("Pip (1-6): ");
             try{
                 int pip =Integer.parseInt(s);
-                dc.setDice2(pip);
+                dc.getDicesStack().getDices().dice2=pip;
                 updateComponents();
             }catch (NumberFormatException ne){
                 //do noting

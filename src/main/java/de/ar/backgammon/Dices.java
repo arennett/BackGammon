@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 public class Dices implements Iterable<Integer>{
+
     public int dice1;
     public int dice2;
 
@@ -18,5 +19,11 @@ public class Dices implements Iterable<Integer>{
         v.add(dice1);
         v.add(dice2);
         return v.iterator();
+    }
+
+    public void clear() {
+        dice1=0;
+        dice2=0;
+
     }
 }

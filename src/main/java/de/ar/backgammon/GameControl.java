@@ -29,7 +29,6 @@ public class GameControl {
     private final BoardModelWriterIf bmWriter;
     private final DicesControl dicesControl;
 
-    private final SequenceStack sequenceStack;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
 
@@ -39,16 +38,14 @@ public class GameControl {
                        BoardPanel boardPanel,
                        BoardModelReaderIf bmReader,
                        BoardModelWriterIf bmWriter,
-                       DicesControl dicesControl,
-                       SequenceStack pointSequenceStack) {
+                       DicesControl dicesControl) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
         this.bmReader = bmReader;
         this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
-        this.sequenceStack = pointSequenceStack;
-        this.moveValidator = new MoveValidator(boardModel, sequenceStack,dicesControl);
+        this.moveValidator = new MoveValidator(boardModel, dicesControl.getDicesStack());
     }
 
     /**
@@ -78,7 +75,7 @@ public class GameControl {
             game.message_error("please start game!");
             return false;
         }
-        if (dicesControl.getDicesState() != DicesControl.DicesState.THROWN) {
+        if (dicesControl.getDicesStack().getState() != DicesStack.State.THROWN) {
             game.message_error("throw the dices!");
             return false;
         }
@@ -120,12 +117,13 @@ public class GameControl {
         // and at least one ps has blots, the user has to choose a pointSequence
         // otherwise we take the first sequence
 
-        ArrayList<PipSequence> psArray = sequenceStack.getValidSequences(move, spc, getTurn());
+        ArrayList<PipSequence> psArray
+                = dicesControl.getDicesStack().getSequenceStack().getValidSequences(move, spc, getTurn());
         boolean hasBlot = false;
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = sequenceStack.psHasBlots(ps, move,spc);
+            hasBlot = dicesControl.getDicesStack().getSequenceStack().psHasBlots(ps, move,spc);
             if (hasBlot) {
                 break;
             }
@@ -145,12 +143,12 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
-                    SequenceStack.BlotArray ba0 = sequenceStack.getBlotArray(psArray.get(0), move,spc);
+                    SequenceStack.BlotArray ba0 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(psArray.get(0), move,spc);
                     if (!ba0.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba0);
                     }
 
-                    SequenceStack.BlotArray ba1 = sequenceStack.getBlotArray(psArray.get(1), move,spc);
+                    SequenceStack.BlotArray ba1 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(psArray.get(1), move,spc);
                     if (!ba1.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba1);
                     }
@@ -206,7 +204,7 @@ public class GameControl {
 
 
 
-        if (dicesControl.getDicesState() == DicesControl.DicesState.READY) {
+        if (dicesControl.getDicesStack().getState() == DicesStack.State.READY) {
             switch_turn();
         }else{
             if (!isMovePossible()){
@@ -301,7 +299,7 @@ public class GameControl {
         BPoint barPoint= boardModel.getBarPoint(getTurn());
         if (!barPoint.isEmpty()) {
             MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,this);
-            ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDices(),getTurn());
+            ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());
             valid = !moves.isEmpty();
 
         }else{
@@ -341,7 +339,7 @@ public class GameControl {
             bmReader.readSaveMap(boardModel);
             game.message("game loaded");
             game.message_append("turn: " + getTurn());
-            dicesControl.updateStack();
+            dicesControl.loadDices();
             running = true;
         } catch (Exception ex) {
             logger.error("loadModel failed", ex);
@@ -394,6 +392,7 @@ public class GameControl {
 
     public void saveModel() {
         try {
+            dicesControl.saveDices();
             bmWriter.writeSaveMap(boardModel);
             game.message("game saved");
             running = true;

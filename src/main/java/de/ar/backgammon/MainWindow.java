@@ -37,13 +37,8 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 
         DicesControl dicesControl = new DicesControl(game,bModel);
-        SequenceStack pointSequenceStack =new SequenceStack(bModel);
-
-        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl, pointSequenceStack);
-        dicesControl.setSequenceStack(pointSequenceStack);
+        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl);
         dicesControl.setGameControl(gameControl);
-        pointSequenceStack.setGameControl(gameControl);
-
         boardPanel.setGameControl(gameControl);
 
         ButtonPanelControl bpControl= new ButtonPanelControl(
@@ -54,7 +49,7 @@ public class MainWindow extends JFrame implements ComponentListener {
                 gameControl
         );
 
-        DicesPanel dicesPanel = new DicesPanel(dicesControl, pointSequenceStack);
+        DicesPanel dicesPanel = new DicesPanel(dicesControl);
         ButtonPanel buttonPanel= new ButtonPanel(bpControl,game,gameControl,dicesPanel);
         gameControl.setButtonPanel(buttonPanel);
         gameControl.setButtonPanelControl(bpControl);

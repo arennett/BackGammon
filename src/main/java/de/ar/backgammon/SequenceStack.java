@@ -83,38 +83,38 @@ public class SequenceStack {
         return retList;
     }
 
-    public void updateSequences(ArrayList<Integer> pipStack) {
+    public void updateSequences(ArrayList<Integer> dicesStack) {
         pipSequences.clear();
         logger.debug("updating the sequences...");
         PipSequence p;
-        if (pipStack.size() == 1) {
+        if (dicesStack.size() == 1) {
             //no sequences
-        } else if (pipStack.size() == 2) {
-            p = new PipSequence(pipStack);
+        } else if (dicesStack.size() == 2) {
+            p = new PipSequence(dicesStack);
             pipSequences.add(p);
-            if(pipStack.get(0)!=pipStack.get(1)) {
-                p = new PipSequence(pipStack);
+            if(dicesStack.get(0)!=dicesStack.get(1)) {
+                p = new PipSequence(dicesStack);
                 p.flipFirst2();
                 pipSequences.add(p);
             }
-        } else if (pipStack.size() == 3) {
-            assert pipStack.get(0) == pipStack.get(1);
-            assert pipStack.get(1) == pipStack.get(2);
+        } else if (dicesStack.size() == 3) {
+            assert dicesStack.get(0) == dicesStack.get(1);
+            assert dicesStack.get(1) == dicesStack.get(2);
 
-            p = new PipSequence(pipStack);
+            p = new PipSequence(dicesStack);
             pipSequences.add(p);
-            p = new PipSequence(pipStack);
+            p = new PipSequence(dicesStack);
             p.removeLast();
             pipSequences.add(p);
 
-        } else if (pipStack.size() == 4) {
-            assert pipStack.get(0) == pipStack.get(1);
-            assert pipStack.get(1) == pipStack.get(2);
-            assert pipStack.get(2) == pipStack.get(3);
+        } else if (dicesStack.size() == 4) {
+            assert dicesStack.get(0) == dicesStack.get(1);
+            assert dicesStack.get(1) == dicesStack.get(2);
+            assert dicesStack.get(2) == dicesStack.get(3);
 
-            p = new PipSequence(pipStack);
+            p = new PipSequence(dicesStack);
             pipSequences.add(p);
-            p = new PipSequence(pipStack);
+            p = new PipSequence(dicesStack);
             p.removeLast();
             pipSequences.add(p);
             p = new PipSequence(p);

@@ -10,16 +10,14 @@ import java.util.ArrayList;
 public class MoveValidator implements MoveValidatorIf{
     private static final Logger logger = LoggerFactory.getLogger(MoveValidator.class);
     private final BoardModelIf boardModel;
-    private final SequenceStack sequenceStack;
-    private final DicesControl dicesControl;
+    private final DicesStack dicesStack;
     public ValidationError err;
     private PointValidator pointValidator = new PointValidator();
 
 
-    public MoveValidator(BoardModelIf boardModel, SequenceStack sequenceStack, DicesControl dicesControl){
+    public MoveValidator(BoardModelIf boardModel, DicesStack dicesStack){
         this.boardModel = boardModel;
-        this.sequenceStack = sequenceStack;
-        this.dicesControl = dicesControl;
+        this.dicesStack = dicesStack;
         err=new ValidationError();
     }
 
@@ -115,12 +113,12 @@ public class MoveValidator implements MoveValidatorIf{
         int range = move.getRange(turn);
         logger.debug("check dices for move range: {}",range);
 
-        ArrayList<PipSequence> psArray = sequenceStack.getValidSequences(move, spc, turn);
+        ArrayList<PipSequence> psArray = dicesStack.getSequenceStack().getValidSequences(move, spc, turn);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
             logger.debug("no sequences found");
             if (range <= 6) {
-                ret = dicesControl.isMoveOnStack(range, spc);
+                ret = dicesStack.isMoveOnStack(range, spc);
                 if (!ret) {
                      err.nr=8;
                     err.userMessage ="Not allowed! Look at the dices.";
