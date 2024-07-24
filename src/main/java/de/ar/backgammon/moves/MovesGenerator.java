@@ -2,7 +2,7 @@ package de.ar.backgammon.moves;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.BPoint;
-import de.ar.backgammon.Dices;
+import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.GameControl;
 import de.ar.backgammon.model.BoardModelIf;
 

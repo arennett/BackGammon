@@ -1,4 +1,4 @@
-package de.ar.backgammon;
+package de.ar.backgammon.dices;
 
 import de.ar.backgammon.model.BoardModel;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ public class PipSequence extends ArrayList<Integer> {
      *
      * @return
      */
-    int getSum() {
+    public int getSum() {
         int sum = 0;
         for (int pip : this) {
             sum += pip;

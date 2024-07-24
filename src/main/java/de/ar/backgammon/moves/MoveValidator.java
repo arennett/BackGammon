@@ -1,6 +1,8 @@
 package de.ar.backgammon.moves;
 
 import de.ar.backgammon.*;
+import de.ar.backgammon.dices.DicesStack;
+import de.ar.backgammon.dices.PipSequence;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

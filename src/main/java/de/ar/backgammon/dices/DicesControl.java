@@ -1,10 +1,10 @@
-package de.ar.backgammon;
+package de.ar.backgammon.dices;
 
+import de.ar.backgammon.Game;
+import de.ar.backgammon.GameControl;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class DicesControl {
     private static final Logger logger = LoggerFactory.getLogger(DicesControl.class);

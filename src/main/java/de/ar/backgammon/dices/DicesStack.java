@@ -1,4 +1,4 @@
-package de.ar.backgammon;
+package de.ar.backgammon.dices;
 
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;

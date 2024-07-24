@@ -1,5 +1,8 @@
-package de.ar.backgammon;
+package de.ar.backgammon.dices;
 
+import de.ar.backgammon.BColor;
+import de.ar.backgammon.BPoint;
+import de.ar.backgammon.GameControl;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.moves.Move;
@@ -140,7 +143,7 @@ public class SequenceStack {
     }
 
 
-    class BlotArray extends ArrayList<Integer> {
+    public class BlotArray extends ArrayList<Integer> {
         @Override
         public boolean equals(Object o) {
             boolean ret = false;

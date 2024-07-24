@@ -1,4 +1,4 @@
-package de.ar.backgammon;
+package de.ar.backgammon.dices;
 
 import java.util.Iterator;
 import java.util.Vector;
