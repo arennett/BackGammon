@@ -12,6 +12,8 @@ import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.moves.MoveValidator;
 import de.ar.backgammon.moves.MovesGenerator;
 import de.ar.backgammon.moves.MovesGeneratorIf;
+import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.points.BarPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +81,7 @@ public class GameControl {
             game.message_error("please start game!");
             return false;
         }
-        if (dicesControl.getDicesStack().getState() != DicesStack.State.THROWN) {
+        if (dicesControl.getDicesStack().getState() != DicesStack.State.UPDATED) {
             game.message_error("throw the dices!");
             return false;
         }
@@ -127,7 +129,7 @@ public class GameControl {
 
 
         for (PipSequence ps : psArray) {
-            hasBlot = dicesControl.getDicesStack().getSequenceStack().psHasBlots(ps, move,spc);
+            hasBlot = dicesControl.getDicesStack().getSequenceStack().psHasBlots(ps, move,spc,getTurn());
             if (hasBlot) {
                 break;
             }
@@ -147,12 +149,14 @@ public class GameControl {
             psSelect = psArray.get(0);
             if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
                 if (hasBlot) {
-                    SequenceStack.BlotArray ba0 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(psArray.get(0), move,spc);
+                    SequenceStack.BlotArray ba0 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(
+                                                  psArray.get(0), move,spc,getTurn());
                     if (!ba0.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba0);
                     }
 
-                    SequenceStack.BlotArray ba1 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(psArray.get(1), move,spc);
+                    SequenceStack.BlotArray ba1 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(
+                                                  psArray.get(1), move,spc,getTurn());
                     if (!ba1.isEmpty()) {
                         logger.debug("blots detected on: {}", "" + ba1);
                     }
@@ -206,9 +210,7 @@ public class GameControl {
             sub_move(move, spc);
         }
 
-
-
-        if (dicesControl.getDicesStack().getState() == DicesStack.State.READY) {
+        if (dicesControl.getDicesStack().getState() == DicesStack.State.EMPTY) {
             switch_turn();
         }else{
             if (!isMovePossible()){
@@ -248,19 +250,20 @@ public class GameControl {
         BPoint bpFrom = boardModel.getPoint(move.from);
         BPoint bpTo = boardModel.getPoint(move.to);
 
-        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc);
+        BColor colorFrom =bpFrom.getPieceColor();
+        BColor colorTo =bpTo.getPieceColor();
+        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc,colorFrom);
 
-        if (bpTo.getPieceCount() == 1 && bpTo.getPieceColor() != bpFrom.getPieceColor()) {
+        if (bpTo.getPieceCount() == 1 && colorTo != colorFrom) {
             // blot
-            boardModel.getBarPoint(bpTo.getPieceColor()).addCount(1);
+            boardModel.getBarPoint(colorTo).addCount(1);
             logger.debug("moved {} (blot)", move);
-            bpTo.setPieceCount(spc);
+            bpTo.setPieceCount(spc,colorFrom);
         } else {
             // no blot
-            bpTo.setPieceCount(bpTo.getPieceCount() + spc);
+            bpTo.setPieceCount(bpTo.getPieceCount() + spc,colorFrom);
             logger.debug("moved {}", move);
         }
-        bpTo.setPieceColor(bpFrom.getPieceColor());
 
         if (!bpControl.isSetMode()) {
             // try to remove points from stack
@@ -300,7 +303,7 @@ public class GameControl {
      * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
-        BPoint barPoint= boardModel.getBarPoint(getTurn());
+        BarPoint barPoint= boardModel.getBarPoint(getTurn());
         if (!barPoint.isEmpty()) {
             MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,this);
             ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());

@@ -4,6 +4,8 @@ import de.ar.backgammon.*;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.dices.PipSequence;
 import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.points.PointValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

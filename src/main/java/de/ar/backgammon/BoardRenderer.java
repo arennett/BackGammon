@@ -2,6 +2,7 @@ package de.ar.backgammon;
 
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.points.BPoint;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,12 +1,12 @@
 package de.ar.backgammon.dices;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.GameControl;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.moves.Move;
-import de.ar.backgammon.moves.PointValidator;
+import de.ar.backgammon.points.PointValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 public class SequenceStack {
     static Logger logger = LoggerFactory.getLogger(SequenceStack.class);
     private final BoardModelIf bModel;
-    private GameControl gameControl;
+
 
     public SequenceStack(BoardModelIf bModel){
         this.bModel = bModel;
@@ -138,11 +138,6 @@ public class SequenceStack {
         pipSequences.clear();
     }
 
-    public void setGameControl(GameControl gameControl) {
-        this.gameControl = gameControl;
-    }
-
-
     public class BlotArray extends ArrayList<Integer> {
         @Override
         public boolean equals(Object o) {
@@ -179,10 +174,10 @@ public class SequenceStack {
      * @param move
      * @return list of blot positions
      */
-    public BlotArray getBlotArray(PipSequence ps,Move move,int spc){
+    public BlotArray getBlotArray(PipSequence ps,Move move,int spc,BColor turn){
         BlotArray arr=new BlotArray();
         int direction = 0;
-        if (gameControl.getTurn() == BColor.WHITE) {
+        if (turn == BColor.WHITE) {
             direction = 1;
         } else {
             direction = -1;
@@ -195,7 +190,7 @@ public class SequenceStack {
             if (pips <= ps.getSum()) {
                 int pos = prevpos+ pip * direction;
                 BPoint point = bModel.getPoint(pos);
-                if (point.getPieceColor() != gameControl.getTurn()) {
+                if (point.getPieceColor() != turn) {
                     if (point.getPieceCount() == 1) {
 
                         arr.add(pos);
@@ -214,9 +209,9 @@ public class SequenceStack {
 
 
 
-    public boolean psHasBlots(PipSequence ps, Move move,int spc){
+    public boolean psHasBlots(PipSequence ps, Move move,int spc,BColor turn){
 
-        return !getBlotArray(ps,move,spc).isEmpty();
+        return !getBlotArray(ps,move,spc,turn).isEmpty();
 
     }
 

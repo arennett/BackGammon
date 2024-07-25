@@ -1,7 +1,7 @@
-package de.ar.backgammon.moves;
+package de.ar.backgammon.points;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
 
 public interface PointValidatorIf {
     boolean isValid(BPoint point, int spc, BColor turn);

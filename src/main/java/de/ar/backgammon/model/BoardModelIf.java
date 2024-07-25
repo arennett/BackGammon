@@ -1,7 +1,9 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.points.BarPoint;
+import de.ar.backgammon.points.OffPoint;
 
 import java.util.ArrayList;
 
@@ -18,12 +20,15 @@ public interface BoardModelIf {
     int getPiecesCount(BColor bcolor);
 
     int getStartPointSelectedIdx();
-    int getPointSelectedIdx();
 
     void setStartPointSelectedIdx(int pointIdx);
+
+    int getPointSelectedIdx();
+
     void setPointSelectedIdx(int pointIdx);
 
     int getPieceSelectedIdx();
+
     void setPieceSelectedIdx(int pieceSelectedIdx);
 
     BColor getTurn();
@@ -44,7 +49,7 @@ public interface BoardModelIf {
 
     ArrayList<Integer> getHomePointMaxDuo(BColor bcolor);
 
-     BPoint getOffPoint(BColor bColor);
+    OffPoint getOffPoint(BColor bColor);
 
-    BPoint getBarPoint(BColor bColor);
+    BarPoint getBarPoint(BColor bColor);
 }

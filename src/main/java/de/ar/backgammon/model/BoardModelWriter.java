@@ -2,7 +2,7 @@ package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.BException;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

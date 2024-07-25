@@ -1,7 +1,9 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.points.BarPoint;
+import de.ar.backgammon.points.OffPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,11 +44,25 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-        for (int i = 0; i < MAX_MODEL_POINTS; i++) {
+
+        //0
+        BarPoint wbar = new BarPoint(POINT_IDX_BAR_WHITE,this,BColor.WHITE);
+        points.add(wbar);
+
+        //1-24
+        for (int i = 1; i <= MAX_POINTS; i++) {
             BPoint point = new BPoint(i, this);
             points.add(point);
             setPoint(i, 0, null);
+
         }
+        //25-27
+        BarPoint rbar = new BarPoint(POINT_IDX_BAR_RED,this,BColor.RED);
+        points.add(rbar);
+        OffPoint roff = new OffPoint(POINT_IDX_OFF_RED,this,BColor.RED);
+        points.add(roff);
+        OffPoint woff = new OffPoint(POINT_IDX_OFF_WHITE,this,BColor.WHITE);
+        points.add(woff);
     }
 
     /* the nr of selected pieces by start of a move */
@@ -60,8 +76,7 @@ public class BoardModel implements BoardModelIf {
     @Override
     public void setPoint(int pidx, int pcount, BColor bcolor) {
         BPoint bpoint = points.elementAt(pidx);
-        bpoint.setPieceColor(bcolor);
-        bpoint.setPieceCount(pcount);
+        bpoint.setPieceCount(pcount,bcolor);
     }
 
     @Override
@@ -74,8 +89,7 @@ public class BoardModel implements BoardModelIf {
     @Override
     public void clear() {
         for (BPoint point : points) {
-            point.setPieceColor(null);
-            point.setPieceCount(0);
+            point.setPieceCount(0,null);
         }
     }
 
@@ -220,21 +234,21 @@ public class BoardModel implements BoardModelIf {
     }
 
     @Override
-    public BPoint getOffPoint(BColor bColor) {
+    public OffPoint getOffPoint(BColor bColor) {
         assert bColor != null;
         if(bColor==BColor.RED){
-            return getPoint(BoardModel.POINT_IDX_OFF_RED);
+            return (OffPoint) getPoint(BoardModel.POINT_IDX_OFF_RED);
         }else{
-            return getPoint(BoardModel.POINT_IDX_OFF_WHITE);
+            return (OffPoint) getPoint(BoardModel.POINT_IDX_OFF_WHITE);
         }
     }
 
-    public BPoint getBarPoint(BColor bColor) {
+    public BarPoint getBarPoint(BColor bColor) {
         assert bColor != null;
         if(bColor==BColor.RED){
-            return getPoint(BoardModel.POINT_IDX_BAR_RED);
+            return (BarPoint) getPoint(BoardModel.POINT_IDX_BAR_RED);
         }else{
-            return getPoint(BoardModel.POINT_IDX_BAR_WHITE);
+            return (BarPoint) getPoint(BoardModel.POINT_IDX_BAR_WHITE);
         }
     }
 }

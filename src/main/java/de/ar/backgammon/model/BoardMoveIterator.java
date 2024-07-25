@@ -1,7 +1,7 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.BPoint;
+import de.ar.backgammon.points.BPoint;
 
 import java.util.Iterator;
 

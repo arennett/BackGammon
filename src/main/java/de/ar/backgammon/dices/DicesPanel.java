@@ -61,7 +61,7 @@ public class DicesPanel extends JPanel implements ActionListener {
         updateComponents();
     }
     public void updateComponents(){
-        if (dc.getDicesStack().getState()== DicesStack.State.THROWN) {
+        if (dc.getDicesStack().getState()== DicesStack.State.UPDATED) {
             jbDice1.setText("["+dc.getDicesStack().getDices().dice1+"]");
             jbDice2.setText("["+dc.getDicesStack().getDices().dice2+"]");
         }else{

@@ -1,4 +1,4 @@
-package de.ar.backgammon.moves;
+package de.ar.backgammon;
 
 public class ValidationError {
     public int nr=-1;

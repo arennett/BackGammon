@@ -1,5 +1,6 @@
-package de.ar.backgammon;
+package de.ar.backgammon.points;
 
+import de.ar.backgammon.BColor;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 
@@ -9,7 +10,8 @@ import de.ar.backgammon.model.BoardModelIf;
 public class BPoint {
     private final int index;
     private final BoardModelIf bModel;
-    BColor pieceColor;
+    private BColor pieceColor;
+    private int pieceCount = 0;
     
     public BPoint(int index,BoardModelIf bModel){
         this.index = index;
@@ -35,24 +37,20 @@ public class BPoint {
         return 0;
     }
 
-
-
     public int getPieceCount() {
         return pieceCount;
     }
 
-    public void setPieceCount(int pieceCount) {
+    public void setPieceCount(int pieceCount,BColor pieceColor) {
         this.pieceCount = pieceCount;
+        this.pieceColor=pieceColor;
+        if(pieceCount > 0){
+            assert pieceColor!=null;
+        }
     }
-
-    int pieceCount = 0;
 
     public BColor getPieceColor() {
         return pieceColor;
-    }
-
-    public void setPieceColor(BColor pieceColor) {
-        this.pieceColor = pieceColor;
     }
 
 
@@ -70,7 +68,8 @@ public class BPoint {
     }
 
     public void clear() {
-        setPieceCount(0);
+        setPieceCount(0,null);
+
     }
 
     public boolean isBarPoint() {
@@ -81,7 +80,11 @@ public class BPoint {
         return getIndex()== BoardModel.POINT_IDX_OFF_WHITE || getIndex()==BoardModel.POINT_IDX_OFF_RED;
     }
 
-    public void addCount(int i) {
+    public void addCount(int i,BColor color) {
         pieceCount+=i;
+        pieceColor=color;
+        if(pieceCount > 0){
+            assert pieceColor!=null;
+        }
     }
 }

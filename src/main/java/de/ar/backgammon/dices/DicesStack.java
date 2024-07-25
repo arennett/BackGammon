@@ -13,8 +13,8 @@ public class DicesStack extends ArrayList<Integer> {
     private SequenceStack sequenceStack;
 
 
-    public enum State {READY, THROWN}
-    State state = State.READY;
+    public enum State {EMPTY, UPDATED}
+    State state = State.EMPTY;
 
     private final BoardModelIf bModel;
 
@@ -30,8 +30,7 @@ public class DicesStack extends ArrayList<Integer> {
     public void clear(){
         super.clear();
         sequenceStack.clear();
-        state = State.READY;
-
+        state = State.EMPTY;
     }
 
     public void throwDices() {
@@ -84,7 +83,7 @@ public class DicesStack extends ArrayList<Integer> {
         }
 
         sequenceStack.updateSequences(this);
-        state = State.THROWN;
+        state = State.UPDATED;
     }
 
     /**

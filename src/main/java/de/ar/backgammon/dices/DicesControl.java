@@ -75,7 +75,9 @@ public class DicesControl {
 
     public void loadDices() {
         dicesStack.dices.dice1= bModel.getDice1();
-        dicesStack.dices.dice2= bModel.getDice1();
+        dicesStack.dices.dice2= bModel.getDice2();
+        dicesStack.state= DicesStack.State.UPDATED;
+        dicesStack.update();
         dicesPanel.updateComponents();
 
     }
