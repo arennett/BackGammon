@@ -1,6 +1,7 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
@@ -35,14 +36,6 @@ public interface BoardModelIf {
 
     void setTurn(BColor bColor);
 
-    int getDice1();
-
-    void setDice1(int dice1);
-
-    int getDice2();
-
-    void setDice2(int dice2);
-
     boolean isAllPiecesAtHome(BColor pieceColor);
 
     int getHomePiecesCount(BColor pieceColor);
@@ -52,4 +45,11 @@ public interface BoardModelIf {
     OffPoint getOffPoint(BColor bColor);
 
     BarPoint getBarPoint(BColor bColor);
+
+    Dices getDices();
+
+    void setDices(Dices dices);
+
+    void setDice1(int count);
+    void setDice2(int count);
 }

@@ -64,6 +64,7 @@ public class GameControl {
      */
     public boolean moveRequest(Move move) {
         if (move.to== BoardModel.POINT_IDX_OFF) {
+            // if off move delegate to the players offpoint
             BPoint bfrom= boardModel.getPoint(move.from);
             if (bfrom.getPieceColor()==BColor.RED) {
                 move.to=BoardModel.POINT_IDX_OFF_RED;

@@ -47,9 +47,9 @@ public class BoardModelWriter implements BoardModelWriterIf{
 
         bufferedWriter.write("turn,"+bmodel.getTurn().getShortString());
         bufferedWriter.newLine();
-        bufferedWriter.write("dice1,"+bmodel.getDice1());
+        bufferedWriter.write("dice1,"+bmodel.getDices().dice1);
         bufferedWriter.newLine();
-        bufferedWriter.write("dice2,"+bmodel.getDice2());
+        bufferedWriter.write("dice2,"+bmodel.getDices().dice2);
         bufferedWriter.newLine();
 
         bufferedWriter.close();

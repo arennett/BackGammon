@@ -61,9 +61,12 @@ public class DicesPanel extends JPanel implements ActionListener {
         updateComponents();
     }
     public void updateComponents(){
+        int dice1=dc.getDicesStack().getDices().dice1;
+        int dice2=dc.getDicesStack().getDices().dice2;
+
         if (dc.getDicesStack().getState()== DicesStack.State.UPDATED) {
-            jbDice1.setText("["+dc.getDicesStack().getDices().dice1+"]");
-            jbDice2.setText("["+dc.getDicesStack().getDices().dice2+"]");
+            jbDice1.setText("["+(dice1>0?dice1:" ") +"]");
+            jbDice2.setText("["+(dice2>0?dice2:" ") +"]");
         }else{
             jbDice1.setText("[ ]");
             jbDice2.setText("[ ]");
@@ -77,7 +80,7 @@ public class DicesPanel extends JPanel implements ActionListener {
                 sb.append("[  ]");
             }
         }
-        for (PipSequence ps: dc.dicesStack.getSequenceStack().getPipSequences()){
+        for (PipSequence ps: dc.getDicesStack().getSequenceStack().getPipSequences()){
             sb.append("\n"+ps);
         }
 
@@ -95,6 +98,7 @@ public class DicesPanel extends JPanel implements ActionListener {
             try{
                 int pip =Integer.parseInt(s);
                 dc.getDicesStack().getDices().dice1=pip;
+                dc.getDicesStack().update();
                 updateComponents();
             }catch (NumberFormatException ne){
                 //
@@ -105,6 +109,7 @@ public class DicesPanel extends JPanel implements ActionListener {
             try{
                 int pip =Integer.parseInt(s);
                 dc.getDicesStack().getDices().dice2=pip;
+                dc.getDicesStack().update();
                 updateComponents();
             }catch (NumberFormatException ne){
                 //do noting

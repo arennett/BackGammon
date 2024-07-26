@@ -6,12 +6,15 @@ import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * holds the dices stack for the game and updates the components of the dices panel
+ */
 public class DicesControl {
     private static final Logger logger = LoggerFactory.getLogger(DicesControl.class);
     private final Game game;
     private final BoardModelIf bModel;
 
-    DicesStack dicesStack;
+    private DicesStack dicesStack;
 
     private DicesPanel dicesPanel;
     private GameControl gameControl;
@@ -23,15 +26,17 @@ public class DicesControl {
     }
 
     /**
-     * clear pip stack and pip sequences
+     * clear dices stack and update components
      */
     public void clear() {
         dicesStack.clear();
-
         dicesPanel.updateComponents();
     }
 
 
+    /**
+     * throw dices and update components
+     */
     public void throwDices() {
         if (!gameControl.isRunning()) {
             game.message_error("start a new game!");
@@ -42,22 +47,10 @@ public class DicesControl {
 
     }
 
-    /**
-     * update the stack after a dices roll
-     * followed by updating the pip sequences
-     */
-    public void updateStack() {
-        dicesStack.update();
-        dicesPanel.updateComponents();
-        gameControl.dicesThrown();
-    }
-
+    /*setter and getter*******************************************************************/
     public void setGameControl(GameControl gameControl) {
         this.gameControl = gameControl;
     }
-
-
-    /*setter and getter*******************************************************************/
 
     public DicesStack getDicesStack() {
         return dicesStack;
@@ -72,18 +65,16 @@ public class DicesControl {
         dicesPanel.updateComponents();
     }
 
-
+    /**
+     * load dices from the model into the dicesStack
+     */
     public void loadDices() {
-        dicesStack.dices.dice1= bModel.getDice1();
-        dicesStack.dices.dice2= bModel.getDice2();
-        dicesStack.state= DicesStack.State.UPDATED;
-        dicesStack.update();
+         dicesStack.loadDices(bModel.getDices());
         dicesPanel.updateComponents();
 
     }
 
     public void saveDices() {
-        bModel.setDice1(dicesStack.dices.dice1);
-        bModel.setDice2(dicesStack.dices.dice2);
+        bModel.setDices(dicesStack.dices);
     }
 }

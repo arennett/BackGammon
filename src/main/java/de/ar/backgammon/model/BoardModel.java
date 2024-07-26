@@ -1,6 +1,7 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
@@ -29,8 +30,7 @@ public class BoardModel implements BoardModelIf {
     Vector<BPoint> points = new Vector<>();
 
     private BColor turn = BColor.WHITE;
-    int dice1 = 0;
-    int dice2 = 0;
+    Dices dices = new Dices(0,0);
 
     int startPointSelectedIdx = -1;
     int pointSelectedIdx = -1;
@@ -167,26 +167,6 @@ public class BoardModel implements BoardModelIf {
     }
 
     @Override
-    public int getDice1() {
-        return dice1;
-    }
-
-    @Override
-    public void setDice1(int dice1) {
-        this.dice1 = dice1;
-    }
-
-    @Override
-    public int getDice2() {
-        return dice2;
-    }
-
-    @Override
-    public void setDice2(int dice2) {
-        this.dice2 = dice2;
-    }
-
-    @Override
     public boolean isAllPiecesAtHome(BColor pieceColor) {
         int piecesOnBoard = getPiecesCount(pieceColor);
         int piecesAtHome = getHomePiecesCount(pieceColor);
@@ -250,5 +230,26 @@ public class BoardModel implements BoardModelIf {
         }else{
             return (BarPoint) getPoint(BoardModel.POINT_IDX_BAR_WHITE);
         }
+    }
+
+    @Override
+    public Dices getDices() {
+        return dices;
+    }
+
+    @Override
+    public void setDices(Dices dices) {
+        this.dices=dices;
+    }
+
+    @Override
+    public void setDice1(int count) {
+        getDices().dice1=count;
+    }
+
+    @Override
+    public void setDice2(int count) {
+        getDices().dice2=count;
+
     }
 }

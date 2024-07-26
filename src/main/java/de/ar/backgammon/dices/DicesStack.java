@@ -7,6 +7,16 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Random;
 
+/**
+ * Dices stack is a list of 2..4 pips
+ * if the to dices different it has this 2 pips
+ * if we have a double score it has 4 pips
+ * so  [3] and [4] leads to [3] [4] on stack
+ * and [3] and [3] leads to [3] [3] [3] [3] on stack
+ * further on it contains the SequenceStack
+ * which contains all combinations of possible sequences
+ * the sequence stack is updated when the dicesstack is updated
+ */
 public class DicesStack extends ArrayList<Integer> {
     private static final Logger logger = LoggerFactory.getLogger(DicesStack.class);
     Dices dices;
@@ -33,6 +43,19 @@ public class DicesStack extends ArrayList<Integer> {
         state = State.EMPTY;
     }
 
+    /**
+     * load dices into the stack
+     * @param dices
+     */
+    public void loadDices(Dices dices) {
+        this.dices=dices;
+        state= DicesStack.State.UPDATED;
+        update();
+    }
+
+    /**
+     * throw dices and update the stack
+     */
     public void throwDices() {
         clear();
         dices.dice1=random.nextInt(6) + 1;
@@ -40,11 +63,18 @@ public class DicesStack extends ArrayList<Integer> {
         update();
     }
 
+    /**
+     * check if the range of a move is on the stack
+     * @param move_range
+     * @param count
+     * @return true when the move range is a pip (1..6) and all pieces(count) are on stack
+     */
     public boolean isMoveOnStack(int move_range, int count) {
         boolean allOnStack = true;
         for (int i = 0; i < count; i++) {
-            if (!contains(move_range)) {
+            if (!(i< size() && get(i)==move_range)) {
                 allOnStack = false;
+                break;
             }
         }
         logger.debug("move range:{} {}x {}"
@@ -59,6 +89,10 @@ public class DicesStack extends ArrayList<Integer> {
 
         if (bModel.isAllPiecesAtHome(bModel.getTurn())) {
             logger.debug("all at home, special stack handling");
+            /*
+             if the dice is greater than the highest piece
+             the dice is replaced by the pip of the highest
+             */
             ArrayList<Integer> max = bModel.getHomePointMaxDuo(bModel.getTurn());
             int maxPoint1 = max.get(0);
             int maxPoint2 = max.get(1);
@@ -75,9 +109,10 @@ public class DicesStack extends ArrayList<Integer> {
                 }
             }
         }
-        add(dice1);
-        add(dice2);
-        if (dice1 == dice2) {
+        if (dice1>0) add(dice1);
+        if (dice2>0) add(dice2);
+        if (dice1 == dice2 && dice1> 0 && dice2 > 0) {
+            // double score ,no we have 4 pips on stack
             add(dice1);
             add(dice2);
         }
