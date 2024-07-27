@@ -100,6 +100,7 @@ public class DicesPanel extends JPanel implements ActionListener {
                 dc.getDicesStack().getDices().dice1=pip;
                 dc.getDicesStack().update();
                 updateComponents();
+                dc.dicesThrown();
             }catch (NumberFormatException ne){
                 //
             }
@@ -111,6 +112,7 @@ public class DicesPanel extends JPanel implements ActionListener {
                 dc.getDicesStack().getDices().dice2=pip;
                 dc.getDicesStack().update();
                 updateComponents();
+                dc.dicesThrown();
             }catch (NumberFormatException ne){
                 //do noting
             }

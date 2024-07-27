@@ -44,6 +44,7 @@ public class DicesControl {
         }
         dicesStack.throwDices();
         dicesPanel.updateComponents();
+        gameControl.dicesThrown();
 
     }
 
@@ -70,11 +71,20 @@ public class DicesControl {
      */
     public void loadDices() {
          dicesStack.loadDices(bModel.getDices());
-        dicesPanel.updateComponents();
+         dicesPanel.updateComponents();
+         dicesThrown();
 
     }
 
     public void saveDices() {
         bModel.setDices(dicesStack.dices);
+    }
+
+    /**
+     * called after one or two dices were thrown,
+     * it's a callback by the dices stack
+     */
+    public void dicesThrown() {
+        gameControl.dicesThrown();
     }
 }

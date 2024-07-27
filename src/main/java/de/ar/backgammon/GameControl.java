@@ -293,9 +293,12 @@ public class GameControl {
         } else {
             boardModel.setTurn(BColor.RED);
         }
+        game.message("Turn is "+getTurn());
+        dicesControl.getDicesStack().getDices().clear();
         dicesControl.clear();
         logger.debug("################## TURN IS {} ############################",getTurn());
         buttonPanel.updateComponents();
+
     }
 
     /**
@@ -419,7 +422,6 @@ public class GameControl {
         // switch back
         if (!isMovePossible()) {
             game.message_error("no possible moves found for "+getTurn()+ ", please switch turn");
-            switch_turn();
         }else{
             game.message("move is possible");
         }

@@ -18,7 +18,7 @@ public enum BColor {
         return null;
     }
 
-    public String getString() {
+    public String toString() {
         return STR_COLORS[this.ordinal()];
     }
 

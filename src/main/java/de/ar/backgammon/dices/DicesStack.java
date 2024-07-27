@@ -72,7 +72,7 @@ public class DicesStack extends ArrayList<Integer> {
     public boolean isMoveOnStack(int move_range, int count) {
         boolean allOnStack = true;
         for (int i = 0; i < count; i++) {
-            if (!(i< size() && get(i)==move_range)) {
+            if (!contains(move_range)) {
                 allOnStack = false;
                 break;
             }

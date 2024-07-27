@@ -34,7 +34,7 @@ public class MoveValidator implements MoveValidatorIf{
 
         if (bpFrom.getPieceColor() != turn){
             err.nr=1;
-            err.userMessage ="Wrong color! Turn is "+turn.getString();
+            err.userMessage ="Wrong color! Turn is "+turn;
             logger.debug("err<{}> move<{}> <{}>",err.nr,move,err.userMessage);
             return false;
         }
