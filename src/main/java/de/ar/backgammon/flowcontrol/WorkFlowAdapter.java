@@ -1,34 +1,36 @@
 package de.ar.backgammon.flowcontrol;
 
-import de.ar.backgammon.model.BoardModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Vector;
+
+import static de.ar.backgammon.flowcontrol.StepSequenceIf.*;
 
 public class WorkFlowAdapter implements WorkFlowIf {
     static Logger logger = LoggerFactory.getLogger(WorkFlowAdapter.class);
+    private int initalSeqId;
+    private final int initalSeqId1;
     public HashMap<String, Object> wmap = new HashMap<>();
     private HashMap<Integer, StepIf> smap = new HashMap<>();
-    private Vector<Integer> svec = new Vector<>();
+    private HashMap<Integer,StepSequenceIf> seqHash = new HashMap<>();
 
-    int currentStepIdx;
-    boolean finished = false;
+    int currentStepSeqIdx;
 
-    {
-        finished = true;
+    public WorkFlowAdapter(int initalSeqId) {
+        initalSeqId1 = initalSeqId;
     }
-
     public WorkFlowAdapter() {
-        currentStepIdx = -1;
+        initalSeqId1 = SEQID_INITIALZED;
     }
 
     @Override
     public void registerStep(StepIf step, int stepId) {
         smap.put(stepId, step);
-        svec.add(stepId);
+    }
+    public void addStepSequence(int stepId,int seqId,int nextSeqId){
+       StepSequence seq = new StepSequence(stepId,seqId,nextSeqId);
+       seqHash.put(seqId,seq);
     }
 
     @Override
@@ -36,66 +38,61 @@ public class WorkFlowAdapter implements WorkFlowIf {
         return smap.get(stepId);
     }
 
-    public StepIf getCurrentStep() {
-        return smap.get(getCurrentStepId());
-    }
 
     @Override
     public int getCurrentStepId() {
-        return svec.get(currentStepIdx);
+        return seqHash.get(currentStepSeqIdx).getStepId();
     }
 
         @Override
     public boolean initialize() {
-        finished = false;
-        currentStepIdx = -1;
-        return false;
+        currentStepSeqIdx = SEQID_INITIALZED;
+        return true;
+    }
+
+
+    /**
+     * do next checks the exit condition of the current step,and the entry condition
+     * of the next step. if both true it switches to the first respectively the next step sequence
+     * doAction of the step is not called
+     * @return true if switchted to next stepsequence
+     */
+    @Override
+    public boolean doNext() {
+        return doNext(true,true);
     }
 
     /**
      * do next checks the exit condition of the current step,and the entry condition
-     * of the next step. if both true it switches to the first respectively the next step
+     * of the next step. if both true it switches to the first respectively the next step sequence
      * doAction of the step is not called
-     * @return
+     * @return true if switchted to next stepsequence
      */
-    @Override
-    public boolean doNext() {
-        if (finished) {
+         @Override
+         public boolean doNext(boolean checkExit,boolean checkEntry) {
+        if (isFinished()) {
             return false;
         }
-        int nextStepIdx;
-        if (currentStepIdx < 0) {
-            nextStepIdx = 0;
+        int nextStepSeqIdx=-1;
+        if (currentStepSeqIdx ==SEQID_INITIALZED) {
+            nextStepSeqIdx = initalSeqId;
         } else {
-            StepIf step = getStep(currentStepIdx);
-            if (!step.exitCondition()){
-                logger.error("exit conditon of step<{}> failed",step);
-                return false;
-            }
-            nextStepIdx = currentStepIdx + 1;
+            StepSequenceIf scurseq = getCurrentStepSequence();
+            nextStepSeqIdx = scurseq.getNextSeqId();
         }
-        StepIf step = getStep(nextStepIdx);
-        if (step.entryCondition()) {
-            currentStepIdx = nextStepIdx;
-            if (currentStepIdx >= svec.size()) {
-                finished = true;
-            }
-
-        }else{
-            logger.error("entry conditon of step<{}> failed",step);
-            return false;
-        }
+        doNext(nextStepSeqIdx,true,true)
 
         return false;
 }
 
-    public boolean doNext(int _stepId,boolean checkExit,boolean checkEntry) {
-        if (finished) {
+    @Override
+    public boolean doNext(int _stepSeqId, boolean checkExit, boolean checkEntry) {
+        if (isFinished()) {
+            logger.error("workflow is finished");
             return false;
         }
-        int nextStepIdx=_stepId;
-        if (currentStepIdx > -1) {
-            StepIf currstep = getStep(currentStepIdx);
+        if (currentStepSeqIdx > SEQID_INITIALZED) {
+            StepIf currstep = getStep(currentStepSeqIdx);
             if (checkExit && !currstep.exitCondition()){
                 logger.error("exit conditon of current step<{}> failed",currstep);
                 return false;
@@ -103,33 +100,38 @@ public class WorkFlowAdapter implements WorkFlowIf {
         }
 
         if (!checkEntry){
-            currentStepIdx = nextStepIdx;
-            if (currentStepIdx >= svec.size()) {
-                finished = true;
-            }
+            currentStepSeqIdx = _stepSeqId;
             return true;
         }
 
-        StepIf step = getStep(nextStepIdx);
-        if (step.entryCondition()) {
-            currentStepIdx = nextStepIdx;
-            if (currentStepIdx >= svec.size()) {
-                finished = true;
-            }
+        StepIf nextStep = getStep(_stepSeqId);
+        if (nextStep.entryCondition()) {
+            currentStepSeqIdx = _stepSeqId;
+            logger.error("switch to seqId<{}> step<{}> failed",currentStepSeqIdx,nextStep);
+            return true;
         }else{
-            logger.error("entry conditon of step<{}> failed",step);
+            logger.error("entry conditon of step<{}> failed",nextStep);
             return false;
         }
 
-        return false;
     }
-    @Override
-    public boolean isFinished() {
-        return finished;
+
+    private StepSequenceIf getStepSequence(int stepSeqIdx) {
+        return seqHash.get(stepSeqIdx);
+    }
+
+    private StepSequenceIf getCurrentStepSequence() {
+        return seqHash.get(currentStepSeqIdx);
+    }
+
+    public StepIf getCurrentStep() {
+        return getStep(getCurrentStepSequence().getStepId());
     }
 
     @Override
-    public Iterator<Integer> iterator() {
-        return svec.iterator();
+    public boolean isFinished() {
+       return currentStepSeqIdx == StepSequenceIf.SEQID_FINISHED;
     }
+
+
 }

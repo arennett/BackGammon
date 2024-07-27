@@ -1,9 +1,14 @@
 package de.ar.backgammon.flowcontrol;
 
 public interface StepIf {
-    public boolean entryCondition();
+    boolean entryCondition();
 
-    public boolean doAction();
+    boolean doAction();
 
-    public boolean exitCondition();
+    boolean exitCondition();
+
+    String getName();
+
+    int getStepId();
+
 }
