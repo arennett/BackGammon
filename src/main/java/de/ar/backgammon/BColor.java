@@ -17,6 +17,14 @@ public enum BColor {
         }
         return null;
     }
+    public static BColor getOtherColor(BColor col) {
+        if(col==WHITE){
+            return RED;
+        }else if(col==RED){
+            return WHITE;
+        }
+        return null;
+    }
 
     public String toString() {
         return STR_COLORS[this.ordinal()];

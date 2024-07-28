@@ -1,10 +1,10 @@
 package de.ar.backgammon.moves;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.model.BoardMoveIterator;
+import de.ar.backgammon.model.OccupiedPointIterator;
+import de.ar.backgammon.model.PointIterator;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.dices.Dices;
-import de.ar.backgammon.GameControl;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,23 +44,24 @@ public class MovesGenerator implements MovesGeneratorIf{
                 }else{
                     move=new Move(barPoint.getIndex(), barPoint.getIndex()-dice);
                 }
-                valid = moveValidator.isValid(move,turn);
+                valid = moveValidator.isValid(move,turn,1);
                 if (valid) {
                     logger.debug("generate move: {}",move);
                     moves.add(move);
                 }
             }
         }else {
-            BoardMoveIterator  pointItFrom= new BoardMoveIterator(boardModel,turn);
+            OccupiedPointIterator pointItFrom= new OccupiedPointIterator(boardModel,turn);
             while (pointItFrom.hasNext()){
                 BPoint fromPoint = pointItFrom.next();
-                BoardMoveIterator  pointItTo= new BoardMoveIterator(boardModel,turn);
+                PointIterator pointItTo= new PointIterator(boardModel,turn);
+                pointItTo.setIdx(fromPoint.getIndex());
                 while (pointItTo.hasNext()){
                     BPoint toPoint = pointItTo.next();
                     if (fromPoint!=toPoint) {
                         Move move= new Move(fromPoint.getIndex(),toPoint.getIndex());
 
-                        boolean valid = moveValidator.isValid(move, turn);
+                        boolean valid = moveValidator.isValid(move, turn,1);
                         if (valid) {
                             logger.debug("generate move: {}",move);
                             moves.add(move);

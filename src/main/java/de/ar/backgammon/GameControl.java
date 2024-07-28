@@ -279,7 +279,7 @@ public class GameControl {
      * @return
      */
     public boolean validateMove(Move move) {
-        boolean ret=moveValidator.isValid(move,getTurn());
+        boolean ret=moveValidator.isValid(move,getTurn(),boardModel.getStartPointSelectedPiecesCount());
         game.message_error(moveValidator.err.userMessage);
         return ret;
     }
@@ -298,6 +298,9 @@ public class GameControl {
         dicesControl.clear();
         logger.debug("################## TURN IS {} ############################",getTurn());
         buttonPanel.updateComponents();
+        if (isMovePossible()){
+            game.message_error(" no further moves possible, please switch turn");
+        }
 
     }
 
@@ -307,17 +310,10 @@ public class GameControl {
      * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
-        BarPoint barPoint= boardModel.getBarPoint(getTurn());
-        if (!barPoint.isEmpty()) {
-            MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,
-                    new MoveValidator(boardModel,dicesControl.getDicesStack()));
-            ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());
-            valid = !moves.isEmpty();
-
-        }else{
-            //TODO  check if off moves possible
-            valid=true;
-        }
+        MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,
+                new MoveValidator(boardModel,dicesControl.getDicesStack()));
+        ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());
+        valid = !moves.isEmpty();
         return valid;
     }
 

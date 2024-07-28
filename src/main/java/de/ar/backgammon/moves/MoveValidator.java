@@ -26,7 +26,7 @@ public class MoveValidator implements MoveValidatorIf{
     }
 
     @Override
-    public boolean isValid(Move move, BColor turn) {
+    public boolean isValid(Move move, BColor turn,int spc) {
         boolean ret = false;
 
         BPoint bpFrom = boardModel.getPoint(move.from);
@@ -39,21 +39,21 @@ public class MoveValidator implements MoveValidatorIf{
             return false;
         }
 
-        int spc;
+        int lspc;
         if (move.isBarMove()) {
-            spc = 1;
+            lspc = 1;
 
         }else{
-            spc = boardModel.getStartPointSelectedPiecesCount();
+            lspc = spc;
         }
 
-        if (spc < 1) {
+        if (lspc < 1) {
             err.nr=2;
             err.userMessage ="No pieces selected";
             logger.debug("err<{}> move<{}> <{}>",err.nr,move,err.userMessage);
             return false;
         }
-        if (spc > 4) {
+        if (lspc > 4) {
             err.nr=3;
             err.userMessage ="You can only select up to 4 pieces";
             logger.debug("err<{}> move<{}> <{}>",err.nr,move,err.userMessage);
@@ -88,7 +88,7 @@ public class MoveValidator implements MoveValidatorIf{
             }
         }
 
-        ret = pointValidator.isValid(bpTo, spc,turn);
+        ret = pointValidator.isValid(bpTo, lspc,turn);
 
         if (!ret) {
             logger.error("unvalid point");
@@ -117,12 +117,12 @@ public class MoveValidator implements MoveValidatorIf{
         int range = move.getRange(turn);
         logger.debug("check dices for move range: {}",range);
 
-        ArrayList<PipSequence> psArray = dicesStack.getSequenceStack().getValidSequences(move, spc, turn);
+        ArrayList<PipSequence> psArray = dicesStack.getSequenceStack().getValidSequences(move, lspc, turn);
         if (psArray.isEmpty()) {
             // maybe only one pip on stack
             logger.debug("no sequences found");
             if (range <= 6) {
-                ret = dicesStack.isMoveOnStack(range, spc);
+                ret = dicesStack.isMoveOnStack(range, lspc);
                 if (!ret) {
                      err.nr=8;
                     err.userMessage ="Not allowed! Look at the dices.";

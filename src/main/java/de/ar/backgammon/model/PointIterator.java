@@ -1,7 +1,10 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.GameControl;
 import de.ar.backgammon.points.BPoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 
@@ -10,12 +13,13 @@ import java.util.Iterator;
  * from start board to the homeboard of a player(bColor)
  * the bar is discounted
  */
-public class BoardMoveIterator implements Iterator<BPoint> {
-    private final BoardModelIf boardModel;
-    private final BColor bColor;
+public class PointIterator implements Iterator<BPoint> {
+    private static final Logger logger = LoggerFactory.getLogger(PointIterator.class);
+    protected  BoardModelIf boardModel;
+    protected  BColor bColor;
     int idx = 0;
 
-    public BoardMoveIterator(BoardModelIf boardModel, BColor bColor) {
+    public PointIterator(BoardModelIf boardModel, BColor bColor) {
         this.boardModel = boardModel;
 
         this.bColor = bColor;
@@ -25,6 +29,17 @@ public class BoardMoveIterator implements Iterator<BPoint> {
             idx = BoardModel.POINT_IDX_LAST_BOARD_POINT+1;
         }
 
+    }
+
+
+    /**
+     * create a pointiterator with the current index
+     * @param pit
+     */
+    public PointIterator(PointIterator pit) {
+        this.idx= pit.idx;
+        this.boardModel=pit.boardModel;
+        this.bColor=pit.bColor;
     }
 
     @Override
@@ -40,7 +55,7 @@ public class BoardMoveIterator implements Iterator<BPoint> {
     public BPoint next() {
         BPoint point = null;
         if (hasNext()) {
-            if (bColor == BColor.RED) {
+            if (bColor == BColor.WHITE) {
                 idx++;
             } else {
                 idx--;
@@ -49,5 +64,27 @@ public class BoardMoveIterator implements Iterator<BPoint> {
         }
 
         return point;
+    }
+
+
+    public BoardModelIf getBoardModel() {
+        return boardModel;
+    }
+
+    public BColor getbColor() {
+        return bColor;
+    }
+
+    public int getIdx() {
+        return idx;
+    }
+
+    public void setIdx(int index) {
+        this.idx=index;
+    }
+
+    @Override
+    public String toString() {
+        return "bcolor: " +bColor+" idx: "+idx;
     }
 }
