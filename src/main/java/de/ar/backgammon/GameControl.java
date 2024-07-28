@@ -309,7 +309,8 @@ public class GameControl {
         boolean valid = false;
         BarPoint barPoint= boardModel.getBarPoint(getTurn());
         if (!barPoint.isEmpty()) {
-            MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,this);
+            MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,
+                    new MoveValidator(boardModel,dicesControl.getDicesStack()));
             ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());
             valid = !moves.isEmpty();
 

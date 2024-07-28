@@ -10,12 +10,12 @@ import java.util.Iterator;
  * from start board to the homeboard of a player(bColor)
  * the bar is discounted
  */
-class BoardMoveIterator implements Iterator<BPoint> {
-    private final BoardModel boardModel;
+public class BoardMoveIterator implements Iterator<BPoint> {
+    private final BoardModelIf boardModel;
     private final BColor bColor;
     int idx = 0;
 
-    public BoardMoveIterator(BoardModel boardModel, BColor bColor) {
+    public BoardMoveIterator(BoardModelIf boardModel, BColor bColor) {
         this.boardModel = boardModel;
 
         this.bColor = bColor;
