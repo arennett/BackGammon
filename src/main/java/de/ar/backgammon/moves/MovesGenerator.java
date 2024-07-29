@@ -6,6 +6,7 @@ import de.ar.backgammon.model.PointIterator;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,18 @@ public class MovesGenerator implements MovesGeneratorIf{
 
         this.moveValidator = moveValidator;
     }
+
+    /**
+     * generates all possible moves for the given turn and dices
+     * the dicesstack is part of the validator
+     * @param turn
+     * @return
+     */
     @Override
-    public ArrayList<Move> getValidMoves(Dices dices, BColor turn) {
+    public ArrayList<Move> getValidMoves(BColor turn) {
         ArrayList<Move> moves = new ArrayList<>();
         BPoint barPoint= boardModel.getBarPoint(turn);
-
+        Dices dices=moveValidator.getDicesStack().getDices();
         if (!barPoint.isEmpty()) {
             for (int dice:dices) {
                 boolean valid=false;
@@ -46,11 +54,12 @@ public class MovesGenerator implements MovesGeneratorIf{
                 }
                 valid = moveValidator.isValid(move,turn,1);
                 if (valid) {
-                    logger.debug("generate move: {}",move);
+                    logger.debug("generate (A) move: {}",move);
                     moves.add(move);
                 }
             }
         }else {
+
             OccupiedPointIterator pointItFrom= new OccupiedPointIterator(boardModel,turn);
             while (pointItFrom.hasNext()){
                 BPoint fromPoint = pointItFrom.next();
@@ -60,10 +69,9 @@ public class MovesGenerator implements MovesGeneratorIf{
                     BPoint toPoint = pointItTo.next();
                     if (fromPoint!=toPoint) {
                         Move move= new Move(fromPoint.getIndex(),toPoint.getIndex());
-
                         boolean valid = moveValidator.isValid(move, turn,1);
                         if (valid) {
-                            logger.debug("generate move: {}",move);
+                            logger.debug("generate (B) move: {}",move);
                             moves.add(move);
                         }
 

@@ -1,7 +1,8 @@
-package de.ar.backgammon.points;
+package de.ar.backgammon.validation;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.ValidationError;
+import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,7 @@ public class PointValidator implements PointValidatorIf{
 
     private static final Logger logger = LoggerFactory.getLogger(PointValidator.class);
     @Override
-    public boolean isValid(BPoint point, int spc,BColor turn) {
+    public boolean isValid(BPoint point, int spc, BColor turn) {
         logger.debug("validate point: {} ...", point);
 
         if (point.isOffPoint()) {

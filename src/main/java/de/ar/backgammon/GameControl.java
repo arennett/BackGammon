@@ -9,11 +9,10 @@ import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.model.BoardModelWriterIf;
 import de.ar.backgammon.moves.Move;
-import de.ar.backgammon.moves.MoveValidator;
+import de.ar.backgammon.validation.MoveValidator;
 import de.ar.backgammon.moves.MovesGenerator;
 import de.ar.backgammon.moves.MovesGeneratorIf;
 import de.ar.backgammon.points.BPoint;
-import de.ar.backgammon.points.BarPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -312,7 +311,7 @@ public class GameControl {
         boolean valid = false;
         MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,
                 new MoveValidator(boardModel,dicesControl.getDicesStack()));
-        ArrayList<Move> moves=movesGenerator.getValidMoves(dicesControl.getDicesStack().getDices(),getTurn());
+        ArrayList<Move> moves=movesGenerator.getValidMoves(getTurn());
         valid = !moves.isEmpty();
         return valid;
     }

@@ -6,5 +6,5 @@ import de.ar.backgammon.dices.Dices;
 import java.util.ArrayList;
 
 public interface MovesGeneratorIf  {
-     ArrayList<Move> getValidMoves(Dices dices, BColor turn);
+     ArrayList<Move> getValidMoves(BColor turn);
 }

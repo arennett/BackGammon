@@ -1,11 +1,11 @@
-package de.ar.backgammon.moves;
+package de.ar.backgammon.validation;
 
 import de.ar.backgammon.*;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.dices.PipSequence;
 import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.points.BPoint;
-import de.ar.backgammon.points.PointValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,12 @@ public class MoveValidator implements MoveValidatorIf{
     }
 
     @Override
-    public boolean isValid(Move move, BColor turn,int spc) {
+    public DicesStack getDicesStack(){
+        return this.dicesStack;
+    }
+
+    @Override
+    public boolean isValid(Move move, BColor turn, int spc) {
         boolean ret = false;
 
         BPoint bpFrom = boardModel.getPoint(move.from);

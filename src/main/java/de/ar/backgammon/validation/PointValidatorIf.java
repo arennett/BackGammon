@@ -1,4 +1,4 @@
-package de.ar.backgammon.points;
+package de.ar.backgammon.validation;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.points.BPoint;

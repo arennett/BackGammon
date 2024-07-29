@@ -42,6 +42,9 @@
         <Logger name="de.ar.backgammon" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
+        <Logger name="de.ar.backgammon.validation" level="error" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
 
 
     </Loggers>
