@@ -210,15 +210,19 @@ public class GameControl {
             sub_move(move, spc);
         }
 
+        game.message("piece moved : "+move);
         if (dicesControl.getDicesStack().getState() == DicesStack.State.EMPTY) {
             switch_turn();
         }else{
             if (!isMovePossible()){
                 game.message_error(" no further moves possible, please switch turn");
+            }else{
+
+                game.message_append("further moves possible...");
             }
         }
-
         boardPanel.repaint();
+
         return true;
 
     }
@@ -346,7 +350,8 @@ public class GameControl {
             bmReader.readSaveMap(boardModel);
             game.message("game loaded");
             game.message_append("turn: " + getTurn());
-            dicesControl.loadDices();
+            dicesControl.updateComponents();
+            dicesThrown();
             running = true;
         } catch (Exception ex) {
             logger.error("loadModel failed", ex);
@@ -399,7 +404,7 @@ public class GameControl {
 
     public void saveModel() {
         try {
-            dicesControl.saveDices();
+            //dicesControl.saveDices();
             bmWriter.writeSaveMap(boardModel);
             game.message("game saved");
             running = true;

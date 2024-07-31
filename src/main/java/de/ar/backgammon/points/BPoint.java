@@ -64,7 +64,9 @@ public class BPoint {
 
     @Override
     public String toString() {
-        return "(" + getIndex()+ ")";
+        String pcol=!isEmpty()?getPieceColor().toString():"";
+
+        return "(#"+pcol+"#"+pieceCount+")[" + getIndex()+ "]";
     }
 
     public void clear() {

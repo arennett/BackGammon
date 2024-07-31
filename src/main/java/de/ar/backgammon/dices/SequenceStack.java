@@ -86,8 +86,9 @@ public class SequenceStack {
     }
 
     public void updateSequences(ArrayList<Integer> dicesStack) {
+        logger.debug("updating sequences...");
         pipSequences.clear();
-        logger.debug("updating the sequences...");
+
         PipSequence p;
         if (dicesStack.size() == 1) {
             //no sequences
@@ -124,6 +125,7 @@ public class SequenceStack {
             pipSequences.add(p);
             logSequences();
         }
+
     }
     public void logSequences(){
         logger.debug("PipSequences: --------------------");

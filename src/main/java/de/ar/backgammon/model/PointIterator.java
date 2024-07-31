@@ -1,7 +1,6 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.GameControl;
 import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,16 +16,21 @@ public class PointIterator implements Iterator<BPoint> {
     private static final Logger logger = LoggerFactory.getLogger(PointIterator.class);
     protected  BoardModelIf boardModel;
     protected  BColor bColor;
+
+
+    private final int minPointIdx;
+    private final int maxPointIdx;
     int idx = 0;
 
-    public PointIterator(BoardModelIf boardModel, BColor bColor) {
+    public PointIterator(BoardModelIf boardModel, BColor bColor,int minPointIdx,int maxPointIdx) {
         this.boardModel = boardModel;
-
         this.bColor = bColor;
+        this.minPointIdx = minPointIdx;
+        this.maxPointIdx = maxPointIdx;
         if (bColor == BColor.WHITE) {
-            idx = BoardModel.POINT_IDX_FIRST_BOARD_POINT-1;
+            idx = minPointIdx-1;
         } else {
-            idx = BoardModel.POINT_IDX_LAST_BOARD_POINT+1;
+            idx = this.maxPointIdx +1;
         }
 
     }
@@ -38,6 +42,8 @@ public class PointIterator implements Iterator<BPoint> {
      */
     public PointIterator(PointIterator pit) {
         this.idx= pit.idx;
+        this.minPointIdx =pit.getMinPointIdx();
+        this.maxPointIdx =pit.getMaxPointIdx();
         this.boardModel=pit.boardModel;
         this.bColor=pit.bColor;
     }
@@ -45,9 +51,9 @@ public class PointIterator implements Iterator<BPoint> {
     @Override
     public boolean hasNext() {
         if (bColor == BColor.WHITE) {
-            return idx + 1 <= BoardModel.POINT_IDX_LAST_BOARD_POINT;
+            return idx + 1 <= maxPointIdx;
         } else {
-            return idx - 1 >= BoardModel.POINT_IDX_FIRST_BOARD_POINT;
+            return idx - 1 >= minPointIdx;
         }
     }
 
@@ -81,6 +87,18 @@ public class PointIterator implements Iterator<BPoint> {
 
     public void setIdx(int index) {
         this.idx=index;
+    }
+
+    public void setbColor(BColor bColor) {
+        this.bColor = bColor;
+    }
+
+    public int getMinPointIdx() {
+        return minPointIdx;
+    }
+
+    public int getMaxPointIdx() {
+        return maxPointIdx;
     }
 
     @Override

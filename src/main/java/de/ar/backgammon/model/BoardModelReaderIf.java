@@ -6,9 +6,14 @@ import de.ar.backgammon.model.BoardModelIf;
 import java.io.IOException;
 
 public interface BoardModelReaderIf {
-    void read(String modelName, BoardModelIf bmodel) throws IOException, BException;
+
+    void readFile(String fileName, BoardModelIf bModel) throws IOException, BException;
+
+    void readModel(BoardModelIf bmodel, String modelName) throws IOException, BException;
+
+    void readTestModel(BoardModelIf bmodel, String modelName) throws IOException, BException;
 
     void readSetupMap(BoardModelIf bmodel) throws IOException, BException;
 
-    void readSaveMap(BoardModelIf boardModel)throws IOException, BException;
+    void readSaveMap(BoardModelIf bmodel) throws IOException, BException;
 }

@@ -2,6 +2,7 @@ package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.dices.Dices;
+import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
@@ -52,4 +53,6 @@ public interface BoardModelIf {
 
     void setDice1(int count);
     void setDice2(int count);
+
+    DicesStack getDicesStack();
 }

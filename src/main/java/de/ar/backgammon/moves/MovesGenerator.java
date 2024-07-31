@@ -1,11 +1,9 @@
 package de.ar.backgammon.moves;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.model.OccupiedPointIterator;
-import de.ar.backgammon.model.PointIterator;
+import de.ar.backgammon.model.*;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.dices.Dices;
-import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,10 +58,10 @@ public class MovesGenerator implements MovesGeneratorIf{
             }
         }else {
 
-            OccupiedPointIterator pointItFrom= new OccupiedPointIterator(boardModel,turn);
+            OccupiedOffBoardPointIterator pointItFrom= new OccupiedOffBoardPointIterator(boardModel,turn);
             while (pointItFrom.hasNext()){
                 BPoint fromPoint = pointItFrom.next();
-                PointIterator pointItTo= new PointIterator(boardModel,turn);
+                PointIterator pointItTo= new BoardPointsIterator(boardModel,turn);
                 pointItTo.setIdx(fromPoint.getIndex());
                 while (pointItTo.hasNext()){
                     BPoint toPoint = pointItTo.next();

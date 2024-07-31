@@ -2,6 +2,7 @@ package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.dices.Dices;
+import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
@@ -31,6 +32,7 @@ public class BoardModel implements BoardModelIf {
 
     private BColor turn = BColor.WHITE;
     Dices dices = new Dices(0,0);
+    DicesStack dicesStack;
 
     int startPointSelectedIdx = -1;
     int pointSelectedIdx = -1;
@@ -44,7 +46,8 @@ public class BoardModel implements BoardModelIf {
     }
 
     private void initModel() {
-
+        logger.debug("init model...");
+        dicesStack=new DicesStack(this);
         //0
         BarPoint wbar = new BarPoint(POINT_IDX_BAR_WHITE,this,BColor.WHITE);
         points.add(wbar);
@@ -63,6 +66,9 @@ public class BoardModel implements BoardModelIf {
         points.add(roff);
         OffPoint woff = new OffPoint(POINT_IDX_OFF_WHITE,this,BColor.WHITE);
         points.add(woff);
+
+        dicesStack.loadDices(dices);
+        logger.debug("model inited");
     }
 
     /* the nr of selected pieces by start of a move */
@@ -145,8 +151,8 @@ public class BoardModel implements BoardModelIf {
         if (startPointSelectedIdx == -1) {
             startPieceSelectedIdx = -1;
         }
-        logger.debug("set start point selected idx: {} start piece idx {} "
-                , startPointSelectedIdx, startPieceSelectedIdx);
+        //logger.debug("set start point selected idx: {} start piece idx {} "
+        //        , startPointSelectedIdx, startPieceSelectedIdx);
     }
 
 
@@ -170,7 +176,7 @@ public class BoardModel implements BoardModelIf {
     public boolean isAllPiecesAtHome(BColor pieceColor) {
         int piecesOnBoard = getPiecesCount(pieceColor);
         int piecesAtHome = getHomePiecesCount(pieceColor);
-        return  piecesAtHome==piecesOnBoard;
+        return  piecesAtHome > 0 && piecesAtHome==piecesOnBoard;
     }
 
     @Override
@@ -184,7 +190,7 @@ public class BoardModel implements BoardModelIf {
             }
 
         }
-        logger.debug("Homeboard {} has {} pieces",pieceColor,count);
+        //logger.debug("Homeboard {} has {} pieces",pieceColor,count);
         return count;
     }
 
@@ -240,16 +246,24 @@ public class BoardModel implements BoardModelIf {
     @Override
     public void setDices(Dices dices) {
         this.dices=dices;
+        dicesStack.loadDices(dices);
     }
 
     @Override
-    public void setDice1(int count) {
-        getDices().dice1=count;
+    public void setDice1(int pip) {
+        dices.dice1=pip;
+        dicesStack.loadDices(dices);
     }
 
     @Override
-    public void setDice2(int count) {
-        getDices().dice2=count;
+    public void setDice2(int pip) {
+        dices.dice2=pip;
+        dicesStack.loadDices(dices);
 
+    }
+
+    @Override
+    public DicesStack getDicesStack() {
+        return this.dicesStack;
     }
 }

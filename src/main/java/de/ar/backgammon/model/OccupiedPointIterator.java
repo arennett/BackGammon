@@ -14,16 +14,16 @@ import java.util.Iterator;
  * the bar is discounted
  */
 public class OccupiedPointIterator implements Iterator<BPoint> {
-    private static final Logger logger = LoggerFactory.getLogger(PointIterator.class);
+    private static final Logger logger = LoggerFactory.getLogger(OccupiedPointIterator.class);
     protected final BoardModelIf boardModel;
     protected final BColor bColor;
     int idx = 0;
     PointIterator pit;
 
-    public OccupiedPointIterator(BoardModelIf boardModel, BColor bColor) {
+    public OccupiedPointIterator(BoardModelIf boardModel, BColor bColor,int minPointIdx,int maxPointIdx) {
         this.boardModel = boardModel;
         this.bColor = bColor;
-        pit=new PointIterator(boardModel,bColor);
+        pit=new PointIterator(boardModel,bColor,minPointIdx,maxPointIdx);
     }
 
     /**
@@ -53,7 +53,7 @@ public class OccupiedPointIterator implements Iterator<BPoint> {
         BPoint point = null;
         if (hasNext()){
             point=getNextOccPoint(pit);
-            logger.debug("next occupied {} point {} on index: {}",point,bColor,pit.getIdx());
+            logger.debug("next occupied: {}" ,point);
         }
 
         return point;

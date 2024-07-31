@@ -22,7 +22,7 @@ public class DicesControl {
     public DicesControl(Game game, BoardModelIf bModel) {
         this.game = game;
         this.bModel = bModel;
-        this.dicesStack = new DicesStack(bModel);
+        this.dicesStack = bModel.getDicesStack();
     }
 
     /**
@@ -30,6 +30,9 @@ public class DicesControl {
      */
     public void clear() {
         dicesStack.clear();
+        updateComponents();
+    }
+    public void updateComponents() {
         dicesPanel.updateComponents();
     }
 
@@ -43,9 +46,8 @@ public class DicesControl {
             return;
         }
         dicesStack.throwDices();
-        dicesPanel.updateComponents();
-        gameControl.dicesThrown();
-
+        updateComponents();
+        dicesThrown();
     }
 
     /*setter and getter*******************************************************************/
@@ -63,12 +65,12 @@ public class DicesControl {
 
     public void removePipsFromStack(int range, int spc) {
         dicesStack.removePipsFromStack(range, spc);
-        dicesPanel.updateComponents();
+        updateComponents();
     }
 
     /**
      * load dices from the model into the dicesStack
-     */
+
     public void loadDices() {
          dicesStack.loadDices(bModel.getDices());
          dicesPanel.updateComponents();
@@ -79,6 +81,7 @@ public class DicesControl {
     public void saveDices() {
         bModel.setDices(dicesStack.dices);
     }
+     */
 
     /**
      * called after one or two dices were thrown,

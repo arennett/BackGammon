@@ -16,15 +16,15 @@ public class BoardModelReader implements BoardModelReaderIf{
 
     /**
      * read a model map and writes it into the boardModel
-     * @param modelName
+     * @param fileName
      * @param bModel
      * @throws IOException
      * @throws BException
      */
     @Override
-    public void read(String modelName, BoardModelIf bModel) throws IOException, BException {
+    public void readFile(String fileName, BoardModelIf bModel) throws IOException, BException {
         FileReader filereader;
-        filereader = new FileReader(BOARDMAP_FILENAME+modelName+".txt");
+        filereader = new FileReader(fileName);
         BufferedReader bufferedReader = new BufferedReader(filereader);
         logger.debug("reading...");
         while (bufferedReader.ready()){
@@ -84,11 +84,24 @@ public class BoardModelReader implements BoardModelReaderIf{
 
     }
 
+
+    @Override
+    public void readModel(BoardModelIf bmodel, String modelName) throws IOException, BException {
+        readFile(BOARDMAP_FILENAME+modelName+".txt",bmodel);
+    }
+    @Override
+    public void readTestModel(BoardModelIf bmodel, String modelName) throws IOException, BException {
+        readFile(BOARDMAP_TEST_FILENAME+modelName+".txt",bmodel);
+    }
+
     @Override
     public void readSetupMap(BoardModelIf bmodel) throws IOException, BException {
-        read(BOARDMAP_SETUP,bmodel);
+        readModel(bmodel,BOARDMAP_SETUP);
     }
+    @Override
     public void readSaveMap(BoardModelIf bmodel) throws IOException, BException {
-        read(BOARDMAP_SAVE,bmodel);
+        readModel(bmodel,BOARDMAP_SAVE);
     }
+
+
 }

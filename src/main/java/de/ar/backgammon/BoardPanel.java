@@ -144,7 +144,7 @@ public class BoardPanel extends JPanel
        //logger.debug("moveRequest from: {} to: {} ", pointIdxPressed,pointIdxReleased);
         boolean isMoved=gameControl.moveRequest(new Move(pointIdxPressed,pointIdxReleased));
         if (isMoved) {
-           game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
+          // game.message("piece moved from "+pointIdxPressed+ " to "+pointIdxReleased);
         }
     }
 

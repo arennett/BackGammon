@@ -48,6 +48,7 @@ public class DicesStack extends ArrayList<Integer> {
      * @param dices
      */
     public void loadDices(Dices dices) {
+        logger.debug("loading dices...");
         this.dices=dices;
         state= DicesStack.State.UPDATED;
         update();
@@ -82,7 +83,7 @@ public class DicesStack extends ArrayList<Integer> {
         return allOnStack;
     }
     public void update() {
-
+        logger.debug("updating dices...");
         clear();
         int dice1=dices.dice1;
         int dice2=dices.dice2;
@@ -119,6 +120,7 @@ public class DicesStack extends ArrayList<Integer> {
 
         sequenceStack.updateSequences(this);
         state = State.UPDATED;
+
     }
 
     /**
