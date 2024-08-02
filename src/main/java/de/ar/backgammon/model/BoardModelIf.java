@@ -41,7 +41,9 @@ public interface BoardModelIf {
 
     int getHomePiecesCount(BColor pieceColor);
 
-    ArrayList<Integer> getHomePointMaxDuo(BColor bcolor);
+    ArrayList<Integer> getMinHomePipArray(BColor bcolor);
+
+    ArrayList<Integer> getMaxHomePipArray(BColor bcolor);
 
     OffPoint getOffPoint(BColor bColor);
 

@@ -9,10 +9,10 @@ import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.model.BoardModelWriterIf;
 import de.ar.backgammon.moves.Move;
-import de.ar.backgammon.validation.MoveValidator;
 import de.ar.backgammon.moves.MovesGenerator;
 import de.ar.backgammon.moves.MovesGeneratorIf;
 import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.validation.MoveValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

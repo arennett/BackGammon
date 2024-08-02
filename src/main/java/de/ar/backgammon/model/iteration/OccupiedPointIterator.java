@@ -1,6 +1,7 @@
-package de.ar.backgammon.model;
+package de.ar.backgammon.model.iteration;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

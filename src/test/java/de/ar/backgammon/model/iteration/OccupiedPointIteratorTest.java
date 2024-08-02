@@ -1,22 +1,38 @@
-package de.ar.backgammon.model;
+package de.ar.backgammon.model.iteration;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.BException;
+import de.ar.backgammon.model.BoardModel;
+import de.ar.backgammon.model.BoardModelIf;
+import de.ar.backgammon.model.BoardModelReader;
+import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.points.BPoint;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class OccupiedPointIteratorTest {
+    static Logger logger = LoggerFactory.getLogger(OccupiedPointIteratorTest.class);
     OccupiedPointIterator opitWhite;
     OccupiedPointIterator opitRed;
+    static BoardModelIf boardModel;
+
+    @BeforeAll
+    static public void init(){
+        boardModel= new BoardModel();
+    }
+
+
     @BeforeEach
-    void init() throws IOException, BException {
-        BoardModelIf boardModel = new BoardModel();
-        BoardModelReaderIf  bmodelReader = new BoardModelReader();
+    void setUp() throws IOException, BException {
+
+        BoardModelReaderIf bmodelReader = new BoardModelReader();
         bmodelReader.readTestModel(boardModel,"testOccupiedPointIteratorMap");
         opitWhite = new OccupiedPointIterator(boardModel, BColor.WHITE,
                 BoardModel.POINT_IDX_FIRST_BOARD_POINT,

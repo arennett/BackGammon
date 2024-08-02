@@ -3,6 +3,7 @@ package de.ar.backgammon.model;
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.dices.DicesStack;
+import de.ar.backgammon.model.iteration.HomeBoardIterator;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
@@ -15,8 +16,6 @@ import java.util.Vector;
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
     static int MAX_POINTS = 24;
-    static int MAX_MODEL_POINTS = MAX_POINTS+4; //+2 barpoints +2 offpoints
-
     public static int POINT_IDX_FIRST_BOARD_POINT = 1;
     public static int POINT_IDX_LAST_BOARD_POINT = MAX_POINTS;
 
@@ -194,28 +193,46 @@ public class BoardModel implements BoardModelIf {
         return count;
     }
 
+    /**
+     * returns all pips of the homeboard from min to max
+     * @param bcolor
+     * @return
+     */
     @Override
-    public ArrayList<Integer> getHomePointMaxDuo(BColor bcolor){
-        int maxPoint1=-1;
-        int maxPoint2=-1;
+    public ArrayList<Integer> getMinHomePipArray(BColor bcolor){
+
+        ArrayList<Integer> arrFromMinToMax =new ArrayList<>();
 
         HomeBoardIterator hit = new HomeBoardIterator(this,bcolor);
         int pip=0; //1..6
         while (hit.hasNext()){
             BPoint point = hit.next();
             pip++;
-            if (point.getPieceColor()==bcolor&& !point.isEmpty()){
-                maxPoint2=maxPoint1;
-                maxPoint1=pip;
-                if(point.getPieceCount()>1){
-                    maxPoint2=pip;
+            if (!point.isEmpty() && point.getPieceColor()==bcolor){
+                for (int i=0;i < point.getPieceCount();i++){
+                    arrFromMinToMax.add(pip);
                 }
             }
         }
-        ArrayList<Integer> arr =new ArrayList<>();
-        arr.add(maxPoint1);
-        arr.add(maxPoint2);
-        return arr;
+
+        return arrFromMinToMax;
+
+    }
+    @Override
+
+    /**
+     * returns all pips of the homeboard from max to min
+     * @param bcolor
+     * @return
+     */
+    public ArrayList<Integer> getMaxHomePipArray(BColor bColor){
+
+        ArrayList<Integer> arrFromMinToMax = getMinHomePipArray(bColor);
+        ArrayList<Integer> arrFromMaxToMin = new ArrayList<>();
+        for (int i = arrFromMinToMax.size()-1;i >= 0;i--){
+            arrFromMaxToMin.add(arrFromMinToMax.get(i));
+        }
+        return arrFromMaxToMin;
 
     }
 

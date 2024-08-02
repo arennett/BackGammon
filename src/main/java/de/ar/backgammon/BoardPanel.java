@@ -10,7 +10,7 @@ import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.*;
 
-import static de.ar.backgammon.ConstIf.*;
+import static de.ar.backgammon.ConstIf.MAX_PIECES_ON_POINT;
 
 public class BoardPanel extends JPanel
         implements  MouseListener,

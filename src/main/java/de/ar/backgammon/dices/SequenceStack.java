@@ -1,10 +1,10 @@
 package de.ar.backgammon.dices;
 
 import de.ar.backgammon.BColor;
-import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.moves.Move;
+import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.validation.PointValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

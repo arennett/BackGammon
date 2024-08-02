@@ -6,9 +6,12 @@ import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
-import static de.ar.backgammon.ConstIf.*;
+import static de.ar.backgammon.ConstIf.BOARDMAP_FILENAME;
+import static de.ar.backgammon.ConstIf.BOARDMAP_SAVE;
 
 public class BoardModelWriter implements BoardModelWriterIf{
     private static final Logger logger = LoggerFactory.getLogger(BoardModelWriter.class);

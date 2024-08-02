@@ -5,6 +5,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 /**
@@ -88,28 +90,6 @@ public class DicesStack extends ArrayList<Integer> {
         int dice1=dices.dice1;
         int dice2=dices.dice2;
 
-        if (bModel.isAllPiecesAtHome(bModel.getTurn())) {
-            logger.debug("all at home, special stack handling");
-            /*
-             if the dice is greater than the highest piece
-             the dice is replaced by the pip of the highest
-             */
-            ArrayList<Integer> max = bModel.getHomePointMaxDuo(bModel.getTurn());
-            int maxPoint1 = max.get(0);
-            int maxPoint2 = max.get(1);
-
-            if (dice1 >= maxPoint1 && maxPoint1 > -1) {
-                dice1 = maxPoint1;
-                if (dice2 > maxPoint2 && maxPoint2 > -1) {
-                    dice2 = maxPoint2;
-                }
-            } else if (dice2 >= maxPoint1 && maxPoint1 > -1) {
-                dice2 = maxPoint1;
-                if (dice1 > maxPoint2 && maxPoint2 > -1) {
-                    dice1 = maxPoint2;
-                }
-            }
-        }
         if (dice1>0) add(dice1);
         if (dice2>0) add(dice2);
         if (dice1 == dice2 && dice1> 0 && dice2 > 0) {
@@ -117,6 +97,9 @@ public class DicesStack extends ArrayList<Integer> {
             add(dice1);
             add(dice2);
         }
+
+        /*if stack piece > board pieces, replace stack pieces*/
+        cutStackPipsToBoardPips();
 
         sequenceStack.updateSequences(this);
         state = State.UPDATED;
@@ -139,6 +122,10 @@ public class DicesStack extends ArrayList<Integer> {
             }
             logger.debug("removed pip {}x [{}] from stack", count, pip);
 
+
+            cutStackPipsToBoardPips();
+
+
             if (isEmpty()) {
                 clear();
             }
@@ -155,6 +142,29 @@ public class DicesStack extends ArrayList<Integer> {
 
         return isMoveOnStack;
 
+    }
+
+    private void cutStackPipsToBoardPips() {
+        // sort stack from high to low
+        // if all piece at home
+        // and if  pips from stack > max pips on board
+        // replace pips with max pips on board
+        // as long as pip from stack is > board pip
+
+        Collections.sort(this, Collections.reverseOrder());
+
+        if (bModel.isAllPiecesAtHome(bModel.getTurn())) {
+            logger.debug("all at home, special stack handling");
+            ArrayList<Integer> boardPips = bModel.getMaxHomePipArray(bModel.getTurn());
+            for (int i = 0; i < this.size() && i < boardPips.size() ; i++) {
+                if (this.get(i) > boardPips.get(i)) {
+                    logger.debug("replace pip from stack {} with board {}",this.get(i) ,boardPips.get(i));
+                    this.set(i, boardPips.get(i));
+                }else{
+                    break;
+                }
+            }
+        }
     }
 
     public Dices getDices() {

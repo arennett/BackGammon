@@ -1,7 +1,11 @@
-package de.ar.backgammon.model;
+package de.ar.backgammon.model.iteration;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.model.BoardModel;
+import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.points.BPoint;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,14 +13,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PointIteratorTest {
-    PointIterator pitWhite,pitRed, pitRedMin10Max20,pitWhiteMin10Max20;
-    public PointIteratorTest(){
-        init();
+    PointIterator pitWhite,pitRed, pitRedMin10Max20,pitWhiteMin10Max20,pitWhite1;
+    static BoardModelIf bmodel;
+    @BeforeAll
+    static public void init(){
+        bmodel= new BoardModel();
     }
-
     @BeforeEach
-    void init() {
-        BoardModelIf bmodel = new BoardModel();
+    void setUp() {
         pitWhite = new PointIterator(bmodel, BColor.WHITE,
                 BoardModel.POINT_IDX_FIRST_BOARD_POINT,
                 BoardModel.POINT_IDX_LAST_BOARD_POINT );
@@ -31,34 +35,32 @@ class PointIteratorTest {
                 10,
                 20 );
 
+        pitWhite1= new PointIterator(bmodel, BColor.WHITE,1,1);
+
     }
 
-    @Test
-    void hasNext() {
-        assertTrue(pitWhite.hasNext());
-        assertTrue(pitRed.hasNext());
-    }
 
     @Test
-    @DisplayName("iterate to the firstElement")
-    void firstNext() {
-        BPoint point= pitWhite.next();
-        assertEquals(point.getIndex(),BoardModel.POINT_IDX_FIRST_BOARD_POINT);
-        point= pitRed.next();
-        assertEquals(point.getIndex(),BoardModel.POINT_IDX_LAST_BOARD_POINT);
-    }
-
-    @Test
-    void iterateToEnd() {
+    void  iterateRed(){
         BPoint point=null;
-        while (pitWhite.hasNext()){
-            point=pitWhite.next();
-        }
-        assertEquals(point.getIndex(),BoardModel.POINT_IDX_LAST_BOARD_POINT);
+        assertTrue (pitRed.hasNext());
+        point= pitRed.next();
+        assertEquals(point.getIndex(),24);
         while (pitRed.hasNext()){
-            point=pitRed.next();
+            point= pitRed.next();
         }
-        assertEquals(point.getIndex(),BoardModel.POINT_IDX_FIRST_BOARD_POINT);
+        assertEquals(point.getIndex(),1);
+    }
+    @Test
+    void  iterateWhite(){
+        BPoint point=null;
+        assertTrue (pitWhite.hasNext());
+        point= pitWhite.next();
+        assertEquals(point.getIndex(),1);
+        while (pitWhite.hasNext()){
+            point= pitWhite.next();
+        }
+        assertEquals(point.getIndex(),24);
     }
 
     @Test
@@ -75,6 +77,19 @@ class PointIteratorTest {
 
 
     }
+
+    @Test
+    @DisplayName("iterateWhite1(): iterate over an one element Iterator")
+    void  iterateWhite1(){
+        BPoint point=null;
+        while (pitWhite1.hasNext()){
+            point= pitWhite1.next();
+        }
+        assertEquals(point.getIndex(),1);
+        assertFalse(pitWhite1.hasNext());
+
+    }
+
 
 
 }

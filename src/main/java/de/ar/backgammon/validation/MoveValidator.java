@@ -1,6 +1,7 @@
 package de.ar.backgammon.validation;
 
-import de.ar.backgammon.*;
+import de.ar.backgammon.BColor;
+import de.ar.backgammon.ValidationError;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.dices.PipSequence;
 import de.ar.backgammon.model.BoardModelIf;

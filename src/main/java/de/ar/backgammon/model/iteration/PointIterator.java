@@ -1,6 +1,7 @@
-package de.ar.backgammon.model;
+package de.ar.backgammon.model.iteration;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.points.BPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +15,7 @@ import java.util.Iterator;
  */
 public class PointIterator implements Iterator<BPoint> {
     private static final Logger logger = LoggerFactory.getLogger(PointIterator.class);
-    protected  BoardModelIf boardModel;
+    protected BoardModelIf boardModel;
     protected  BColor bColor;
 
 
@@ -22,12 +23,21 @@ public class PointIterator implements Iterator<BPoint> {
     private final int maxPointIdx;
     int idx = 0;
 
-    public PointIterator(BoardModelIf boardModel, BColor bColor,int minPointIdx,int maxPointIdx) {
+    /**
+     *
+     * @param boardModel
+     * @param bColorDirection BColor.white iterates from minPointIdx to maxPointIdx
+     *                        BColor.red   iterates from maxPointIdx to minPointIdx
+     * @param minPointIdx
+     * @param maxPointIdx
+     */
+    public PointIterator(BoardModelIf boardModel, BColor bColorDirection,int minPointIdx,int maxPointIdx) {
         this.boardModel = boardModel;
-        this.bColor = bColor;
+        this.bColor = bColorDirection;
         this.minPointIdx = minPointIdx;
         this.maxPointIdx = maxPointIdx;
-        if (bColor == BColor.WHITE) {
+        /** initialize idx pointer one before next idx*/
+        if (bColorDirection == BColor.WHITE) {
             idx = minPointIdx-1;
         } else {
             idx = this.maxPointIdx +1;

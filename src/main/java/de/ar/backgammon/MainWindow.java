@@ -8,7 +8,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 
 public class MainWindow extends JFrame implements ComponentListener {
     static Logger logger = LoggerFactory.getLogger(MainWindow.class);
