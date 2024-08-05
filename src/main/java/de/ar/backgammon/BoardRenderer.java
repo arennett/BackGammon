@@ -21,7 +21,9 @@ public class BoardRenderer implements BoardRendererIf {
 
     public void render(Graphics g, JPanel panel) {
         Graphics2D g2d = (Graphics2D) g;
-
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
         drawRect(0, 0, BoardPanel.BOARD_WIDTH, BoardPanel.BOARD_HEIGTH, 2, g2d);
         // drawLine(PLAY_AREA_WIDTH/2,0,PLAY_AREA_WIDTH/2,PLAY_AREA_HEIGHT,g2d);
         barRenderer.render(g2d);
@@ -132,6 +134,7 @@ public class BoardRenderer implements BoardRendererIf {
             x = x_down;
             y = y_down;
         }
+
 
         if (fill) {
             g2d.setColor(new Color(196, 164, 132));

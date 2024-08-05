@@ -1,6 +1,7 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.BException;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.model.iteration.HomeBoardIterator;
@@ -10,6 +11,7 @@ import de.ar.backgammon.points.OffPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -37,7 +39,8 @@ public class BoardModel implements BoardModelIf {
     int pointSelectedIdx = -1;
     private int pieceSelectedIdx = 0;
     private int startPieceSelectedIdx;
-
+    BoardModelWriterIf bwriter = new BoardModelWriter();
+    BoardModelReaderIf breader = new BoardModelReader();
 
     public BoardModel() {
 
@@ -236,6 +239,11 @@ public class BoardModel implements BoardModelIf {
 
     }
 
+    private void copy(BoardModel toModel) throws IOException, BException {
+            bwriter.write("tempModel", this);
+            breader.readModel(toModel,"tempModel");
+    }
+
     @Override
     public OffPoint getOffPoint(BColor bColor) {
         assert bColor != null;
@@ -283,4 +291,7 @@ public class BoardModel implements BoardModelIf {
     public DicesStack getDicesStack() {
         return this.dicesStack;
     }
+
+
+
 }

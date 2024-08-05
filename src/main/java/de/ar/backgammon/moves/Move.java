@@ -59,4 +59,23 @@ public class Move {
         return range;
     }
 
+    @Override
+    public boolean equals(Object other){
+        if (other instanceof Move){
+            Move m= (Move) other;
+             if (this.from==m.from && this.to==m.to){
+                 return true;
+             }
+        }else{
+            return false;
+        }
+        return false;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return from*1000+to;
+    }
+
 }

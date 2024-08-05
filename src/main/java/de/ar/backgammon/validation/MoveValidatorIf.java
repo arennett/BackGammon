@@ -7,5 +7,5 @@ import de.ar.backgammon.moves.Move;
 public interface MoveValidatorIf {
     DicesStack getDicesStack();
 
-    boolean isValid(Move move, BColor turn, int spc);
+    boolean isValid(Move move, int spc);
 }

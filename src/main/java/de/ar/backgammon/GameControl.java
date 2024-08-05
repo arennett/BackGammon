@@ -9,8 +9,8 @@ import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReaderIf;
 import de.ar.backgammon.model.BoardModelWriterIf;
 import de.ar.backgammon.moves.Move;
-import de.ar.backgammon.moves.MovesGenerator;
-import de.ar.backgammon.moves.MovesGeneratorIf;
+import de.ar.backgammon.moves.MoveListGenerator;
+import de.ar.backgammon.moves.MoveListGeneratorIf;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.validation.MoveValidator;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class GameControl {
         this.bmReader = bmReader;
         this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
-        this.moveValidator = new MoveValidator(boardModel, dicesControl.getDicesStack());
+        this.moveValidator = new MoveValidator(boardModel);
     }
 
     /**
@@ -282,7 +282,7 @@ public class GameControl {
      * @return
      */
     public boolean validateMove(Move move) {
-        boolean ret=moveValidator.isValid(move,getTurn(),boardModel.getStartPointSelectedPiecesCount());
+        boolean ret=moveValidator.isValid(move,boardModel.getStartPointSelectedPiecesCount());
         game.message_error(moveValidator.err.userMessage);
         return ret;
     }
@@ -313,9 +313,9 @@ public class GameControl {
      * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
-        MovesGeneratorIf movesGenerator=new MovesGenerator(boardModel,
-                new MoveValidator(boardModel,dicesControl.getDicesStack()));
-        ArrayList<Move> moves=movesGenerator.getValidMoves(getTurn());
+        MoveListGeneratorIf movesGenerator=new MoveListGenerator(boardModel,
+                new MoveValidator(boardModel));
+        ArrayList<Move> moves=movesGenerator.getValidMoves();
         valid = !moves.isEmpty();
         return valid;
     }

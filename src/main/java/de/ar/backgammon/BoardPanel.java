@@ -121,6 +121,9 @@ public class BoardPanel extends JPanel
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if (e.getButton()!=MouseEvent.BUTTON1){
+            return;
+        }
         pointIdxPressed = getPointIndex(e);
         if (pointIdxPressed >-1){
             gameControl.setStartPointSelectedIdx(pointIdxPressed);
@@ -131,6 +134,9 @@ public class BoardPanel extends JPanel
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if (e.getButton()!=MouseEvent.BUTTON1){
+            return;
+        }
         int pointIdxReleased = getPointIndex(e);
         this.setCursor(Cursor.getDefaultCursor());
         if (pointIdxReleased >-1 && pointIdxPressed >-1){

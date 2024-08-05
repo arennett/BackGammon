@@ -20,9 +20,9 @@ public class MoveValidator implements MoveValidatorIf{
     private PointValidator pointValidator = new PointValidator();
 
 
-    public MoveValidator(BoardModelIf boardModel, DicesStack dicesStack){
-        this.boardModel = boardModel;
-        this.dicesStack = dicesStack;
+    public MoveValidator(BoardModelIf boardModel){
+        this.boardModel=boardModel;
+        this.dicesStack = boardModel.getDicesStack();
         err=new ValidationError();
     }
 
@@ -32,15 +32,16 @@ public class MoveValidator implements MoveValidatorIf{
     }
 
     @Override
-    public boolean isValid(Move move, BColor turn, int spc) {
+    public boolean isValid(Move move, int spc) {
         boolean ret = false;
+        BColor turn =boardModel.getTurn();
 
         BPoint bpFrom = boardModel.getPoint(move.from);
         BPoint bpTo = boardModel.getPoint(move.to);
 
-        if (bpFrom.getPieceColor() != turn){
+        if (bpFrom.getPieceColor() != boardModel.getTurn()){
             err.nr=1;
-            err.userMessage ="Wrong color! Turn is "+turn;
+            err.userMessage ="Wrong color! Turn is "+boardModel.getTurn();
             logger.debug("err<{}> move<{}> <{}>",err.nr,move,err.userMessage);
             return false;
         }
