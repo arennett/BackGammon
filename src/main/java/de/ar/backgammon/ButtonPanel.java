@@ -109,6 +109,8 @@ public void updateComponents(){
     jtaStatistics.setText(wstr);
     jtaStatistics.append(rstr);
 
+    dicesPanel.updateComponents();
+
 
 
 }

@@ -4,6 +4,7 @@ import de.ar.backgammon.BColor;
 import de.ar.backgammon.ValidationError;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.dices.PipSequence;
+import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.points.BPoint;
@@ -14,13 +15,21 @@ import java.util.ArrayList;
 
 public class MoveValidator implements MoveValidatorIf{
     private static final Logger logger = LoggerFactory.getLogger(MoveValidator.class);
-    private final BoardModelIf boardModel;
-    private final DicesStack dicesStack;
+    private  BoardModelIf boardModel;
+    private  DicesStack dicesStack;
     public ValidationError err;
     private PointValidator pointValidator = new PointValidator();
 
 
     public MoveValidator(BoardModelIf boardModel){
+        this.boardModel=boardModel;
+        this.dicesStack = boardModel.getDicesStack();
+        err=new ValidationError();
+    }
+    public MoveValidator(){
+
+    }
+    public void setBoardModel(BoardModelIf  boardModel){
         this.boardModel=boardModel;
         this.dicesStack = boardModel.getDicesStack();
         err=new ValidationError();

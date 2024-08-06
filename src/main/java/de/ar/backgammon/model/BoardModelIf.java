@@ -1,12 +1,17 @@
 package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
+import de.ar.backgammon.BException;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.dices.DicesStack;
+import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
+import de.ar.backgammon.validation.MoveValidator;
+import de.ar.backgammon.validation.MoveValidatorIf;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public interface BoardModelIf {
@@ -45,6 +50,8 @@ public interface BoardModelIf {
 
     ArrayList<Integer> getMaxHomePipArray(BColor bcolor);
 
+    void copy(BoardModel toModel) throws IOException, BException;
+
     OffPoint getOffPoint(BColor bColor);
 
     BarPoint getBarPoint(BColor bColor);
@@ -57,4 +64,10 @@ public interface BoardModelIf {
     void setDice2(int count);
 
     DicesStack getDicesStack();
+
+    boolean move(Move move, int _spc, boolean setMode);
+
+    void subMove(Move move, int spc, boolean setMode);
+
+    void setMoveValidator(MoveValidatorIf moveValidator);
 }

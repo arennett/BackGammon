@@ -2,18 +2,26 @@ package de.ar.backgammon.model;
 
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.BException;
+import de.ar.backgammon.SeqSelectDialog;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.dices.DicesStack;
+import de.ar.backgammon.dices.PipSequence;
+import de.ar.backgammon.dices.SequenceStack;
 import de.ar.backgammon.model.iteration.HomeBoardIterator;
+import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.points.BarPoint;
 import de.ar.backgammon.points.OffPoint;
+import de.ar.backgammon.validation.MoveValidator;
+import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Vector;
+
+import static de.ar.backgammon.ConstIf.MAX_PIP;
 
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
@@ -27,6 +35,7 @@ public class BoardModel implements BoardModelIf {
     public static int POINT_IDX_OFF_RED = MAX_POINTS+2;
     public static int POINT_IDX_OFF_WHITE = MAX_POINTS+3;
     public static int POINT_IDX_OFF = 99;
+    private  MoveValidatorIf moveValidator;
 
 
     Vector<BPoint> points = new Vector<>();
@@ -34,6 +43,7 @@ public class BoardModel implements BoardModelIf {
     private BColor turn = BColor.WHITE;
     Dices dices = new Dices(0,0);
     DicesStack dicesStack;
+
 
     int startPointSelectedIdx = -1;
     int pointSelectedIdx = -1;
@@ -43,7 +53,6 @@ public class BoardModel implements BoardModelIf {
     BoardModelReaderIf breader = new BoardModelReader();
 
     public BoardModel() {
-
         initModel();
     }
 
@@ -70,6 +79,7 @@ public class BoardModel implements BoardModelIf {
         points.add(woff);
 
         dicesStack.loadDices(dices);
+
         logger.debug("model inited");
     }
 
@@ -239,7 +249,8 @@ public class BoardModel implements BoardModelIf {
 
     }
 
-    private void copy(BoardModel toModel) throws IOException, BException {
+    @Override
+    public void copy(BoardModel toModel) throws IOException, BException {
             bwriter.write("tempModel", this);
             breader.readModel(toModel,"tempModel");
     }
@@ -293,5 +304,174 @@ public class BoardModel implements BoardModelIf {
     }
 
 
+    /**
+     * move one or more pieces from position to position
+     * @param move
+     * @param _spc number of pieces to move
+     * @param setMode true means no validation
+     * @return
+     */
+    @Override
+    public boolean move(Move move, int _spc, boolean setMode) {
+        logger.debug("################## start move ##### {} ##########",move);
+        int spc =_spc;
+        if (move.isBarMove()) {
+            spc = 1;
+        }
+
+        if (!setMode) {
+            if (!moveValidator.isValid(move,spc)) {
+
+                return false;
+            }
+        } else {
+            //setmode
+            subMove(move, spc,setMode);
+            return true;
+        }
+
+        // get valid sequences from sequenceControl depending on the move range
+        // if psArray.size == 2 and sequences have equal sum
+        // and at least one ps has blots, the user has to choose a pointSequence
+        // otherwise we take the first sequence
+
+        ArrayList<PipSequence> psArray
+                = getDicesStack().getSequenceStack().getValidSequences(move, spc, getTurn());
+        boolean hasBlot = false;
+
+
+        for (PipSequence ps : psArray) {
+            hasBlot = getDicesStack().getSequenceStack().psHasBlots(ps, move,spc,getTurn());
+            if (hasBlot) {
+                break;
+            }
+        }
+
+
+        PipSequence psSelect = null;
+
+        //default
+        if (!psArray.isEmpty()) {
+            psSelect = psArray.get(0);
+        }
+
+        // two move sequences are possible
+
+        if (psArray.size() == 2) {
+            psSelect = psArray.get(0);
+            if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
+                if (hasBlot) {
+                    SequenceStack.BlotArray ba0 = getDicesStack().getSequenceStack().getBlotArray(
+                            psArray.get(0), move,spc,getTurn());
+                    if (!ba0.isEmpty()) {
+                        logger.debug("blots detected on: {}", "" + ba0);
+                    }
+
+                    SequenceStack.BlotArray ba1 = getDicesStack().getSequenceStack().getBlotArray(
+                            psArray.get(1), move,spc,getTurn());
+                    if (!ba1.isEmpty()) {
+                        logger.debug("blots detected on: {}", "" + ba1);
+                    }
+
+                    if (!ba0.equals(ba1)) {
+                        logger.debug("user sequence selection requested !");
+                        SeqSelectDialog sq = new SeqSelectDialog();
+                        sq.setSequences(psArray);
+                        sq.setVisible(true);
+                        logger.debug("OPTION : {}", sq.getOption());
+                        if (sq.getOption() < 0) {
+                            return false;
+                        } else {
+                            psSelect = psArray.get(sq.getOption());
+                        }
+                    } else {
+                        logger.debug("equal BlotArrays ba0: {}", ba0);
+                        logger.debug("equal BlotArrays ba1: {}", ba1);
+
+                    }
+
+                }
+            }
+
+        }
+
+        int direction = 0;
+        if (getTurn() == BColor.WHITE) {
+            direction = 1;
+        } else {
+            direction = -1;
+        }
+
+        if (psSelect != null) {
+            int pos = move.from;
+            int pips=0;
+            for (int pip : psSelect) {
+                pips+=pip*spc;
+                if (pips <= psSelect.getSum()){
+                    int subto = pos + pip * direction;
+                    subMove(new Move(pos, subto), spc,setMode);
+                    pos = subto;
+                }else{
+                    break;
+                }
+
+            }
+        } else {
+            // no sequence
+            assert move.getRange(getTurn()) <= MAX_PIP;
+            subMove(move, spc,setMode);
+        }
+
+
+        logger.debug("################## end move ##### {} ##########",move);
+        return true;
+
+    }
+
+
+    @Override
+    public void subMove(Move move, int spc,boolean setMode) {
+
+        logger.debug("sub move {}", move);
+
+        //if not is setmode delegate point 0/25 (bar points) to offpoints
+        if (!setMode) {
+            assert move.getRange(getTurn()) <= MAX_PIP;
+            if (move.to == BoardModel.POINT_IDX_BAR_WHITE) {
+                move.to = BoardModel.POINT_IDX_OFF_RED;
+            } else if (move.to == BoardModel.POINT_IDX_BAR_RED) {
+                move.to = BoardModel.POINT_IDX_OFF_WHITE;
+            }
+        }
+
+
+        BPoint bpFrom = this.getPoint(move.from);
+        BPoint bpTo = this.getPoint(move.to);
+
+        BColor colorFrom = bpFrom.getPieceColor();
+        BColor colorTo = bpTo.getPieceColor();
+        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc, colorFrom);
+
+        if (bpTo.getPieceCount() == 1 && colorTo != colorFrom) {
+            // blot
+            this.getBarPoint(colorTo).addCount(1);
+            logger.debug("moved {} (blot)", move);
+            bpTo.setPieceCount(spc, colorFrom);
+        } else {
+            // no blot
+            bpTo.setPieceCount(bpTo.getPieceCount() + spc, colorFrom);
+            logger.debug("moved {}", move);
+        }
+
+        if (!setMode) {
+            // try to remove points from stack
+            dicesStack.removePipsFromStack(move.getRange(getTurn()), spc);
+        }
+    }
+
+    @Override
+    public void setMoveValidator(MoveValidatorIf moveValidator) {
+        this.moveValidator=moveValidator;
+    }
 
 }

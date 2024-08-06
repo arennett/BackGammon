@@ -103,113 +103,12 @@ public class GameControl {
      */
     private boolean move(Move move) {
         int spc = boardModel.getStartPointSelectedPiecesCount();
-        if (move.isBarMove()) {
-            spc = 1;
+        boolean moved=boardModel.move(move,spc,bpControl.isSetMode());
+
+        if(!moved){
+            game.message_error("piece not moved : "+move);
+            return false;
         }
-
-        if (!bpControl.isSetMode()) {
-            if (!validateMove(move)) {
-
-                return false;
-            }
-        } else {
-            //setmode
-            sub_move(move, spc);
-            return true;
-        }
-
-        // get valid sequences from sequenceControl depending on the move range
-        // if psArray.size == 2 and sequences have equal sum
-        // and at least one ps has blots, the user has to choose a pointSequence
-        // otherwise we take the first sequence
-
-        ArrayList<PipSequence> psArray
-                = dicesControl.getDicesStack().getSequenceStack().getValidSequences(move, spc, getTurn());
-        boolean hasBlot = false;
-
-
-        for (PipSequence ps : psArray) {
-            hasBlot = dicesControl.getDicesStack().getSequenceStack().psHasBlots(ps, move,spc,getTurn());
-            if (hasBlot) {
-                break;
-            }
-        }
-
-
-        PipSequence psSelect = null;
-
-        //default
-        if (!psArray.isEmpty()) {
-            psSelect = psArray.get(0);
-        }
-
-        // two move sequences are possible
-
-        if (psArray.size() == 2) {
-            psSelect = psArray.get(0);
-            if (psArray.get(0).getSum() == psArray.get(1).getSum()) {
-                if (hasBlot) {
-                    SequenceStack.BlotArray ba0 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(
-                                                  psArray.get(0), move,spc,getTurn());
-                    if (!ba0.isEmpty()) {
-                        logger.debug("blots detected on: {}", "" + ba0);
-                    }
-
-                    SequenceStack.BlotArray ba1 = dicesControl.getDicesStack().getSequenceStack().getBlotArray(
-                                                  psArray.get(1), move,spc,getTurn());
-                    if (!ba1.isEmpty()) {
-                        logger.debug("blots detected on: {}", "" + ba1);
-                    }
-
-                    if (!ba0.equals(ba1)) {
-                        logger.debug("user sequence selection requested !");
-                        SeqSelectDialog sq = new SeqSelectDialog();
-                        sq.setSequences(psArray);
-                        sq.setVisible(true);
-                        logger.debug("OPTION : {}", sq.getOption());
-                        if (sq.getOption() < 0) {
-                            return false;
-                        } else {
-                            psSelect = psArray.get(sq.getOption());
-                        }
-                    } else {
-                        logger.debug("equal BlotArrays ba0: {}", ba0);
-                        logger.debug("equal BlotArrays ba1: {}", ba1);
-
-                    }
-
-                }
-            }
-
-        }
-
-        int direction = 0;
-        if (getTurn() == BColor.WHITE) {
-            direction = 1;
-        } else {
-            direction = -1;
-        }
-
-        if (psSelect != null) {
-            int pos = move.from;
-            int pips=0;
-            for (int pip : psSelect) {
-                pips+=pip*spc;
-                if (pips <= psSelect.getSum()){
-                    int subto = pos + pip * direction;
-                    sub_move(new Move(pos, subto), spc);
-                    pos = subto;
-                }else{
-                    break;
-                }
-
-            }
-        } else {
-            // no sequence
-            assert move.getRange(getTurn()) <= MAX_PIP;
-            sub_move(move, spc);
-        }
-
         game.message("piece moved : "+move);
         if (dicesControl.getDicesStack().getState() == DicesStack.State.EMPTY) {
             switch_turn();
@@ -222,6 +121,7 @@ public class GameControl {
             }
         }
         boardPanel.repaint();
+        buttonPanel.updateComponents();
 
         return true;
 
@@ -236,43 +136,7 @@ public class GameControl {
      * @param spc count of pieces moved
      */
     public void sub_move(Move move, int spc) {
-
-
-        logger.debug("sub move {}",move);
-
-        //if not is setmode delegate point 0/25 (bar points) to offpoints
-        if (!bpControl.isSetMode()) {
-            assert move.getRange(getTurn()) <= MAX_PIP;
-            if (move.to == BoardModel.POINT_IDX_BAR_WHITE) {
-                move.to = BoardModel.POINT_IDX_OFF_RED;
-            } else if (move.to == BoardModel.POINT_IDX_BAR_RED) {
-                move.to = BoardModel.POINT_IDX_OFF_WHITE;
-            }
-        }
-
-
-        BPoint bpFrom = boardModel.getPoint(move.from);
-        BPoint bpTo = boardModel.getPoint(move.to);
-
-        BColor colorFrom =bpFrom.getPieceColor();
-        BColor colorTo =bpTo.getPieceColor();
-        bpFrom.setPieceCount(bpFrom.getPieceCount() - spc,colorFrom);
-
-        if (bpTo.getPieceCount() == 1 && colorTo != colorFrom) {
-            // blot
-            boardModel.getBarPoint(colorTo).addCount(1);
-            logger.debug("moved {} (blot)", move);
-            bpTo.setPieceCount(spc,colorFrom);
-        } else {
-            // no blot
-            bpTo.setPieceCount(bpTo.getPieceCount() + spc,colorFrom);
-            logger.debug("moved {}", move);
-        }
-
-        if (!bpControl.isSetMode()) {
-            // try to remove points from stack
-            dicesControl.removePipsFromStack(move.getRange(getTurn()), spc);
-        }
+        boardModel.subMove(move,spc,bpControl.isSetMode());
     }
 
 
