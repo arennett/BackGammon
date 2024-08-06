@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     static Logger logger = LoggerFactory.getLogger(MoveSetListGenerator.class);
@@ -29,7 +30,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     }
 
     @Override
-    public ArrayList<MoveSet> getValidMoveSets(BColor turn) {
+    public ArrayList<MoveSet> getValidMoveSets() {
         // create copy of boardModel
         // list mlist = list of first valid moves f(dices)
         // for all move in mlist
@@ -37,12 +38,27 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
         //      mlist = list of first valid moves f(dices)
 
         ArrayList<MoveSet> msetList = new ArrayList<>();
-        MoveSet mset = new MoveSet();
-        msetList.add(mset);
-        for(MoveSet moveSet:msetList){
-            ArrayList<MoveSet> list = calcMoveSet(mset);
-            msetList.addAll(list);
-            msetList.remove(mset);
+        ArrayList<MoveSet> msetResultList = new ArrayList<>();
+        ArrayList<MoveSet> msetRemoveList = new ArrayList<>();
+
+        msetList.add(new MoveSet());
+        boolean allFinished =false;
+        while (!allFinished) {
+            boolean _allFinished =true;
+            msetRemoveList.clear();
+            msetResultList.clear();
+            for (MoveSet moveSet : msetList) {
+                      ArrayList<MoveSet> list = calcMoveSet(moveSet);
+                    msetResultList.addAll(list);
+                    msetRemoveList.add(moveSet);
+                    if (!moveSet.isFinished()) {
+                        _allFinished = false;
+                    }
+
+            }
+            allFinished=_allFinished;
+            msetList.removeAll(msetRemoveList);
+            msetList.addAll(msetResultList);
         }
         return null;
     }
@@ -54,6 +70,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
         }
         /*prepare Model*/
         resetModel(cModel);
+        logger.debug("preparing model with mset: {}",mset);
         for(Move move:mset){
                boolean moved= cModel.move(move,1,false);
                assert (moved);
@@ -69,7 +86,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
         for (Move move : moves){
             MoveSet moveset = new MoveSet();
             for (Move mmove:mset){
-                moveset.add(move);
+                moveset.add(mmove);
             }
             moveset.add(move);
             moveSetList.add(moveset);

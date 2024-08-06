@@ -13,11 +13,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertTrue;
 
 class MoveSetListGeneratorTest {
     static Logger logger = LoggerFactory.getLogger(MoveSetListGeneratorTest.class);
     BoardModelIf bmodel;
-    MoveSetListGenerator mlg;
+    MoveSetListGenerator mslg;
 
     @BeforeEach
     public void setUp() throws IOException, BException {
@@ -27,11 +30,15 @@ class MoveSetListGeneratorTest {
         bmodel.setMoveValidator(moveValidator);
         BoardModelReaderIf breader = new BoardModelReader();
         breader.readTestModel(bmodel, "testMoveListGeneratorTest");
-        mlg = new MoveSetListGenerator(bmodel,moveValidator);
+        mslg = new MoveSetListGenerator(bmodel,moveValidator);
     }
+
+
 
     @Test
     void getValidMoveSets() {
+        ArrayList<MoveSet> msetList=mslg.getValidMoveSets();
+        assertTrue (!msetList.isEmpty());
 
     }
 
