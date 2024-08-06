@@ -21,8 +21,9 @@ class MoveSetListGeneratorTest {
 
     @BeforeEach
     public void setUp() throws IOException, BException {
-        MoveValidatorIf moveValidator =new MoveValidator(bmodel);
+
         BoardModelIf bmodel = new BoardModel();
+        MoveValidatorIf moveValidator =new MoveValidator(bmodel);
         bmodel.setMoveValidator(moveValidator);
         BoardModelReaderIf breader = new BoardModelReader();
         breader.readTestModel(bmodel, "testMoveListGeneratorTest");

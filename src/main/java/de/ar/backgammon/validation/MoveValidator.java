@@ -26,9 +26,7 @@ public class MoveValidator implements MoveValidatorIf{
         this.dicesStack = boardModel.getDicesStack();
         err=new ValidationError();
     }
-    public MoveValidator(){
 
-    }
     public void setBoardModel(BoardModelIf  boardModel){
         this.boardModel=boardModel;
         this.dicesStack = boardModel.getDicesStack();

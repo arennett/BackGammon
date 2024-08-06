@@ -32,8 +32,9 @@ public class MainWindow extends JFrame implements ComponentListener {
         MessagePanel messagePanel= new MessagePanel();
         messagePanel.message("Welcome to BackGammon V1.0");
         Game game = new Game(messagePanel);
-        MoveValidator moveValidator=new MoveValidator();
+
         BoardModelIf bModel= new BoardModel();
+        MoveValidator moveValidator=new MoveValidator(bModel);
         bModel.setMoveValidator(moveValidator);
         BoardRenderer bRenderer = new BoardRenderer(bModel);
         BoardPanel boardPanel = new BoardPanel(bRenderer,game);
