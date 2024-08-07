@@ -17,75 +17,90 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     private final BoardModelIf bModel;
     BoardModelWriterIf bwriter = new BoardModelWriter();
     BoardModelReaderIf breader = new BoardModelReader();
-    BoardModel cModel ;
+    BoardModel cModel;
     MoveListGenerator mlGen;
 
-    public MoveSetListGenerator(BoardModelIf bModel, MoveValidatorIf moveValidator) {
+    public MoveSetListGenerator(BoardModelIf bModel) {
 
         this.bModel = bModel;
         cModel = new BoardModel();
+        MoveValidatorIf moveValidator = new MoveValidator(cModel);
         cModel.setMoveValidator(moveValidator);
-        mlGen =new MoveListGenerator(cModel,moveValidator);
+        mlGen = new MoveListGenerator(cModel, moveValidator);
 
     }
 
+    /**
+       return a list of possible movesets
+     */
     @Override
     public ArrayList<MoveSet> getValidMoveSets() {
-        // create copy of boardModel
-        // list mlist = list of first valid moves f(dices)
-        // for all move in mlist
-        //      add move to mset
-        //      mlist = list of first valid moves f(dices)
 
         ArrayList<MoveSet> msetList = new ArrayList<>();
         ArrayList<MoveSet> msetResultList = new ArrayList<>();
         ArrayList<MoveSet> msetRemoveList = new ArrayList<>();
 
         msetList.add(new MoveSet());
-        boolean allFinished =false;
+        boolean allFinished = false;
         while (!allFinished) {
-            boolean _allFinished =true;
+            boolean _allFinished = true;
             msetRemoveList.clear();
-            msetResultList.clear();
+            /**
+             * in the first iteration we start with one empty moveset
+             * the result is a list of 1 move movesets
+             * we add this to the moveset for the next iteration
+             * in the second iteration we get a list of 2 movements for every one move moveset
+             * and so on
+             */
             for (MoveSet moveSet : msetList) {
-                      ArrayList<MoveSet> list = calcMoveSet(moveSet);
-                    msetResultList.addAll(list);
-                    msetRemoveList.add(moveSet);
-                    if (!moveSet.isFinished()) {
-                        _allFinished = false;
-                    }
+                msetRemoveList.add(moveSet);
+                ArrayList<MoveSet> list = calcMoveSet(moveSet);
+                msetResultList.addAll(list);
+                if (!moveSet.isFinished()) {
+                    _allFinished = false;
+                }
 
             }
-            allFinished=_allFinished;
-            msetList.removeAll(msetRemoveList);
+            allFinished = _allFinished;
+            msetList.clear();
             msetList.addAll(msetResultList);
+            msetList.removeAll(msetRemoveList);
+            if (!allFinished){
+                msetResultList.removeAll(msetRemoveList);
+            }
         }
-        return null;
+        return msetResultList;
     }
 
-    public ArrayList<MoveSet> calcMoveSet(MoveSet mset){
+    public ArrayList<MoveSet> calcMoveSet(MoveSet mset) {
         ArrayList<MoveSet> moveSetList = new ArrayList<>();
-        if (mset.isFinished()){
+        if (mset.isFinished()) {
             return moveSetList;
         }
         /*prepare Model*/
+        cModel.clear();
         resetModel(cModel);
-        logger.debug("preparing model with mset: {}",mset);
-        for(Move move:mset){
-               boolean moved= cModel.move(move,1,false);
-               assert (moved);
+
+        logger.debug("preparing model with mset: {}", mset);
+        for (Move move : mset) {
+            boolean moved = cModel.move(move, 1, false);
+            if (!moved) {
+                int test = 0;
+            }
+            assert (moved);
+
         }
         ArrayList<Move> moves = mlGen.getValidMoves();
-        if (moves.isEmpty()){
+        if (moves.isEmpty()) {
             mset.setFinished(true);
             return moveSetList;
         }
         /*
         copy moves from mset and add new move
          */
-        for (Move move : moves){
+        for (Move move : moves) {
             MoveSet moveset = new MoveSet();
-            for (Move mmove:mset){
+            for (Move mmove : mset) {
                 moveset.add(mmove);
             }
             moveset.add(move);

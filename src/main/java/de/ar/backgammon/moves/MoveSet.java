@@ -21,7 +21,7 @@ public class MoveSet extends ArrayList<Move> {
 
     @Override
     public boolean add(Move move) {
-        assert this.size() < MAX_SIZE;
+        assert(this.size() < MAX_SIZE);
         return super.add(move);
     }
 }
