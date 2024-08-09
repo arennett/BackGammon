@@ -3,7 +3,7 @@ package de.ar.backgammon.moves;
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.model.BoardModel;
 
-public class Move {
+public class Move implements Comparable{
 
     public int from;
     public int to;
@@ -78,4 +78,9 @@ public class Move {
         return from*1000+to;
     }
 
+    @Override
+    public int compareTo(Object o) {
+        Move m = (Move) o;
+        return this.toString().compareTo(m.toString());
+    }
 }

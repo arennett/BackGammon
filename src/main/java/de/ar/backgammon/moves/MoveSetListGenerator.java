@@ -26,7 +26,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
         cModel = new BoardModel();
         MoveValidatorIf moveValidator = new MoveValidator(cModel);
         cModel.setMoveValidator(moveValidator);
-        mlGen = new MoveListGenerator(cModel, moveValidator);
+        mlGen = new MoveListGenerator(cModel);
 
     }
 
@@ -34,11 +34,11 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
        return a list of possible movesets
      */
     @Override
-    public ArrayList<MoveSet> getValidMoveSets() {
+    public MoveSetHash getValidMoveSets() {
 
-        ArrayList<MoveSet> msetList = new ArrayList<>();
-        ArrayList<MoveSet> msetResultList = new ArrayList<>();
-        ArrayList<MoveSet> msetRemoveList = new ArrayList<>();
+        MoveSetHash msetList = new MoveSetHash();
+        MoveSetHash msetResultList = new MoveSetHash();
+        MoveSetHash msetRemoveList = new MoveSetHash();
 
         msetList.add(new MoveSet());
         boolean allFinished = false;
@@ -69,6 +69,8 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
                 msetResultList.removeAll(msetRemoveList);
             }
         }
+
+
         return msetResultList;
     }
 

@@ -70,4 +70,6 @@ public interface BoardModelIf {
     void subMove(Move move, int spc, boolean setMode);
 
     void setMoveValidator(MoveValidatorIf moveValidator);
+
+    MoveValidatorIf getMoveValidator();
 }

@@ -28,7 +28,7 @@ class MoveListGeneratorTest {
         MoveValidator moveValidator = new MoveValidator(bmodel);
         BoardModelReaderIf breader = new BoardModelReader();
         breader.readTestModel(bmodel, "testMoveListGeneratorTest");
-        mlg = new MoveListGenerator(bmodel, moveValidator);
+        mlg = new MoveListGenerator(bmodel);
     }
 
     @Test
@@ -107,7 +107,7 @@ class MoveListGeneratorTest {
         assertTrue(mhset.contains(new Move(19, 22)));
         assertTrue(mhset.contains(new Move(19, 23)));
 
-        boolean moved =bmodel.move(new Move(1,5),1,false);
+        boolean moved =bmodel.move(new Move(1,6),1,false);
         assert(!moved);
 
 

@@ -106,7 +106,7 @@ public class MoveValidator implements MoveValidatorIf{
         ret = pointValidator.isValid(bpTo, lspc,turn);
 
         if (!ret) {
-            logger.error("unvalid point");
+            logger.debug("unvalid point");
             err= pointValidator.err;
             return false;
         }

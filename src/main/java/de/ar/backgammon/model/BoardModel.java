@@ -313,7 +313,7 @@ public class BoardModel implements BoardModelIf {
      */
     @Override
     public boolean move(Move move, int _spc, boolean setMode) {
-        logger.debug("################## start move ##### {} ##########",move);
+        logger.debug("### start move ### {} ###",move);
         int spc =_spc;
         if (move.isBarMove()) {
             spc = 1;
@@ -423,7 +423,7 @@ public class BoardModel implements BoardModelIf {
         }
 
 
-        logger.debug("################## end move ##### {} ##########",move);
+        logger.debug("### end move ### {} ###",move);
         return true;
 
     }
@@ -472,6 +472,9 @@ public class BoardModel implements BoardModelIf {
     @Override
     public void setMoveValidator(MoveValidatorIf moveValidator) {
         this.moveValidator=moveValidator;
+    }
+    public MoveValidatorIf getMoveValidator() {
+        return moveValidator;
     }
 
 }

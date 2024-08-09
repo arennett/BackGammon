@@ -26,4 +26,8 @@ public class Dices implements Iterable<Integer>{
         dice2=0;
 
     }
+
+    public boolean isEmpty() {
+        return dice1==0 && dice2==0;
+    }
 }

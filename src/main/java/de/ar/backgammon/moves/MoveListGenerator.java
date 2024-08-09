@@ -6,6 +6,7 @@ import de.ar.backgammon.model.*;
 import de.ar.backgammon.model.iteration.BoardAndOffPointIterator;
 import de.ar.backgammon.model.iteration.OccupiedBoardPointIterator;
 import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.validation.MoveValidator;
 import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +27,9 @@ public class MoveListGenerator implements MoveListGeneratorIf {
     ArrayList<Move> moves;
     HashSet<Move> movesHashSet;
 
-    public MoveListGenerator(BoardModelIf boardModel, MoveValidatorIf moveValidator) {
+    public MoveListGenerator(BoardModelIf boardModel) {
         this.boardModel = boardModel;
-        this.moveValidator = moveValidator;
+        this.moveValidator = boardModel.getMoveValidator();
         this.moves = new ArrayList<>();
         this.movesHashSet = new HashSet<>();
     }
@@ -56,6 +57,7 @@ public class MoveListGenerator implements MoveListGeneratorIf {
 
         BPoint barPoint = boardModel.getBarPoint(boardModel.getTurn());
         Dices dices = moveValidator.getDicesStack().getDices();
+        assert !dices.isEmpty();
         if (!barPoint.isEmpty()) {
             for (int dice : dices) {
                 boolean valid = false;
@@ -101,6 +103,24 @@ public class MoveListGenerator implements MoveListGeneratorIf {
     }
 
     private void add(Move move) {
+
+//        if (moves.size() > 0){
+//            Move last =moves.get(moves.size()-1);
+//
+//            if(last.to==move.from){
+//                Move m = new Move(last.from,move.to);
+//                moves.remove(last);
+//                movesHashSet.remove(last);
+//                moves.add(m);
+//                movesHashSet.add(m);
+//            }else {
+//                moves.add(move);
+//                movesHashSet.add(move);
+//            }
+//        }else {
+//            moves.add(move);
+//            movesHashSet.add(move);
+//        }
         moves.add(move);
         movesHashSet.add(move);
     }

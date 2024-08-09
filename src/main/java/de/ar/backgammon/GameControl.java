@@ -177,8 +177,7 @@ public class GameControl {
      * TODO check for the whole board */
     boolean isMovePossible() {
         boolean valid = false;
-        MoveListGeneratorIf movesGenerator=new MoveListGenerator(boardModel,
-                new MoveValidator(boardModel));
+        MoveListGeneratorIf movesGenerator=new MoveListGenerator(boardModel);
         ArrayList<Move> moves=movesGenerator.getValidMoves();
         valid = !moves.isEmpty();
         return valid;
