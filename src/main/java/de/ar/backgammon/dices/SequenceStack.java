@@ -218,7 +218,7 @@ public class SequenceStack {
 
 
     /*setter and getter*******************************************************************/
-    ArrayList<PipSequence> getPipSequences() {
+    public ArrayList<PipSequence> getPipSequences() {
         return pipSequences;
     }
 

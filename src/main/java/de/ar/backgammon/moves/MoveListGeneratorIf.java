@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public interface MoveListGeneratorIf {
-     HashSet<Move> getValidMovesHashSet();
 
      ArrayList<Move> getValidMoves();
 }

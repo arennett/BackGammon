@@ -4,6 +4,7 @@ import de.ar.backgammon.BColor;
 import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.model.*;
 import de.ar.backgammon.model.iteration.BoardAndOffPointIterator;
+import de.ar.backgammon.model.iteration.DicesStackIterator;
 import de.ar.backgammon.model.iteration.OccupiedBoardPointIterator;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.validation.MoveValidator;
@@ -34,16 +35,7 @@ public class MoveListGenerator implements MoveListGeneratorIf {
         this.movesHashSet = new HashSet<>();
     }
 
-    /**
-     * generates all possible moves for the given turn and dices
-     *
-     * @return
-     */
-    @Override
-    public HashSet<Move> getValidMovesHashSet(){
-        doGenerateMoves();
-        return movesHashSet;
-    }
+
 
     @Override
     public ArrayList<Move> getValidMoves() {
@@ -51,7 +43,7 @@ public class MoveListGenerator implements MoveListGeneratorIf {
         return moves;
     }
 
-    private void doGenerateMoves(){
+    private void doGenerateMoves() {
         moves.clear();
         movesHashSet.clear();
 
@@ -77,14 +69,18 @@ public class MoveListGenerator implements MoveListGeneratorIf {
         } else {
 
             OccupiedBoardPointIterator pointItFrom = new OccupiedBoardPointIterator(boardModel, boardModel.getTurn());
+            int count_movevalidations = 0;
             while (pointItFrom.hasNext()) {
                 BPoint fromPoint = pointItFrom.next();
-                BoardAndOffPointIterator pointItTo = new BoardAndOffPointIterator(boardModel, boardModel.getTurn());
-                pointItTo.setIdx(fromPoint.getIndex());
-                while (pointItTo.hasNext()) {
+                //BoardAndOffPointIterator pointItTo = new BoardAndOffPointIterator(boardModel, boardModel.getTurn());
+                DicesStackIterator pointItTo = new DicesStackIterator(boardModel, boardModel.getTurn(),fromPoint.getIndex());
+                logger.debug("### occupied from point: {}", fromPoint);
+              while (pointItTo.hasNext()) {
                     BPoint toPoint = pointItTo.next();
                     if (fromPoint != toPoint) {
+                        logger.debug("### to point: {}", toPoint);
                         Move move = new Move(fromPoint.getIndex(), toPoint.getIndex());
+                        count_movevalidations++;
                         boolean valid = moveValidator.isValid(move, 1);
                         if (valid) {
                             logger.debug("generate (B) move: {}", move);
@@ -92,9 +88,10 @@ public class MoveListGenerator implements MoveListGeneratorIf {
                         }
 
                     }
-
                 }
+
             }
+            logger.debug("count move validations: {}", count_movevalidations);
 
 
         }
