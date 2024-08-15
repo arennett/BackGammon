@@ -42,12 +42,8 @@ class MoveListGeneratorTest {
         BoardModelReaderIf breader = new BoardModelReader();
         breader.readTestModel(bmodel, "boardmap_startup_dices#3#4#turn#w");
         mlg = new MoveListGenerator(bmodel);
-
         ArrayList<Move> mlist = mlg.getValidMoves();
         assertTrue(!mlist.isEmpty());
-
-        assertTrue(!mlist.isEmpty());
-        assertEquals(mlist.size(), mlist.size());
         assertTrue(mlist.contains(new Move(1, 4)));
         assertTrue(mlist.contains(new Move(1, 5)));
         assertTrue(mlist.contains(new Move(12, 15)));
@@ -56,6 +52,7 @@ class MoveListGeneratorTest {
         assertTrue(mlist.contains(new Move(17, 21)));
         assertTrue(mlist.contains(new Move(19, 22)));
         assertTrue(mlist.contains(new Move(19, 23)));
+        assertEquals(mlist.size(), 8);
 
         for (Move m : mlist) {
             logger.debug("test_getValidMoves1 Move: {}", m);
@@ -72,7 +69,9 @@ class MoveListGeneratorTest {
 
         ArrayList<Move> mlist = mlg.getValidMoves();
         assertTrue(!mlist.isEmpty());
-        assertEquals(8,mlist.size());
+        for (Move m : mlist) {
+            logger.debug("test_getValidMoves2 Move: {}", m);
+        }
         assertTrue(mlist.contains(new Move(1, 2)));
         assertTrue(mlist.contains(new Move(1, 3)));
         assertTrue(mlist.contains(new Move(1, 4)));
@@ -82,12 +81,8 @@ class MoveListGeneratorTest {
         assertTrue(mlist.contains(new Move(19, 20)));
         assertTrue(mlist.contains(new Move(19, 21)));
         assertTrue(mlist.contains(new Move(19, 22)));
-
-
-        for (Move m : mlist) {
-            logger.debug("test_getValidMoves2 Move: {}", m);
-        }
-
+        assertTrue(mlist.contains(new Move(19, 23)));
+        assertEquals(9,mlist.size());
     }
 
     @Test
@@ -99,9 +94,9 @@ class MoveListGeneratorTest {
 
         ArrayList<Move> mlist = mlg.getValidMoves();
         assertTrue(!mlist.isEmpty());
-        assertEquals(2,mlist.size());
         assertTrue(mlist.contains(new Move(0, 3)));
         assertTrue(mlist.contains(new Move(0, 4)));
+        assertEquals(2,mlist.size());
 
         for (Move m : mlist) {
             logger.debug("test_getValidMoves3 Move: {}", m);
@@ -117,10 +112,10 @@ class MoveListGeneratorTest {
 
         ArrayList<Move> mlist = mlg.getValidMoves();
         assertTrue(!mlist.isEmpty());
-        assertEquals(3,mlist.size());
         assertTrue(mlist.contains(new Move(19, 27)));
         assertTrue(mlist.contains(new Move(20, 22)));
         assertTrue(mlist.contains(new Move(21, 23)));
+        assertEquals(3,mlist.size());
 
         for (Move m : mlist) {
             logger.debug("test_getValidMoves4 Move: {}", m);

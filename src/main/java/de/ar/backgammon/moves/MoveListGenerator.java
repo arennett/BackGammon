@@ -72,7 +72,6 @@ public class MoveListGenerator implements MoveListGeneratorIf {
             int count_movevalidations = 0;
             while (pointItFrom.hasNext()) {
                 BPoint fromPoint = pointItFrom.next();
-                //BoardAndOffPointIterator pointItTo = new BoardAndOffPointIterator(boardModel, boardModel.getTurn());
                 DicesStackIterator pointItTo = new DicesStackIterator(boardModel, boardModel.getTurn(),fromPoint.getIndex());
                 logger.debug("### occupied from point: {}", fromPoint);
               while (pointItTo.hasNext()) {
@@ -100,24 +99,6 @@ public class MoveListGenerator implements MoveListGeneratorIf {
     }
 
     private void add(Move move) {
-
-//        if (moves.size() > 0){
-//            Move last =moves.get(moves.size()-1);
-//
-//            if(last.to==move.from){
-//                Move m = new Move(last.from,move.to);
-//                moves.remove(last);
-//                movesHashSet.remove(last);
-//                moves.add(m);
-//                movesHashSet.add(m);
-//            }else {
-//                moves.add(move);
-//                movesHashSet.add(move);
-//            }
-//        }else {
-//            moves.add(move);
-//            movesHashSet.add(move);
-//        }
         moves.add(move);
         movesHashSet.add(move);
     }

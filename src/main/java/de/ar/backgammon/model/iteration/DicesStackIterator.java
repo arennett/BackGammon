@@ -21,6 +21,8 @@ public class DicesStackIterator implements Iterator<BPoint> {
     private ArrayList<Integer> pips;
     private ArrayList<Integer> pointsIdx;
 
+    private boolean end_of_iteration;
+
     private int idx = 0;
 
     public DicesStackIterator(BoardModelIf boardModel, BColor bColorDirection, int pointIdx){
@@ -35,6 +37,7 @@ public class DicesStackIterator implements Iterator<BPoint> {
         pointsIdx = new ArrayList<>();
         DicesStack dstack = boardModel.getDicesStack();
         HashSet<Integer> positionHash = new HashSet<>();
+        end_of_iteration=false;
 
         for (int pip:dstack.getDices()){
             positionHash.add(pip);
@@ -47,22 +50,39 @@ public class DicesStackIterator implements Iterator<BPoint> {
 
         if (bColorDirection == BColor.WHITE) {
             for (int pip:pips) {
-                pointsIdx.add(pointIdx+pip);
+                int pos=pointIdx + pip;
+                if (pos > BoardModel.POINT_IDX_LAST_BOARD_POINT){
+                    pos = BoardModel.POINT_IDX_OFF_WHITE;
+                }
+                pointsIdx.add(pos);
             }
+
         }else {
             for (int pip:pips) {
-                pointsIdx.add(pointIdx-pip);
+                int pos=pointIdx-pip;
+                if (pos < BoardModel.POINT_IDX_FIRST_BOARD_POINT){
+                    pos = BoardModel.POINT_IDX_OFF_RED;
+                }
+                pointsIdx.add(pos);
             }
+
         }
+
+        int test = 0;
     }
 
     @Override
     public boolean hasNext() {
-        if (idx < pointsIdx.size()){
-            if (pointsIdx.get(idx) >= BoardModel.POINT_IDX_FIRST_BOARD_POINT &&
-                pointsIdx.get(idx) <= BoardModel.POINT_IDX_LAST_BOARD_POINT) {
+        if (idx < pointsIdx.size() && !end_of_iteration){
+            if (pointsIdx.get(idx) >= BoardModel.POINT_IDX_FIRST_BOARD_POINT
+            &&  pointsIdx.get(idx) <= BoardModel.POINT_IDX_LAST_BOARD_POINT) {
+                return true;
+            }else if (pointsIdx.get(idx)==BoardModel.POINT_IDX_OFF_RED
+                    || pointsIdx.get(idx)==BoardModel.POINT_IDX_OFF_WHITE){
+                end_of_iteration =true;
                 return true;
             }
+
         }
         return false;
     }
