@@ -35,23 +35,31 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
      */
     @Override
     public MoveSetHash getValidMoveSets() {
+        /**
+         * in the first iteration we start with one empty moveset
+         * the result is a list of 1 move moveset
+         * we add this to the moveset for the next iteration
+         * in the second iteration we get a list of 2 movements
+         * and so on
+         */
 
         MoveSetHash msetList = new MoveSetHash();
         MoveSetHash msetResultList = new MoveSetHash();
         MoveSetHash msetRemoveList = new MoveSetHash();
 
-        msetList.add(new MoveSet());
+        msetList.add(new MoveSet()); //we start the iteration with an empty moveset
+
+        // a moveset is finished if the MoveListGenerator generates any valid moves
+
         boolean allFinished = false;
+
         while (!allFinished) {
-            boolean _allFinished = true;
+
+            boolean _allFinished = true;  // reverse logic, so if at least one moveset is not finsihed
+                                          // _allfinsihed is false
+
             msetRemoveList.clear();
-            /**
-             * in the first iteration we start with one empty moveset
-             * the result is a list of 1 move movesets
-             * we add this to the moveset for the next iteration
-             * in the second iteration we get a list of 2 movements for every one move moveset
-             * and so on
-             */
+
             for (MoveSet moveSet : msetList) {
                 msetRemoveList.add(moveSet);
                 ArrayList<MoveSet> list = calcMoveSet(moveSet);
@@ -69,9 +77,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
                 msetResultList.removeAll(msetRemoveList);
             }
         }
-
-
-        return msetResultList;
+       return msetResultList;
     }
 
     public ArrayList<MoveSet> calcMoveSet(MoveSet mset) {

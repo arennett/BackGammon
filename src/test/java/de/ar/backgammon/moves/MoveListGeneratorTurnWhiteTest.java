@@ -1,17 +1,11 @@
 package de.ar.backgammon.moves;
 
-import de.ar.backgammon.BColor;
 import de.ar.backgammon.BException;
-import de.ar.backgammon.dices.Dices;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.model.BoardModelReader;
 import de.ar.backgammon.model.BoardModelReaderIf;
-import de.ar.backgammon.model.iteration.DicesStackIterator;
-import de.ar.backgammon.model.iteration.OccupiedBoardPointIterator;
-import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.validation.MoveValidator;
-import de.ar.backgammon.validation.MoveValidatorIf;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,12 +14,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import static org.junit.Assert.*;
 
-class MoveListGeneratorTest {
-    static Logger logger = LoggerFactory.getLogger(MoveListGeneratorTest.class);
+class MoveListGeneratorTurnWhiteTest {
+    static Logger logger = LoggerFactory.getLogger(MoveListGeneratorTurnWhiteTest.class);
     BoardModelIf bmodel;
     MoveListGenerator mlg;
 
