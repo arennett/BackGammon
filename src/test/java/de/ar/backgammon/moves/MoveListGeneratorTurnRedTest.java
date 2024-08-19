@@ -80,6 +80,32 @@ class MoveListGeneratorTurnRedTest {
 
         assertEquals(9,mlist.size());
     }
+    @Test
+    void test_getValidMoves2b() throws IOException, BException {
+        BoardModelReaderIf breader = new BoardModelReader();
+        breader.readTestModel(bmodel, "boardmap_startup_dices#1#1#turn#r");
+
+        // MOVE !!!!
+        bmodel.move(new Move(24, 23),1,false);
+
+
+        mlg = new MoveListGenerator(bmodel);
+        ArrayList<Move> mlist = mlg.getValidMoves();
+        assertTrue(!mlist.isEmpty());
+        for (Move m : mlist) {
+            logger.debug("test_getValidMoves2b Move: {}", m);
+        }
+        assertTrue(mlist.contains(new Move(24, 23)));
+        assertTrue(mlist.contains(new Move(24, 22)));
+        assertTrue(mlist.contains(new Move(24, 21)));
+        assertTrue(mlist.contains(new Move( 8,  7)));
+        assertTrue(mlist.contains(new Move( 6,  5)));
+        assertTrue(mlist.contains(new Move( 6,  4)));
+        assertTrue(mlist.contains(new Move( 6,  3)));
+
+
+        assertEquals(10,mlist.size());
+    }
 
     @Test
     @DisplayName("boardmap_bar2r_dices#3#4#turn#r")

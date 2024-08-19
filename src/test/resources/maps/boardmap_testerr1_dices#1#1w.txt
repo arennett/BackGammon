@@ -1,0 +1,11 @@
+p6,3,r
+p8,3,r
+p17,3,w
+p19,3,w
+bar,0,r
+bar,0,w
+off,11,r
+off,11,w
+turn,w
+dice1,1
+dice2,1

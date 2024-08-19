@@ -20,6 +20,8 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     BoardModel cModel;
     MoveListGenerator mlGen;
 
+    MoveSet mstest;
+
     public MoveSetListGenerator(BoardModelIf bModel) {
 
         this.bModel = bModel;
@@ -27,6 +29,12 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
         MoveValidatorIf moveValidator = new MoveValidator(cModel);
         cModel.setMoveValidator(moveValidator);
         mlGen = new MoveListGenerator(cModel);
+
+        mstest = new MoveSet();
+        mstest.add(new Move(8,7));
+        mstest.add(new Move(6,5));
+        mstest.add(new Move(6,5));
+        mstest.add(new Move(6,5));
 
     }
 
@@ -81,6 +89,14 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     }
 
     public ArrayList<MoveSet> calcMoveSet(MoveSet mset) {
+        // TEST TEST TEST
+        //[(17) >> (18),(19) >> (20),(19) >> (20),
+        //  8   >>  7  , 6  >> 5, 6  >> 5
+
+
+
+
+
         ArrayList<MoveSet> moveSetList = new ArrayList<>();
         if (mset.isFinished()) {
             return moveSetList;
@@ -98,6 +114,8 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
             assert (moved);
 
         }
+
+
         ArrayList<Move> moves = mlGen.getValidMoves();
         if (moves.isEmpty()) {
             mset.setFinished(true);
@@ -113,6 +131,14 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
             }
             moveset.add(move);
             moveSetList.add(moveset);
+
+            // TEST
+            String msteststr=mstest.toSortedString();
+            String movesetstr=moveset.toSortedString();
+            if (msteststr.equals(movesetstr)){
+                int test = 0;
+            }
+
         }
         return moveSetList;
 
