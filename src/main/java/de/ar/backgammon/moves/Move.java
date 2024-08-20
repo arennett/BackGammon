@@ -5,7 +5,7 @@ import de.ar.backgammon.model.BoardModel;
 
 public class Move implements Comparable{
 
-    private static boolean CmpToString = false;
+    public static boolean CmpToString = true;
     private final boolean cmp;
     public int from;
     public int to;

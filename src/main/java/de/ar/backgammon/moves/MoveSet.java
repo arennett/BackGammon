@@ -30,6 +30,7 @@ public class MoveSet extends ArrayList<Move> implements Comparable{
     public void setFinished(boolean finished) {
         this.finished = finished;
         if (finished) {
+            Collections.sort(this,new MoveComparator());
             logger.debug("moveset {} was finished",this);
         }
     }
@@ -45,14 +46,7 @@ public class MoveSet extends ArrayList<Move> implements Comparable{
     public boolean equals(Object o) {
         if (o instanceof MoveSet){
             MoveSet mset = (MoveSet) o;
-            if (mset.size() == this.size()){
-                for (Move m:this){
-                    if (!mset.contains(m)){ ///TODO  Fehler
-                        return false;
-                    }
-                }
-                return true;
-            }
+            return this.toSortedString().equals(mset.toSortedString());
         }
         return false;
     }

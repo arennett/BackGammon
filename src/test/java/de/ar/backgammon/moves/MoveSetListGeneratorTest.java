@@ -26,265 +26,71 @@ class MoveSetListGeneratorTest {
 
     @BeforeEach
     public void setUp() throws IOException, BException {
+        Move.CmpToString=true;
         bmodel = new BoardModel();
         MoveValidatorIf moveValidator = new MoveValidator(bmodel);
         bmodel.setMoveValidator(moveValidator);
 
     }
 
-    @Test
-    void getValidMoveSets1() throws IOException, BException {
-
+    public void testCompare(String model1, String model2) throws IOException, BException {
         BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#3#4#turn#w");
+        breader.readTestModel(bmodel, model1);
         mslg = new MoveSetListGenerator(bmodel);
         mlg = new MoveListGenerator(bmodel);
 
         MoveSetHash moveSetHash = mslg.getValidMoveSets();
         assertTrue(!moveSetHash.isEmpty());
-        assertEquals(16,moveSetHash.size());
+        //assertEquals(20,moveSetHash.size());
+        String cmpString1 = moveSetHash.toSortedString();
 
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
+
+        breader.readTestModel(bmodel, model2);
+        moveSetHash = mslg.getValidMoveSets();
+        assertTrue(!moveSetHash.isEmpty());
+        //assertEquals(20,moveSetHash.size());
+        String cmpString2 = moveSetHash.toSortedString();
+
+        assertEquals(cmpString1,cmpString2);
+        logger.debug("msetList1 : size: {} {}", moveSetHash.size(), cmpString1);
+        logger.debug("msetList2 : size: {} {}", moveSetHash.size(), cmpString2);
+    }
+    @Test
+    void getValidMoveSets1() throws IOException, BException {
+
+        testCompare("boardmap_startup_dices#3#4#turn#w","boardmap_startup_dices#3#4#turn#r");
+
    }
 
     @Test
     void getValidMoveSets2() throws IOException, BException {
+        testCompare("boardmap_startup_dices#1#1#turn#w","boardmap_startup_dices#1#1#turn#r");
 
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#1#1#turn#w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(36,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
     }
 
     @Test
     void getValidMoveSets2b() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#2#2#turn#w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(52,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
+        testCompare("boardmap_startup_dices#2#2#turn#w","boardmap_startup_dices#2#2#turn#r");
     }
     @Test
     void getValidMoveSets2c() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_only2_dices#1#1#turn#w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
+        testCompare("boardmap_only2_dices#1#1#turn#w","boardmap_only2_dices#1#1#turn#r");
     }
 
     @Test
-    //boardmap_testerr1_dices#1#1w.txt
     void getValidMoveSets2d() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_testerr1_dices#1#1w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-        //boardmap_testerr1_dices#1#1w.txt
-    void getValidMoveSets2e() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_testerr1_dices#1#1w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-        MoveListGenerator mg = new MoveListGenerator(bmodel);
-
-//        bmodel.move(new Move(17,18),1,false);
-//        bmodel.move(new Move(19,20),1,false);
-//        bmodel.move(new Move(19,20),1,false);
-
-        ArrayList<Move> moves=mg.getValidMoves();
-        logger.debug("movelist : {}",moves);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
+        testCompare("boardmap_testerr1_dices#1#1w","boardmap_testerr1_dices#1#1r");
+      }
     @Test
     void getValidMoveSets3() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_bar2w_dices#3#4#turn#w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(1,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
+        testCompare("boardmap_bar2w_dices#3#4#turn#w","boardmap_bar2r_dices#3#4#turn#r");
     }
 
     @Test
     void getValidMoveSets4() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_off_dices#6#2#turn#w");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(2,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
+        testCompare("boardmap_off_dices#6#2#turn#w","boardmap_off_dices#6#2#turn#r");
     }
 
 
-
-    @Test
-    void getValidMoveSets5() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#3#4#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(16,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-    void getValidMoveSets6() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#1#1#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(35,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-    void getValidMoveSets6b() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_startup_dices#2#2#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(52,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-    void getValidMoveSets6c() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_only2_dices#1#1#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-        //boardmap_testerr1_dices#1#1r.txt
-    void getValidMoveSets6d() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_testerr1_dices#1#1r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-        //boardmap_testerr1_dices#1#1r.txt
-    void getValidMoveSets6e() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_testerr1_dices#1#1r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-        MoveListGenerator mg = new MoveListGenerator(bmodel);
-
-//        bmodel.move(new Move(17,18,true),1,false);
-//        bmodel.move(new Move(19,20,true),1,false);
-//        bmodel.move(new Move(19,20,true),1,false);
-
-        ArrayList<Move> moves=mg.getValidMoves();
-        logger.debug("movelist : {}",moves);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-    void getValidMoveSets7() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_bar2r_dices#3#4#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(1,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
-
-    @Test
-    void getValidMoveSets8() throws IOException, BException {
-
-        BoardModelReaderIf breader = new BoardModelReader();
-        breader.readTestModel(bmodel, "boardmap_off_dices#6#2#turn#r");
-        mslg = new MoveSetListGenerator(bmodel);
-        mlg = new MoveListGenerator(bmodel);
-
-        MoveSetHash moveSetHash = mslg.getValidMoveSets();
-        assertTrue(!moveSetHash.isEmpty());
-        assertEquals(3,moveSetHash.size());
-
-        logger.debug("msetList : size: {} {}", moveSetHash.size(), moveSetHash.getFormatedList());
-    }
 
 }

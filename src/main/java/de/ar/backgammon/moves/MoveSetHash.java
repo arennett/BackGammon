@@ -36,7 +36,7 @@ public class MoveSetHash extends HashSet<MoveSet>{
         return list;
     }
 
-    public String getFormatedList(){
+    public String toSortedString(){
         StringBuffer stringBuffer = new StringBuffer();
         ArrayList<MoveSet> list=getSortedList ();
         stringBuffer.append("\n");
