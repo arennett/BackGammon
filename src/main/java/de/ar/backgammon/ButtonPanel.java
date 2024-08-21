@@ -17,7 +17,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
     private final GameControl gControl;
     private final DicesPanel dicesPanel;
 
-    JButton jButtonStart, jbSave, jbLoad;
+    JButton jbStart, jbSave, jbLoad;
+    JRadioButton jrbCompWhite,jrbCompRed;
     JToggleButton jtbSetMode;
     JTextArea jtaStatistics;
 
@@ -55,11 +56,11 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 1;
         add(new JSeparator(),c);
 
-        jButtonStart =new JButton("Start");
-        jButtonStart.addActionListener(this);
+        jbStart =new JButton("Start");
+        jbStart.addActionListener(this);
         c.gridx = 0;
         c.gridy = 2;
-        add(jButtonStart,c);
+        add(jbStart,c);
 
         jtbSetMode=new JToggleButton("SetMode");
         jtbSetMode.addActionListener(this);
@@ -92,6 +93,20 @@ public class ButtonPanel extends JPanel implements ActionListener {
         c.gridy = 7;
         add(jpStat,c);
 
+
+        JPanel jpCompute = new JPanel();
+        jpCompute.setBorder(new TitledBorder("Computing"));
+        jrbCompWhite= new JRadioButton("White");
+        jrbCompWhite.addActionListener(this);
+        jpCompute.add(jrbCompWhite);
+        jrbCompRed= new JRadioButton("Red");
+        jrbCompRed.addActionListener(this);
+        jpCompute.add(jrbCompRed);
+
+        c.gridx = 0;
+        c.gridy = 8;
+        add(jpCompute,c);
+
         updateComponents();
     }
 public void updateComponents(){
@@ -118,25 +133,30 @@ public void updateComponents(){
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource()== jButtonStart){
+        if (e.getSource() == jbStart) {
 
             bpController.start();
 
-        }else if (e.getSource()==jtbSetMode){
+        } else if (e.getSource() == jtbSetMode) {
             bpController.setSetMode(jtbSetMode.isSelected());
 
-        }else if (e.getSource()==jbTurnColor){
+        } else if (e.getSource() == jbTurnColor) {
             bpController.switchTurn();
 
-        }else if (e.getSource()== jbSave){
+        } else if (e.getSource() == jbSave) {
             bpController.saveModel();
 
-        }else if (e.getSource()== jbLoad){
+        } else if (e.getSource() == jbLoad) {
             bpController.loadModel();
 
+        } else if (e.getSource() == jrbCompWhite) {
+            bpController.setCompWhite(jrbCompWhite.isSelected());
+
+        } else if (e.getSource() == jrbCompRed) {
+            bpController.setCompRed(jrbCompRed.isSelected());
+
         }
+
+
     }
-
-
-
 }

@@ -26,7 +26,7 @@ class MoveSetListGeneratorTest {
 
     @BeforeEach
     public void setUp() throws IOException, BException {
-        Move.CmpToString=true;
+        Move.CmpIdxToWhiteString =true;
         bmodel = new BoardModel();
         MoveValidatorIf moveValidator = new MoveValidator(bmodel);
         bmodel.setMoveValidator(moveValidator);
@@ -44,7 +44,7 @@ class MoveSetListGeneratorTest {
         //assertEquals(20,moveSetHash.size());
         String cmpString1 = moveSetHash.toSortedString();
 
-
+        bmodel.clear();
         breader.readTestModel(bmodel, model2);
         moveSetHash = mslg.getValidMoveSets();
         assertTrue(!moveSetHash.isEmpty());
@@ -89,6 +89,26 @@ class MoveSetListGeneratorTest {
     @Test
     void getValidMoveSets4() throws IOException, BException {
         testCompare("boardmap_off_dices#6#2#turn#w","boardmap_off_dices#6#2#turn#r");
+    }
+
+    @Test
+    void getValidMoveSets4b() throws IOException, BException {
+        String model1="boardmap_off_dices#6#2#turn#r";
+        BoardModelReaderIf breader = new BoardModelReader();
+        breader.readTestModel(bmodel, model1);
+        mslg = new MoveSetListGenerator(bmodel);
+        mlg = new MoveListGenerator(bmodel);
+
+        ArrayList<Move> mlglist = mlg.getValidMoves();
+
+        MoveSetHash moveSetHash = mslg.getValidMoveSets();
+        assertTrue(!moveSetHash.isEmpty());
+        //assertEquals(20,moveSetHash.size());
+        String cmpString1 = moveSetHash.toSortedString();
+
+        logger.debug("mlglist : size: {} \n {}",mlglist.size(),mlglist);
+        logger.debug("msetList1 : size: {} {}", moveSetHash.size(), cmpString1);
+
     }
 
 

@@ -81,6 +81,10 @@ public class GameControl {
             game.message_error("please start game!");
             return false;
         }
+        if (bpControl.isComp(getTurn())){
+            game.message_error(getTurn().toString()+" is played by computer");
+            return false;
+        }
         if (dicesControl.getDicesStack().getState() != DicesStack.State.UPDATED) {
             game.message_error("throw the dices!");
             return false;

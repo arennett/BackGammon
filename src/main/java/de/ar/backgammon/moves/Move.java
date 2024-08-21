@@ -3,9 +3,11 @@ package de.ar.backgammon.moves;
 import de.ar.backgammon.BColor;
 import de.ar.backgammon.model.BoardModel;
 
+import static de.ar.backgammon.model.BoardModel.POINT_IDX_LAST_BOARD_POINT;
+
 public class Move implements Comparable{
 
-    public static boolean CmpToString = true;
+    public static boolean CmpIdxToWhiteString = false;
     private final boolean cmp;
     public int from;
     public int to;
@@ -23,11 +25,11 @@ public class Move implements Comparable{
     public Move(int from, int to,boolean cmp) {
         this.cmp = cmp;
         if (cmp) {
-            this.from = 25 - from;
+            this.from = POINT_IDX_LAST_BOARD_POINT+1 - from;
             if (to == BoardModel.POINT_IDX_OFF_WHITE) {
                 to = BoardModel.POINT_IDX_OFF_RED;
             } else {
-                this.to = 25 - to;
+                this.to = POINT_IDX_LAST_BOARD_POINT+1 - to;
             }
         }else{
             this.from = from;
@@ -44,21 +46,26 @@ public class Move implements Comparable{
     }
 
     public String toString(){
-        if (Move.CmpToString
-                && (from > to || to==BoardModel.POINT_IDX_OFF_RED)){
+        if (Move.CmpIdxToWhiteString && isRedDirection()){
             return "(" +getCmpFrom() +") >> (" +getCmpTo() +")";
         }else{
             return "(" +from +") >> (" +to +")";
         }
-  }
+    }
+    public boolean isRedDirection(){
+        return (from > to || to==BoardModel.POINT_IDX_OFF_RED);
+    }
+    public boolean isWhiteDirection(){
+        return !isRedDirection();
+    }
 
     /**
      * for comparing red moves to white moves
      * @return
      */
     public int getCmpFrom(){
-        if (from > to) {
-            return 25 - from;
+        if (isRedDirection()) {
+            return POINT_IDX_LAST_BOARD_POINT+1 - from;
         }else {
             return from;
         }
@@ -72,7 +79,7 @@ public class Move implements Comparable{
         if (to==BoardModel.POINT_IDX_OFF_RED) {
             return BoardModel.POINT_IDX_OFF_WHITE;
         }else if (from > to) {
-            return 25 - to;
+            return POINT_IDX_LAST_BOARD_POINT+1 - to;
         }else {
             return to;
         }
@@ -103,7 +110,7 @@ public class Move implements Comparable{
 
         if (isOffMove()){
             if (turn == BColor.WHITE) {
-                range = BoardModel.POINT_IDX_LAST_BOARD_POINT+1 - from;
+                range = POINT_IDX_LAST_BOARD_POINT+1 - from;
             }else {
                 range = from;
             }

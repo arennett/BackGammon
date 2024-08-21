@@ -1,11 +1,15 @@
 package de.ar.backgammon.moves;
 
+import de.ar.backgammon.model.BoardModel;
+
 import java.util.Comparator;
 
 public class MoveComparator implements Comparator<Move> {
     @Override
     public int compare(Move o1, Move o2) {
-        if (o1.to > o1.from){   // white direction
+        // TODO comparator incomplete
+
+        if (o1.isWhiteDirection()){   // white direction
             if (o1.from > o2.from) {
                 return +1;
             } else if (o1.from < o2.from) {
@@ -13,7 +17,7 @@ public class MoveComparator implements Comparator<Move> {
             } else {
                 return 0;
             }
-        }else{                  // red direction
+        }else{      // red direction
             if (o1.from > o2.from) {
                 return -1;
             } else if (o1.from < o2.from) {

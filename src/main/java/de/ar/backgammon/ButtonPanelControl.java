@@ -13,6 +13,8 @@ public class ButtonPanelControl {
     private final BoardModelReaderIf bmReader;
     private final GameControl gameControl;
     private boolean setMode;
+    private boolean compWhite;
+    private boolean compRed;
 
     public ButtonPanelControl(Game game,
                               BoardPanel boardPanel,
@@ -55,5 +57,29 @@ public class ButtonPanelControl {
     public BoardModelIf getBoardModel() {
 
         return gameControl.getBoardModel();
+    }
+
+    public void setCompWhite(boolean compWhite) {
+        this.compWhite = compWhite;
+    }
+
+    public boolean isCompWhite() {
+        return compWhite;
+    }
+
+    public boolean isCompRed() {
+        return compRed;
+    }
+
+    public boolean isComp(BColor col) {
+        if (col==BColor.RED){
+            return compRed;
+        }else{
+            return compWhite;
+        }
+    }
+
+    public void setCompRed(boolean compRed) {
+        this.compRed = compRed;
     }
 }

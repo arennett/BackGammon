@@ -25,7 +25,7 @@ import static de.ar.backgammon.ConstIf.MAX_PIP;
 
 public class BoardModel implements BoardModelIf {
     static Logger logger = LoggerFactory.getLogger(BoardModel.class);
-    static int MAX_POINTS = 24;
+    public static int MAX_POINTS = 24;
     public static int POINT_IDX_FIRST_BOARD_POINT = 1;
     public static int POINT_IDX_LAST_BOARD_POINT = MAX_POINTS;
 

@@ -75,7 +75,6 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
                 if (!moveSet.isFinished()) {
                     _allFinished = false;
                 }
-
             }
             allFinished = _allFinished;
             msetList.clear();
@@ -85,6 +84,8 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
                 msetResultList.removeAll(msetRemoveList);
             }
         }
+
+       // TODO clean doubles
        return msetResultList;
     }
 
@@ -132,7 +133,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
             moveset.add(move);
             moveSetList.add(moveset);
 
-            // TEST
+            // TODO TEST
             String msteststr=mstest.toSortedString();
             String movesetstr=moveset.toSortedString();
             if (msteststr.equals(movesetstr)){
