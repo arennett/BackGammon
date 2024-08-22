@@ -1,5 +1,6 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.compute.ComputerIf;
 import de.ar.backgammon.dices.DicesControl;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.dices.PipSequence;
@@ -11,6 +12,7 @@ import de.ar.backgammon.model.BoardModelWriterIf;
 import de.ar.backgammon.moves.Move;
 import de.ar.backgammon.moves.MoveListGenerator;
 import de.ar.backgammon.moves.MoveListGeneratorIf;
+import de.ar.backgammon.moves.MoveSet;
 import de.ar.backgammon.points.BPoint;
 import de.ar.backgammon.validation.MoveValidator;
 import org.slf4j.Logger;
@@ -38,12 +40,14 @@ public class GameControl {
     private ButtonPanelControl bpControl;
 
     private MoveValidator moveValidator;
+    private final ComputerIf comp;
 
     public GameControl(Game game, BoardModelIf boardModel,
                        BoardPanel boardPanel,
                        BoardModelReaderIf bmReader,
                        BoardModelWriterIf bmWriter,
-                       DicesControl dicesControl) {
+                       DicesControl dicesControl,
+                       ComputerIf comp) {
         this.game = game;
         this.boardModel = boardModel;
         this.boardPanel = boardPanel;
@@ -51,6 +55,7 @@ public class GameControl {
         this.bmWriter = bmWriter;
         this.dicesControl = dicesControl;
         this.moveValidator = new MoveValidator(boardModel);
+        this.comp = comp;
     }
 
     /**
@@ -169,8 +174,22 @@ public class GameControl {
         dicesControl.clear();
         logger.debug("################## TURN IS {} ############################",getTurn());
         buttonPanel.updateComponents();
-        if (isMovePossible()){
-            game.message_error(" no further moves possible, please switch turn");
+
+
+        if(bpControl.isComp(getTurn())){
+            dicesControl.getDicesStack().throwDices();
+            if (!isMovePossible()){
+                game.message_error(" no further moves possible, switch turn");
+                switch_turn();
+                return;
+            }
+            MoveSet moveSet=comp.compute();
+            if(moveSet != null){
+                if (moveSet.move(boardModel)){
+                    boardPanel.repaint();
+                    switch_turn();
+                };
+            }
         }
 
     }
@@ -178,7 +197,7 @@ public class GameControl {
     /**
      * check for possible moves
      * @return
-     * TODO check for the whole board */
+     */
     boolean isMovePossible() {
         boolean valid = false;
         MoveListGeneratorIf movesGenerator=new MoveListGenerator(boardModel);
@@ -198,6 +217,15 @@ public class GameControl {
             game.message_append("turn: " + getTurn());
             dicesControl.clear();
             running = true;
+            if(bpControl.isComp(getTurn())){
+                dicesControl.getDicesStack().throwDices();
+                MoveSet moveSet=comp.compute();
+                if(moveSet != null){
+                    if (moveSet.move(boardModel)){
+                        switch_turn();
+                    };
+                }
+            }
         } catch (Exception ex) {
             logger.error("start failed", ex);
             game.error("start failed!", ex);

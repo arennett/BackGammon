@@ -1,5 +1,6 @@
 package de.ar.backgammon.moves;
 
+import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,10 +30,6 @@ public class MoveSet extends ArrayList<Move> implements Comparable{
 
     public void setFinished(boolean finished) {
         this.finished = finished;
-        if (finished) {
-            Collections.sort(this,new MoveComparator());
-            logger.debug("moveset {} was finished",this);
-        }
     }
 
 
@@ -86,4 +83,17 @@ public class MoveSet extends ArrayList<Move> implements Comparable{
         return ms.toString();
     }
 
+    /**
+     * moves all moves of the moveset in the passed boardmodell
+     * @param boardModel
+     * @return
+     */
+    public boolean move(BoardModelIf boardModel) {
+        for (Move move:this){
+            if (!boardModel.move(move,1,false)){
+                return false;
+            }
+        }
+        return true;
+    }
 }

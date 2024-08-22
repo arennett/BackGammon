@@ -48,7 +48,13 @@
         <Logger name="de.ar.backgammon.dices" level="error" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="de.ar.backgammon.model.iteration" level="debug" additivity="false">
+        <Logger name="de.ar.backgammon.model.iteration" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="de.ar.backgammon.moves.MoveListGenerator" level="info" additivity="false">
+            <AppenderRef ref="console"/>
+        </Logger>
+        <Logger name="de.ar.backgammon.model.BoardModel" level="info" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
 

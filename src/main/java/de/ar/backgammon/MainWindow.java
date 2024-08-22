@@ -1,8 +1,12 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.compute.ComputerIf;
+import de.ar.backgammon.compute.EasyComputable;
+import de.ar.backgammon.compute.MainComputer;
 import de.ar.backgammon.dices.DicesControl;
 import de.ar.backgammon.dices.DicesPanel;
 import de.ar.backgammon.model.*;
+import de.ar.backgammon.moves.MoveSetListGenerator;
 import de.ar.backgammon.validation.MoveValidator;
 import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
@@ -44,7 +48,11 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 
         DicesControl dicesControl = new DicesControl(game,bModel);
-        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl);
+
+        EasyComputable ec= new EasyComputable(bModel,new MoveSetListGenerator(bModel));
+        ComputerIf comp=new MainComputer(ec);
+
+        GameControl gameControl=new GameControl(game,bModel,boardPanel,bmReader,bmWriter,dicesControl,comp);
         dicesControl.setGameControl(gameControl);
         boardPanel.setGameControl(gameControl);
 

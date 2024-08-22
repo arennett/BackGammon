@@ -26,7 +26,7 @@ class MoveSetListGeneratorTest {
 
     @BeforeEach
     public void setUp() throws IOException, BException {
-        Move.CmpIdxToWhiteString =true;
+        Move.CmpIdxToWhiteString = true;
         bmodel = new BoardModel();
         MoveValidatorIf moveValidator = new MoveValidator(bmodel);
         bmodel.setMoveValidator(moveValidator);
@@ -41,59 +41,74 @@ class MoveSetListGeneratorTest {
 
         MoveSetHash moveSetHash = mslg.getValidMoveSets();
         assertTrue(!moveSetHash.isEmpty());
-        //assertEquals(20,moveSetHash.size());
-        String cmpString1 = moveSetHash.toSortedString();
 
+        //try moves
+        for (MoveSet mset : moveSetHash) {
+            bmodel.clear();
+            breader.readTestModel(bmodel, model1);
+            assertTrue(mset.move(bmodel));
+        }
+        String cmpString1 = moveSetHash.toSortedString();
         bmodel.clear();
         breader.readTestModel(bmodel, model2);
         moveSetHash = mslg.getValidMoveSets();
         assertTrue(!moveSetHash.isEmpty());
-        //assertEquals(20,moveSetHash.size());
+
+        //try moves
+        for (MoveSet mset : moveSetHash) {
+            bmodel.clear();
+            breader.readTestModel(bmodel, model2);
+            assertTrue(mset.move(bmodel));
+        }
+
         String cmpString2 = moveSetHash.toSortedString();
 
-        assertEquals(cmpString1,cmpString2);
+        assertEquals(cmpString1, cmpString2);
         logger.debug("msetList1 : size: {} {}", moveSetHash.size(), cmpString1);
         logger.debug("msetList2 : size: {} {}", moveSetHash.size(), cmpString2);
     }
+
     @Test
     void getValidMoveSets1() throws IOException, BException {
 
-        testCompare("boardmap_startup_dices#3#4#turn#w","boardmap_startup_dices#3#4#turn#r");
+        testCompare("boardmap_startup_dices#3#4#turn#w", "boardmap_startup_dices#3#4#turn#r");
 
-   }
+    }
 
     @Test
     void getValidMoveSets2() throws IOException, BException {
-        testCompare("boardmap_startup_dices#1#1#turn#w","boardmap_startup_dices#1#1#turn#r");
+        testCompare("boardmap_startup_dices#1#1#turn#w", "boardmap_startup_dices#1#1#turn#r");
 
     }
 
     @Test
     void getValidMoveSets2b() throws IOException, BException {
-        testCompare("boardmap_startup_dices#2#2#turn#w","boardmap_startup_dices#2#2#turn#r");
+        testCompare("boardmap_startup_dices#2#2#turn#w", "boardmap_startup_dices#2#2#turn#r");
     }
+
     @Test
     void getValidMoveSets2c() throws IOException, BException {
-        testCompare("boardmap_only2_dices#1#1#turn#w","boardmap_only2_dices#1#1#turn#r");
+        testCompare("boardmap_only2_dices#1#1#turn#w", "boardmap_only2_dices#1#1#turn#r");
     }
 
     @Test
     void getValidMoveSets2d() throws IOException, BException {
-        testCompare("boardmap_testerr1_dices#1#1w","boardmap_testerr1_dices#1#1r");
-      }
+        testCompare("boardmap_testerr1_dices#1#1w", "boardmap_testerr1_dices#1#1r");
+    }
+
     @Test
     void getValidMoveSets3() throws IOException, BException {
-        testCompare("boardmap_bar2w_dices#3#4#turn#w","boardmap_bar2r_dices#3#4#turn#r");
+        testCompare("boardmap_bar2w_dices#3#4#turn#w", "boardmap_bar2r_dices#3#4#turn#r");
     }
 
     @Test
     void getValidMoveSets4() throws IOException, BException {
-        testCompare("boardmap_off_dices#6#2#turn#w","boardmap_off_dices#6#2#turn#r");
+        testCompare("boardmap_off_dices#6#2#turn#w", "boardmap_off_dices#6#2#turn#r");
     }
 
     @Test
     void getValidMoveSets4b() throws IOException, BException {
-        String model1="boardmap_off_dices#6#2#turn#r";
+        String model1 = "boardmap_off_dices#6#2#turn#r";
         BoardModelReaderIf breader = new BoardModelReader();
         breader.readTestModel(bmodel, model1);
         mslg = new MoveSetListGenerator(bmodel);
@@ -106,11 +121,10 @@ class MoveSetListGeneratorTest {
         //assertEquals(20,moveSetHash.size());
         String cmpString1 = moveSetHash.toSortedString();
 
-        logger.debug("mlglist : size: {} \n {}",mlglist.size(),mlglist);
+        logger.debug("mlglist : size: {} \n {}", mlglist.size(), mlglist);
         logger.debug("msetList1 : size: {} {}", moveSetHash.size(), cmpString1);
 
     }
-
 
 
 }

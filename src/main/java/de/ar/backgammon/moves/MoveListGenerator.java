@@ -44,6 +44,7 @@ public class MoveListGenerator implements MoveListGeneratorIf {
     }
 
     private void doGenerateMoves() {
+        logger.info("doGenerateMoves");
         moves.clear();
         movesHashSet.clear();
 
@@ -93,6 +94,9 @@ public class MoveListGenerator implements MoveListGeneratorIf {
             logger.debug("count move validations: {}", count_movevalidations);
 
 
+        }
+        if (moves.size() != movesHashSet.size()) {
+            logger.error("#list# {} #hash# {}", moves, movesHashSet);
         }
         assert moves.size() == movesHashSet.size();
 
