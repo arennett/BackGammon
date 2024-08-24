@@ -51,8 +51,8 @@ class MoveSetTest {
         MoveSet bset = new MoveSet();
         aset.add(new Move(1,3));
         aset.add(new Move(1,4));
-        bset.add(new Move(1,4));
         bset.add(new Move(1,3));
+        bset.add(new Move(1,4));
 
         assertTrue(aset.equals(bset));
 

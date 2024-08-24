@@ -14,6 +14,7 @@ import java.util.Iterator;
 
 public class DicesStackIterator implements Iterator<BPoint> {
 
+    private final DicesStack dstack;
     private final BoardModelIf boardModel;
     private final BColor bColorDirection;
     private int pointIdx;
@@ -25,7 +26,8 @@ public class DicesStackIterator implements Iterator<BPoint> {
 
     private int idx = 0;
 
-    public DicesStackIterator(BoardModelIf boardModel, BColor bColorDirection, int pointIdx){
+    public DicesStackIterator(DicesStack dstack ,BoardModelIf boardModel, BColor bColorDirection, int pointIdx){
+        this.dstack = dstack;
         this.boardModel = boardModel;
         this.bColorDirection = bColorDirection;
         this.pointIdx = pointIdx;
@@ -35,7 +37,7 @@ public class DicesStackIterator implements Iterator<BPoint> {
     private void initIterator() {
         pips = new ArrayList<>();
         pointsIdx = new ArrayList<>();
-        DicesStack dstack = boardModel.getDicesStack();
+        
         HashSet<Integer> positionHash = new HashSet<>();
         end_of_iteration=false;
 

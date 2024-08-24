@@ -43,7 +43,7 @@ public class ButtonPanelControl {
     }
 
     public void switchTurn() {
-        gameControl.switch_turn();
+        gameControl.switch_turn(BColor.WHITE);
     }
 
     public void saveModel() {
@@ -61,6 +61,7 @@ public class ButtonPanelControl {
 
     public void setCompWhite(boolean compWhite) {
         this.compWhite = compWhite;
+        gameControl.setCompWhite( compWhite);
     }
 
     public boolean isCompWhite() {
@@ -69,6 +70,7 @@ public class ButtonPanelControl {
 
     public boolean isCompRed() {
         return compRed;
+
     }
 
     public boolean isComp(BColor col) {
@@ -81,5 +83,6 @@ public class ButtonPanelControl {
 
     public void setCompRed(boolean compRed) {
         this.compRed = compRed;
+        gameControl.setCompRed( compRed);
     }
 }

@@ -126,5 +126,25 @@ class MoveSetListGeneratorTest {
 
     }
 
+    @Test
+    void getValidMoveSets5() throws IOException, BException {
+        String model1 = "boardmap_error_0101#dices1#1#turn#w";
+        BoardModelReaderIf breader = new BoardModelReader();
+        breader.readTestModel(bmodel, model1);
+        mslg = new MoveSetListGenerator(bmodel);
+        mlg = new MoveListGenerator(bmodel);
+
+        ArrayList<Move> mlglist = mlg.getValidMoves();
+
+        MoveSetHash moveSetHash = mslg.getValidMoveSets();
+        assertTrue(!moveSetHash.isEmpty());
+        //assertEquals(20,moveSetHash.size());
+        String cmpString1 = moveSetHash.toSortedString();
+
+        logger.debug("mlglist : size: {} \n {}", mlglist.size(), mlglist);
+        logger.debug("msetList1 : size: {} {}", moveSetHash.size(), cmpString1);
+
+    }
+
 
 }

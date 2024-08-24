@@ -106,9 +106,10 @@ class MoveListGeneratorTurnWhiteTest {
         ArrayList<Move> mlist = mlg.getValidMoves();
         assertTrue(!mlist.isEmpty());
         assertTrue(mlist.contains(new Move(19, 27)));
+        assertTrue(mlist.contains(new Move(19, 21)));
         assertTrue(mlist.contains(new Move(20, 22)));
         assertTrue(mlist.contains(new Move(21, 23)));
-        assertEquals(3,mlist.size());
+        assertEquals(4,mlist.size());
 
         for (Move m : mlist) {
             logger.debug("test_getValidMoves4 Move: {}", m);

@@ -137,7 +137,7 @@ class MoveListGeneratorTurnRedTest {
         assertTrue(mlist.contains(new Move(6,4)));
         assertTrue(mlist.contains(new Move(6,26)));
         assertTrue(mlist.contains(new Move(5,3)));
-        assertTrue(mlist.contains(new Move(2,26)));
+        assertTrue(mlist.contains(new Move(4,2)));
 
         assertEquals(4,mlist.size());
 

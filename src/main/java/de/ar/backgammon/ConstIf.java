@@ -11,5 +11,7 @@ public interface ConstIf {
     int MIN_PIP = 1;
     int MAX_PIP = 6;
 
+    int COMP_SLEEPTIME = 500;
+
 
 }

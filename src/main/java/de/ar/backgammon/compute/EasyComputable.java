@@ -26,8 +26,12 @@ public class EasyComputable implements ComputableIf{
     public MoveSet compute() {
         logger.debug("huhu, i am computing");
         MoveSetHash moveSets=moveSetListGenerator.getValidMoveSets();
+        if (moveSets.isEmpty()){
+            logger.debug("no valid moves found");
+                return null;
+        }
         int size =moveSets.size();
-        assert size > 0;
+
         int idx =random.nextInt(size);
         MoveSet mset=(MoveSet) moveSets.toArray()[idx];
         logger.debug("random mset: {} computed",mset);

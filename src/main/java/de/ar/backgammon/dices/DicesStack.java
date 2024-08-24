@@ -25,6 +25,8 @@ public class DicesStack extends ArrayList<Integer> {
     private SequenceStack sequenceStack;
 
 
+
+
     public enum State {EMPTY, UPDATED}
     State state = State.EMPTY;
 
@@ -36,6 +38,14 @@ public class DicesStack extends ArrayList<Integer> {
         this.bModel = bModel;
         this.dices = new Dices(0,0);
         this.sequenceStack = new SequenceStack(bModel);
+    }
+    public DicesStack(BoardModelIf bModel,DicesStack dstack) {
+        this.bModel = bModel;
+        this.dices = new Dices(0,0);
+        this.dices.dice1 = dstack.dices.dice1;
+        this.dices.dice2 = dstack.dices.dice2;
+        this.sequenceStack = new SequenceStack(bModel);
+        this.update();
     }
 
    @Override
