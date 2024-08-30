@@ -52,6 +52,7 @@ public class BoardModel implements BoardModelIf {
     BoardModelWriterIf bwriter = new BoardModelWriter();
     BoardModelReaderIf breader = new BoardModelReader();
 
+
     public BoardModel() {
         initModel();
     }
@@ -312,7 +313,7 @@ public class BoardModel implements BoardModelIf {
      * @return
      */
     @Override
-    public boolean move(Move move, int _spc, boolean setMode) {
+    public boolean move(Move move, int _spc, boolean setMode,boolean comp) {
         logger.debug("### start move ### {} ###",move);
         int spc =_spc;
         if (move.isBarMove()) {
@@ -374,15 +375,29 @@ public class BoardModel implements BoardModelIf {
                     }
 
                     if (!ba0.equals(ba1)) {
-                        logger.debug("user sequence selection requested !");
-                        SeqSelectDialog sq = new SeqSelectDialog();
-                        sq.setSequences(psArray);
-                        sq.setVisible(true);
-                        logger.debug("OPTION : {}", sq.getOption());
-                        if (sq.getOption() < 0) {
-                            return false;
-                        } else {
-                            psSelect = psArray.get(sq.getOption());
+                        if (!comp) {
+                            logger.debug("user sequence selection requested !");
+                            SeqSelectDialog sq = new SeqSelectDialog();
+                            sq.setSequences(psArray);
+                            sq.setVisible(true);
+                            logger.debug("OPTION : {}", sq.getOption());
+                            if (sq.getOption() < 0) {
+                                return false;
+                            } else {
+                                psSelect = psArray.get(sq.getOption());
+                            }
+                        } else{
+                            logger.debug("sequence selection by computer");
+                            int opt = 0;
+                            if (!ba0.isEmpty()){
+                                opt=0;
+                            }else{
+                                opt=1;
+                            }
+
+                            logger.debug("OPTION COMP : {}", opt);
+
+                            psSelect = psArray.get(opt);
                         }
                     } else {
                         logger.debug("equal BlotArrays ba0: {}", ba0);
@@ -428,7 +443,15 @@ public class BoardModel implements BoardModelIf {
 
     }
 
-
+    /**
+     * a submove range is maximum one pip long. If the main move is
+     * longer than a maximum pip (6) a pip sequence devides the move
+     * into sub moves
+     *
+     * @param move
+     * @param spc count of pieces moved
+     * @param setMode manually piece moving
+     */
     @Override
     public void subMove(Move move, int spc,boolean setMode) {
 
@@ -476,5 +499,7 @@ public class BoardModel implements BoardModelIf {
     public MoveValidatorIf getMoveValidator() {
         return moveValidator;
     }
+
+
 
 }

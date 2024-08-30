@@ -22,9 +22,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 
     public MainWindow() {
         super("BackGammon V1.0");
-        //setSize(new Dimension(FRAME_WIDTH,FRAME_HEIGTH));
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-        //this.setMaximumSize(new Dimension(600,800));
         this.addComponentListener(this);
         initUi();
         setVisible(true);
@@ -38,6 +36,7 @@ public class MainWindow extends JFrame implements ComponentListener {
         Game game = new Game(messagePanel);
 
         BoardModelIf bModel= new BoardModel();
+        game.setBoardModel(bModel);
         MoveValidator moveValidator=new MoveValidator(bModel);
         bModel.setMoveValidator(moveValidator);
         BoardRenderer bRenderer = new BoardRenderer(bModel);
@@ -72,7 +71,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 
 
         add(boardPanel,BorderLayout.CENTER);
-        add(messagePanel,BorderLayout.SOUTH);
+        add(messagePanel,BorderLayout.WEST);
         add(buttonPanel,BorderLayout.EAST);
         pack();
     }

@@ -90,7 +90,7 @@ public class MoveSet extends ArrayList<Move> implements Comparable{
      */
     public boolean move(BoardModelIf boardModel) {
         for (Move move:this){
-            if (!boardModel.move(move,1,false)){
+            if (!boardModel.move(move,1,false,true)){
                 return false;
             }
         }

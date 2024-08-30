@@ -1,11 +1,13 @@
 package de.ar.backgammon;
 
+import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Game {
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
     private final MessagePanel mpanel;
+    private BoardModelIf bModel;
 
     public Game(MessagePanel mpanel){
 
@@ -13,9 +15,9 @@ public class Game {
     }
 
     public void message(String message){
-        mpanel.message(message);
+        mpanel.append("["+bModel.getTurn()+"]: "+message);
     }
-    public void message_append(String message){
+    public void rawMessage(String message){
         mpanel.append(message);
     }
 
@@ -30,4 +32,11 @@ public class Game {
     }
 
 
+    public void setBoardModel(BoardModelIf bModel) {
+        this.bModel = bModel;
+    }
+
+    public void clearMessages() {
+        mpanel.clear();
+    }
 }

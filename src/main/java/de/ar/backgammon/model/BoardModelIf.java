@@ -61,11 +61,12 @@ public interface BoardModelIf {
     void setDices(Dices dices);
 
     void setDice1(int count);
+
     void setDice2(int count);
 
     DicesStack getDicesStack();
 
-    boolean move(Move move, int _spc, boolean setMode);
+    boolean move(Move move, int _spc, boolean setMode, boolean comp);
 
     void subMove(Move move, int spc, boolean setMode);
 
@@ -73,3 +74,4 @@ public interface BoardModelIf {
 
     MoveValidatorIf getMoveValidator();
 }
+

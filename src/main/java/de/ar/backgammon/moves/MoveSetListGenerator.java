@@ -90,13 +90,6 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     }
 
     public ArrayList<MoveSet> calcMoveSet(MoveSet mset) {
-        // TEST TEST TEST
-        //[(17) >> (18),(19) >> (20),(19) >> (20),
-        //  8   >>  7  , 6  >> 5, 6  >> 5
-
-
-
-
 
         ArrayList<MoveSet> moveSetList = new ArrayList<>();
         if (mset.isFinished()) {
@@ -108,7 +101,7 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
 
         logger.debug("preparing model with mset: {}", mset);
         for (Move move : mset) {
-            boolean moved = cModel.move(move, 1, false);
+            boolean moved = cModel.move(move, 1, false,true);
             if (!moved) {
                 int test = 0;
             }

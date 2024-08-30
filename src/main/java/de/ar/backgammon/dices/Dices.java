@@ -27,6 +27,10 @@ public class Dices implements Iterable<Integer>{
 
     }
 
+    public String toString(){
+        return "["+dice1+"]["+dice2+"]";
+    }
+
     public boolean isEmpty() {
         return dice1==0 && dice2==0;
     }

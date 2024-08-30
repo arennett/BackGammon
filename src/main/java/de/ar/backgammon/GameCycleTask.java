@@ -53,7 +53,7 @@ public class GameCycleTask extends TimerTask {
             try {
                 if (gc.isRequestTurnSwitch()) {
                     gc.switch_turn(null);
-                } else {
+                }  else {
 //                    logger.debug("nothing to do");
                 }
             } catch (Exception e) {

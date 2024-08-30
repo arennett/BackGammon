@@ -150,10 +150,10 @@ public void updateComponents(){
             bpController.loadModel();
 
         } else if (e.getSource() == jrbCompWhite) {
-            bpController.setCompWhite(jrbCompWhite.isSelected());
+            bpController.setCompWhiteOn(jrbCompWhite.isSelected());
 
         } else if (e.getSource() == jrbCompRed) {
-            bpController.setCompRed(jrbCompRed.isSelected());
+            bpController.setCompRedOn(jrbCompRed.isSelected());
 
         }
 
