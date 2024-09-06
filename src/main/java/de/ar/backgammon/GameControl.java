@@ -12,6 +12,7 @@ import de.ar.backgammon.moves.MoveListGenerator;
 import de.ar.backgammon.moves.MoveListGeneratorIf;
 import de.ar.backgammon.moves.MoveSet;
 import de.ar.backgammon.points.BPoint;
+import de.ar.backgammon.points.OffPoint;
 import de.ar.backgammon.validation.MoveValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,30 +20,23 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 
 import static de.ar.backgammon.ConstIf.COMP_SLEEPTIME;
+import static de.ar.backgammon.ConstIf.PIECES_COUNT_PLAYER;
 
 public class GameControl {
     private static final Logger logger = LoggerFactory.getLogger(GameControl.class);
-
-
-    private boolean running = false;
-
-
     private final Game game;
     private final BoardModelIf boardModel;
     private final BoardPanel boardPanel;
     private final BoardModelReaderIf bmReader;
     private final BoardModelWriterIf bmWriter;
     private final DicesControl dicesControl;
-
+    private final ComputerIf comp;
+    private boolean running = false;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
-
     private MoveValidator moveValidator;
-    private final ComputerIf comp;
-
-    private boolean requestTurnSwitch=false;
-    private boolean requestCompute =false;
-
+    private boolean requestTurnSwitch = false;
+    private boolean requestCompute = false;
 
     public GameControl(Game game, BoardModelIf boardModel,
                        BoardPanel boardPanel,
@@ -62,6 +56,14 @@ public class GameControl {
 
     }
 
+    public boolean isRequestCompute() {
+        return requestCompute;
+    }
+
+    public void setRequestCompute(boolean requestCompute) {
+        this.requestCompute = requestCompute;
+    }
+
     /**
      * user move request by dragging one or more pieces to a target point
      * after throwing the dices
@@ -71,16 +73,16 @@ public class GameControl {
      * @return true if moved
      */
     public boolean moveRequest(Move move) {
-        if (move.to== BoardModel.POINT_IDX_OFF) {
+        if (move.to == BoardModel.POINT_IDX_OFF) {
             // if off move delegate to the players offpoint
-            BPoint bfrom= boardModel.getPoint(move.from);
-            if (bfrom.getPieceColor()==BColor.RED) {
-                move.to=BoardModel.POINT_IDX_OFF_RED;
-            }else{
-                move.to=BoardModel.POINT_IDX_OFF_WHITE;
+            BPoint bfrom = boardModel.getPoint(move.from);
+            if (bfrom.getPieceColor() == BColor.RED) {
+                move.to = BoardModel.POINT_IDX_OFF_RED;
+            } else {
+                move.to = BoardModel.POINT_IDX_OFF_WHITE;
             }
         }
-        logger.debug("moveRequest: {} ",move);
+        logger.debug("moveRequest: {} ", move);
         if (bpControl.isSetMode()) {
             move(move);
             buttonPanel.updateComponents();
@@ -90,8 +92,8 @@ public class GameControl {
             game.message_error("please start game!");
             return false;
         }
-        if (bpControl.isCompOn(getTurn())){
-            game.message_error(getTurn().toString()+" is played by computer");
+        if (bpControl.isCompOn(getTurn())) {
+            game.message_error(getTurn().toString() + " is played by computer");
             return false;
         }
         if (dicesControl.getDicesStack().getState() != DicesStack.State.UPDATED) {
@@ -99,12 +101,11 @@ public class GameControl {
             return false;
         }
 
-        boolean ret= move(move);
+        boolean ret = move(move);
         buttonPanel.updateComponents();
         return ret;
 
     }
-
 
 
     /**
@@ -116,24 +117,25 @@ public class GameControl {
      */
     private boolean move(Move move) {
         int spc = boardModel.getStartPointSelectedPiecesCount();
-        boolean moved=boardModel.move(move,spc,bpControl.isSetMode(), bpControl.isCompOn(getTurn()));
+        boolean moved = boardModel.move(move, spc, bpControl.isSetMode(), bpControl.isCompOn(getTurn()));
 
-        if(!moved){
-            game.message_error(getTurn() + ": piece not moved : "+move);
+        if (!moved) {
+            game.message_error(getTurn() + ": piece not moved : " + move);
             return false;
         }
 
-        game.message("piece moved : "+move);
+        game.message("piece moved : " + move);
         if (dicesControl.getDicesStack().getState() == DicesStack.State.EMPTY) {
             setRequestTurnSwitch(true);
-        }else{
-            if (!isMovePossible()){
+        } else {
+            if (!isMovePossible()) {
                 game.message_error(getTurn() + ": no further moves possible, turn will switched");
                 setRequestTurnSwitch(true);
-            }else{
+            } else {
                 game.message("further moves possible...");
             }
         }
+
         boardPanel.repaint();
         buttonPanel.updateComponents();
 
@@ -147,20 +149,19 @@ public class GameControl {
      * into sub moves
      *
      * @param move
-     * @param spc count of pieces moved
+     * @param spc  count of pieces moved
      */
     public void sub_move(Move move, int spc) {
-        boardModel.subMove(move,spc,bpControl.isSetMode());
+        boardModel.subMove(move, spc, bpControl.isSetMode());
     }
 
 
     /**
-     *
      * @param move validation
      * @return
      */
     public boolean validateMove(Move move) {
-        boolean ret=moveValidator.isValid(move,boardModel.getStartPointSelectedPiecesCount());
+        boolean ret = moveValidator.isValid(move, boardModel.getStartPointSelectedPiecesCount());
         game.message_error(moveValidator.err.userMessage);
         return ret;
     }
@@ -175,61 +176,74 @@ public class GameControl {
     }
 
     public void switch_turn(BColor color) {
+
         setRequestTurnSwitch(false);
 
-        if (color ==null) {
+        OffPoint offPoint=boardModel.getOffPoint(getTurn());
+        if (offPoint.getPieceCount()==PIECES_COUNT_PLAYER){
+            running=false;
+            game.message("GAME OVER");
+            return;
+
+        }
+
+        if (color == null) {
             if (getTurn() == BColor.RED) {
                 boardModel.setTurn(BColor.WHITE);
             } else {
                 boardModel.setTurn(BColor.RED);
             }
-        }else if (color!=getTurn()) {
+        } else if (color != getTurn()) {
             boardModel.setTurn(color);
         }
 
 
-
         dicesControl.getDicesStack().getDices().clear();
         dicesControl.clear();
+
+
         game.message("---------< has turn >---------");
-        logger.debug("################## TURN IS {} ############################",getTurn());
+        logger.debug("################## TURN IS {} ############################", getTurn());
         buttonPanel.updateComponents();
-        if(bpControl.isCompOn(getTurn())){
+        if (bpControl.isCompOn(getTurn())) {
             compute();
         }
 
 
     }
 
-    private void compute() {
-        if (!isRunning()){
+    void compute() {
+        setRequestCompute(false);
+        if (!isRunning()) {
             return;
         }
         game.message("compute...");
-        sleep(COMP_SLEEPTIME);
+        sleep();
         dicesControl.getDicesStack().throwDices();
         dicesControl.updateComponents();
-        sleep(6*COMP_SLEEPTIME);
-        MoveSet moveSet=comp.compute();
-        game.message("moveset: "+moveSet);
-        if(moveSet != null){
-            if (moveSet.move(boardModel)){
-                game.message("dices: "+dicesControl.getDicesStack().getDices());
-                game.message("moved: "+moveSet);
+        sleep();
+        MoveSet moveSet = comp.compute();
+        game.message("moveset: " + moveSet);
+        if (moveSet != null) {
+            if (moveSet.move(boardModel)) {
+                game.message("dices: " + dicesControl.getDicesStack().getDices());
+                game.message("moved: " + moveSet);
                 boardPanel.repaint();
-            }else{
+            } else {
                 game.message_error("error by moving moveset");
-            };
-        }else{
-            game.message_error("no further moves possible");
+            }
+            ;
+        } else {
+            game.message("no further moves possible");
         }
-        sleep(COMP_SLEEPTIME);
+        sleep();
         setRequestTurnSwitch(true);
     }
 
-    private void sleep(int sleepTime) {
+    private void sleep() {
+        int sl = COMP_SLEEPTIME; //500
         try {
-             Thread.sleep(sleepTime);
+            Thread.sleep((long) (sl - 5.0 * bpControl.getCompSpeed()));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -237,12 +251,13 @@ public class GameControl {
 
     /**
      * check for possible moves
+     *
      * @return
      */
     boolean isMovePossible() {
         boolean valid = false;
-        MoveListGeneratorIf movesGenerator=new MoveListGenerator(boardModel);
-        ArrayList<Move> moves=movesGenerator.getValidMoves();
+        MoveListGeneratorIf movesGenerator = new MoveListGenerator(boardModel);
+        ArrayList<Move> moves = movesGenerator.getValidMoves();
         valid = !moves.isEmpty();
         return valid;
     }
@@ -252,25 +267,27 @@ public class GameControl {
      */
     public void start() {
         GameCycleTask.cancelTimer();
-        requestTurnSwitch=false;
+        synchronized (GameCycleTask.class) {
+            requestTurnSwitch = false;
 
-        boardModel.clear();
-        try {
-            bmReader.readSetupMap(boardModel);
-            game.clearMessages();
-            game.rawMessage("Game Started");
-            dicesControl.clear();
-            running = true;
-            GameCycleTask.startTimer(100);
-            if(bpControl.isCompOn(getTurn())){
-                compute();
+            boardModel.clear();
+            try {
+                bmReader.readSetupMap(boardModel);
+                game.clearMessages();
+                game.rawMessage("Game Started");
+                dicesControl.clear();
+                running = true;
+                GameCycleTask.startTimer(100);
+                if (bpControl.isCompOn(getTurn())) {
+                    compute();
+                }
+            } catch (Exception ex) {
+                logger.error("start failed", ex);
+                game.error("start failed!", ex);
+            } finally {
+                buttonPanel.updateComponents();
+                boardPanel.repaint();
             }
-        } catch (Exception ex) {
-            logger.error("start failed", ex);
-            game.error("start failed!", ex);
-        } finally {
-            buttonPanel.updateComponents();
-            boardPanel.repaint();
         }
 
     }
@@ -356,8 +373,8 @@ public class GameControl {
         // if not
         // switch back
         if (!isMovePossible()) {
-            game.message_error("no possible moves found for "+getTurn()+ ", please switch turn");
-        }else{
+            game.message_error("no possible moves found for " + getTurn() + ", please switch turn");
+        } else {
             game.message("move is possible");
         }
     }
@@ -369,7 +386,6 @@ public class GameControl {
     public boolean allPiecesAtHome() {
         return boardModel.isAllPiecesAtHome(getTurn());
     }
-
 
 
 }

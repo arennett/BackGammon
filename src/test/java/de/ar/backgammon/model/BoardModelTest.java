@@ -52,7 +52,7 @@ class BoardModelTest {
         bmodelReader.readTestModel(bmodel,"testBoardModel_move");
         assertTrue( bmodel.getPoint(1).getPieceCount() ==1);
         Move move = new Move(1,4);
-        boolean isMoved = bmodel.move(move,1,false);
+        boolean isMoved = bmodel.move(move,1,false,true);
         assertTrue(isMoved);
         assertTrue( bmodel.getPoint(1).getPieceCount() ==0);
     }

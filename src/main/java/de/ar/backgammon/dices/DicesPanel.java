@@ -36,9 +36,9 @@ public class DicesPanel extends JPanel implements ActionListener {
         JPanel dpanel= new JPanel();
         dpanel.setBorder(new TitledBorder(("")));
         dpanel.setLayout(new GridLayout(1,2));
-        jbDice1 =new JButton("[ ]");
+        jbDice1 =new JButton("[  ]");
         jbDice1.addActionListener(this);
-        jbDice2 =new JButton("[ ]");
+        jbDice2 =new JButton("[  ]");
         jbDice2.addActionListener(this);
         dpanel.add(jbDice1);
         dpanel.add(jbDice2);
@@ -68,8 +68,8 @@ public class DicesPanel extends JPanel implements ActionListener {
             jbDice1.setText("["+(dice1>0?dice1:" ") +"]");
             jbDice2.setText("["+(dice2>0?dice2:" ") +"]");
         }else{
-            jbDice1.setText("[ ]");
-            jbDice2.setText("[ ]");
+            jbDice1.setText("[  ]");
+            jbDice2.setText("[  ]");
         }
 
         StringBuffer sb = new StringBuffer("    ");
@@ -80,8 +80,13 @@ public class DicesPanel extends JPanel implements ActionListener {
                 sb.append("[  ]");
             }
         }
+        int k=4;
         for (PipSequence ps: dc.getDicesStack().getSequenceStack().getPipSequences()){
             sb.append("\n"+ps);
+            k--;
+        }
+        for (int i=0; i< k-1 ; i++){
+            sb.append("\n");
         }
 
 

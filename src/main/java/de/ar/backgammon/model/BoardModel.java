@@ -310,6 +310,7 @@ public class BoardModel implements BoardModelIf {
      * @param move
      * @param _spc number of pieces to move
      * @param setMode true means no validation
+     * @param comp true means no user interaction (computed)
      * @return
      */
     @Override

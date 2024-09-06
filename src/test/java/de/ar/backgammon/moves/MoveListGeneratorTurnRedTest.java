@@ -86,7 +86,7 @@ class MoveListGeneratorTurnRedTest {
         breader.readTestModel(bmodel, "boardmap_startup_dices#1#1#turn#r");
 
         // MOVE !!!!
-        bmodel.move(new Move(24, 23),1,false);
+        bmodel.move(new Move(24, 23),1,false,true);
 
 
         mlg = new MoveListGenerator(bmodel);

@@ -7,11 +7,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Hashtable;
 
-public class ButtonPanel extends JPanel implements ActionListener {
+public class ButtonPanel extends JPanel implements ActionListener, ChangeListener {
     private static final Logger logger = LoggerFactory.getLogger(ButtonPanel.class);
     private final ButtonPanelControl bpController;
     private final GameControl gControl;
@@ -21,6 +24,8 @@ public class ButtonPanel extends JPanel implements ActionListener {
     JRadioButton jrbCompWhite,jrbCompRed;
     JToggleButton jtbSetMode;
     JTextArea jtaStatistics;
+    JSlider jsCompSpeed;
+
 
 
     JButton jbTurnColor;
@@ -96,16 +101,37 @@ public class ButtonPanel extends JPanel implements ActionListener {
 
         JPanel jpCompute = new JPanel();
         jpCompute.setBorder(new TitledBorder("Computing"));
+        jpCompute.setLayout(new BorderLayout());
+
         jrbCompWhite= new JRadioButton("White");
         jrbCompWhite.addActionListener(this);
-        jpCompute.add(jrbCompWhite);
+        jpCompute.add(jrbCompWhite,BorderLayout.WEST);
+
         jrbCompRed= new JRadioButton("Red");
         jrbCompRed.addActionListener(this);
-        jpCompute.add(jrbCompRed);
+        jpCompute.add(jrbCompRed,BorderLayout.EAST);
+
+        jsCompSpeed= new JSlider(0,100);
+        jsCompSpeed.setValue(50);
+        bpController.setCompSpeed(jsCompSpeed.getValue());
+        Hashtable<Integer, JLabel> labelTable =
+                new Hashtable<Integer, JLabel>();
+        labelTable.put(0,
+                new JLabel("0") );
+
+        labelTable.put(100 ,
+                new JLabel("100") );
+        jsCompSpeed.setLabelTable(labelTable);
+        jsCompSpeed.setPaintLabels(true);
+        jsCompSpeed.addChangeListener(this);
+        jpCompute.add(jsCompSpeed,BorderLayout.SOUTH);
+
 
         c.gridx = 0;
         c.gridy = 8;
         add(jpCompute,c);
+
+
 
         updateComponents();
     }
@@ -158,5 +184,13 @@ public void updateComponents(){
         }
 
 
+    }
+
+    @Override
+    public void stateChanged(ChangeEvent e) {
+        if (e.getSource()==jsCompSpeed){
+            bpController.setCompSpeed(jsCompSpeed.getValue());
+
+        }
     }
 }

@@ -11,6 +11,7 @@ public class GameCycleTask extends TimerTask {
     private static GameControl gc;
     private static Timer timer;
     private final int period;
+    public static int GAME_CYCLE_SEMA = 0;
 
 
     private GameCycleTask(int period)  {
@@ -49,16 +50,20 @@ public class GameCycleTask extends TimerTask {
             logger.debug("run Task / cancel Timer");
             timer.cancel();
         } else {
+            synchronized (GameCycleTask.class) {
 //            logger.debug("run Task");
-            try {
-                if (gc.isRequestTurnSwitch()) {
-                    gc.switch_turn(null);
-                }  else {
+                try {
+                    if (gc.isRequestTurnSwitch()) {
+                        gc.switch_turn(null);
+                    } else if (gc.isRequestCompute()) {
+                        gc.compute();
+                    } else {
 //                    logger.debug("nothing to do");
+                    }
+                } catch (Exception e) {
+                    logger.error("switch failed", e);
+                    timer.cancel();
                 }
-            } catch (Exception e) {
-                logger.error("switch failed", e);
-                timer.cancel();
             }
         }
 

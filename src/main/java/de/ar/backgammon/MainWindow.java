@@ -3,6 +3,7 @@ package de.ar.backgammon;
 import de.ar.backgammon.compute.ComputerIf;
 import de.ar.backgammon.compute.EasyComputable;
 import de.ar.backgammon.compute.MainComputer;
+import de.ar.backgammon.dbase.DbasePanel;
 import de.ar.backgammon.dices.DicesControl;
 import de.ar.backgammon.dices.DicesPanel;
 import de.ar.backgammon.model.*;
@@ -69,10 +70,12 @@ public class MainWindow extends JFrame implements ComponentListener {
         gameControl.setButtonPanelControl(bpControl);
 
 
+        DbasePanel dbasePanel = new DbasePanel(bModel);
 
         add(boardPanel,BorderLayout.CENTER);
         add(messagePanel,BorderLayout.WEST);
         add(buttonPanel,BorderLayout.EAST);
+        add(dbasePanel,BorderLayout.SOUTH);
         pack();
     }
 

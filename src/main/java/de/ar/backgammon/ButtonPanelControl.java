@@ -15,6 +15,7 @@ public class ButtonPanelControl {
     private boolean setMode;
     private boolean compWhiteOn;
     private boolean compRedOn;
+    private int compSpeed;
 
     public ButtonPanelControl(Game game,
                               BoardPanel boardPanel,
@@ -61,6 +62,9 @@ public class ButtonPanelControl {
 
     public void setCompWhiteOn(boolean on) {
         this.compWhiteOn = on;
+        if (on){
+            gameControl.setRequestCompute(true);
+        }
     }
 
     public boolean isCompWhiteOn() {
@@ -82,5 +86,17 @@ public class ButtonPanelControl {
 
     public void setCompRedOn(boolean on) {
         this.compRedOn = on;
+        if (on){
+            gameControl.setRequestCompute(true);
+        }
+    }
+
+    public void setCompSpeed(int value) {
+        this.compSpeed=value;
+        logger.debug("comp speed: {} ",value);
+    }
+
+    public int getCompSpeed() {
+        return compSpeed;
     }
 }
