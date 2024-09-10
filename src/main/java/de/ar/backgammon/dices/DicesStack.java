@@ -69,7 +69,7 @@ public class DicesStack extends ArrayList<Integer> {
     /**
      * throw dices and update the stack
      */
-    public void throwDices() {
+    protected void throwDices() {
         clear();
         dices.dice1=random.nextInt(6) + 1;
         dices.dice2=random.nextInt(6) + 1;

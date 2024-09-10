@@ -1,6 +1,7 @@
 package de.ar.backgammon;
 
 import de.ar.backgammon.compute.ComputerIf;
+import de.ar.backgammon.dbase.DbasePanelControl;
 import de.ar.backgammon.dices.DicesControl;
 import de.ar.backgammon.dices.DicesStack;
 import de.ar.backgammon.model.BoardModel;
@@ -34,6 +35,8 @@ public class GameControl {
     private boolean running = false;
     private ButtonPanel buttonPanel;
     private ButtonPanelControl bpControl;
+
+    private DbasePanelControl dbpControl;
     private MoveValidator moveValidator;
     private boolean requestTurnSwitch = false;
     private boolean requestCompute = false;
@@ -219,8 +222,7 @@ public class GameControl {
         }
         game.message("compute...");
         sleep();
-        dicesControl.getDicesStack().throwDices();
-        dicesControl.updateComponents();
+        dicesControl.throwDices();
         sleep();
         MoveSet moveSet = comp.compute();
         game.message("moveset: " + moveSet);
@@ -277,6 +279,7 @@ public class GameControl {
                 game.rawMessage("Game Started");
                 dicesControl.clear();
                 running = true;
+                dbpControl.writeNewGame();
                 GameCycleTask.startTimer(100);
                 if (bpControl.isCompOn(getTurn())) {
                     compute();
@@ -372,9 +375,12 @@ public class GameControl {
         // validate for possible moves
         // if not
         // switch back
+
         if (!isMovePossible()) {
             game.message_error("no possible moves found for " + getTurn() + ", please switch turn");
         } else {
+            // recorf board
+            dbpControl.writeBoard();
             game.message("move is possible");
         }
     }
@@ -383,9 +389,8 @@ public class GameControl {
         return boardModel;
     }
 
-    public boolean allPiecesAtHome() {
-        return boardModel.isAllPiecesAtHome(getTurn());
+
+    public void setDbasePanelControl(DbasePanelControl dbpControl) {
+        this.dbpControl = dbpControl;
     }
-
-
 }

@@ -7,43 +7,62 @@ import de.ar.backgammon.dbase.entity.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DbDaoBoard {
     private static final Logger logger = LoggerFactory.getLogger(DbDaoBoard.class);
-    private static final String sql_insert="insert into board (game_id,seqnr,turn) VALUES (?,?,?);";
-    private static final String sql_read_last ="SELECT id,sqltime,seqnr,turn FROM board order by id desc LIMIT 1;";
+    private static final String sql_insert
+            = "insert into board (game_id,seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2)"
+            + " VALUES (?,?,?,?,?,?,?,?,?);";
+    private static final String sql_read_last
+            = "SELECT id, game_id, sqltime, seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2 FROM board"
+            + " order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM board;";
+    private final Connection conn;
+
+    public DbDaoBoard(Connection conn){
+
+        this.conn = conn;
+    }
 
     public Board insert (Board board) throws BException {
         Board retBoard;
-        DbDaoGame daoGame= new DbDaoGame();
+        DbDaoGame daoGame= new DbDaoGame(conn);
+        Game game=daoGame.readLast();
         try (
-                Connection conn = DbConnect.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql_insert)
+                 PreparedStatement pstmt = conn.prepareStatement(sql_insert)
         ) {
-            Game game=daoGame.readLast();
-            pstmt.setInt(1,game.getId());
 
-            pstmt.setInt(2,game.getNextBoardSeqNr();
-            daoGame.incNextBoardSeqNr();
+            pstmt.setInt(1,1);
+            pstmt.setInt(2,game.getNextBoardSeqNr());
             pstmt.setInt(3,board.getTurn());
+            pstmt.setInt(4,board.getBarRed());
+            pstmt.setInt(5,board.getBarWhite());
+            pstmt.setInt(6,board.getOffRed());
+            pstmt.setInt(7,board.getOffWhite());
+            pstmt.setInt(8,board.getDice1());
+            pstmt.setInt(9,board.getDice2());
+
             pstmt.executeUpdate();
             retBoard = readLast();
         } catch (Exception e){
                logger.error("insert failed",e);
-               throw new BException("insert failed",e);
+            try {
+                conn.rollback();
+                logger.debug("insert rollback");
+            } catch (SQLException ex) {
+                throw new BException("insert rollback failed",e);
+            }
+            throw new BException("insert failed",e);
         }
+        daoGame.incNextBoardSeqNr();
         return retBoard;
 
     }
 
     public Board readLast() throws BException {
         Board board = null;
-        try (Connection conn = DbConnect.getInstance().getConnection();
+        try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_read_last);
         ) {
@@ -52,19 +71,26 @@ public class DbDaoBoard {
                 board.setId(rs.getInt("id"));
                 board.setGameId(rs.getInt("game_id"));
                 board.setSqltime(rs.getTimestamp("sqltime"));
-                board.setSeqNr(rs.getInt("seq_nr"));
+                board.setSeqNr(rs.getInt("seqnr"));
                 board.setTurn(rs.getInt("turn"));
+                board.setBarRed(rs.getInt("bar_r"));
+                board.setBarWhite(rs.getInt("bar_w"));
+                board.setOffRed(rs.getInt("off_r"));
+                board.setOffWhite(rs.getInt("off_w"));
+                board.setDice1(rs.getInt("dice1"));
+                board.setDice2(rs.getInt("dice2"));
+
             }
 
         } catch (Exception e){
-            logger.error("read last failed");
-            throw new BException("read last failed");
+            logger.error("read last failed",e);
+            throw new BException("read last failed",e);
         }
         return board;
     }
     public int count() throws BException {
         int count = -1;
-        try (Connection conn = DbConnect.getInstance().getConnection();
+        try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_count);
         ) {

@@ -19,10 +19,12 @@ public class DbConnect {
         try {
             if(conn==null || conn.isClosed()) {
                 connect();
+                conn.setAutoCommit(false);
             }
         } catch (SQLException e) {
             throw new BException("getConnection failed",e);
         }
+
         return conn;
     }
     private Connection conn = null;

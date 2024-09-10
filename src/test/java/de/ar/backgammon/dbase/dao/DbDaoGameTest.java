@@ -1,16 +1,22 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
+import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
 import de.ar.backgammon.dbase.entity.Game;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class DbDaoGameTest {
     DbDaoGame dbDaoGame;
+    Connection conn;
     @BeforeAll
     static void setup() throws BException {
         DbCreate.getInstance().deleteDbase();
@@ -18,10 +24,16 @@ class DbDaoGameTest {
     }
 
     @BeforeEach
-    void setup_each(){
-        dbDaoGame = new DbDaoGame();
-    }
+    void setupBeforeEach() throws BException {
+        conn= DbConnect.getInstance().getConnection();
+        dbDaoGame = new DbDaoGame(conn);
 
+    }
+    @AfterEach
+    void setupAfterEach() throws SQLException {
+        conn.commit();
+        conn.close();
+    }
 
     @Test
     void insert() throws BException {

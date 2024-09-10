@@ -4,6 +4,7 @@ import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
 import de.ar.backgammon.dbase.entity.Board;
+import de.ar.backgammon.dbase.entity.DbPoint;
 import de.ar.backgammon.dbase.entity.Game;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -13,12 +14,14 @@ import org.junit.jupiter.api.Test;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DbDaoBoardTest {
+class DbDaoPointTest {
 
     DbDaoGame dbDaoGame;
     DbDaoBoard dbDaoBoard;
+    DbDaoPoint dbDaoPoint;
     Connection conn;
     @BeforeAll
     static void setup() throws BException {
@@ -28,10 +31,11 @@ class DbDaoBoardTest {
 
     @BeforeEach
     void setupBeforeEach() throws BException {
-        conn=DbConnect.getInstance().getConnection();
-        dbDaoGame = new DbDaoGame(conn);
+        conn= DbConnect.getInstance().getConnection();
+        dbDaoGame  = new DbDaoGame(conn);
         dbDaoBoard = new DbDaoBoard(conn);
-    }
+        dbDaoPoint = new DbDaoPoint(conn);
+   }
     @AfterEach
     void setupAfterEach() throws SQLException {
         conn.commit();
@@ -43,30 +47,29 @@ class DbDaoBoardTest {
         Game game = dbDaoGame.insert();
         Board board = new Board();
         board.setTurn(0);
-        board.setBarWhite(1);
-        board.setBarRed(2);
-        board.setOffRed(3);
-        board.setOffWhite(4);
-        board.setDice1(1);
-        board.setDice2(2);
-
         Board bx=null;
-        for (int i=0;i<1000;i++){
+        for (int i=0;i<10;i++){
             bx =dbDaoBoard.insert(board);
         }
-
-        assertEquals(999, bx.getSeqNr());
-   }
+        Board lastBoard = dbDaoBoard.readLast();
+        for (int idx = 1 ; idx<=24;idx++) {
+            DbPoint point = new DbPoint();
+            point.setBoardId(lastBoard.getId());
+            point.setIdx(idx);
+            point.setColor(idx % 2);
+            point.setCount(0);
+            dbDaoPoint.insert(point);
+        }
+    }
 
     @Test
     void readLast() throws BException {
-        Board board = dbDaoBoard.readLast();
-        assertEquals(1000,board.getId());
+        DbPoint point = dbDaoPoint.readLast();
+        assertEquals(24,point.getIdx());
     }
 
     @Test
     void count() throws BException {
-        assertEquals(1000,dbDaoBoard.count());
+        assertEquals(24,dbDaoPoint.count());
     }
-
 }

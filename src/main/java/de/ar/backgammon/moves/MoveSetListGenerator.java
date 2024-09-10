@@ -1,6 +1,5 @@
 package de.ar.backgammon.moves;
 
-import de.ar.backgammon.BColor;
 import de.ar.backgammon.BException;
 import de.ar.backgammon.model.*;
 import de.ar.backgammon.validation.MoveValidator;
@@ -10,8 +9,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 
+
+/**
+ * generates a list of all possible movesets for the given board and turn
+ */
 public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     static Logger logger = LoggerFactory.getLogger(MoveSetListGenerator.class);
     private final BoardModelIf bModel;
@@ -20,22 +22,13 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
     BoardModel cModel;
     MoveListGenerator mlGen;
 
-    MoveSet mstest;
 
     public MoveSetListGenerator(BoardModelIf bModel) {
-
         this.bModel = bModel;
         cModel = new BoardModel();
         MoveValidatorIf moveValidator = new MoveValidator(cModel);
         cModel.setMoveValidator(moveValidator);
         mlGen = new MoveListGenerator(cModel);
-
-        mstest = new MoveSet();
-        mstest.add(new Move(8,7));
-        mstest.add(new Move(6,5));
-        mstest.add(new Move(6,5));
-        mstest.add(new Move(6,5));
-
     }
 
     /**
@@ -125,13 +118,6 @@ public class MoveSetListGenerator implements MoveSetListGeneratorIf {
             }
             moveset.add(move);
             moveSetList.add(moveset);
-
-            // TODO TEST
-            String msteststr=mstest.toSortedString();
-            String movesetstr=moveset.toSortedString();
-            if (msteststr.equals(movesetstr)){
-                int test = 0;
-            }
 
         }
         return moveSetList;

@@ -14,8 +14,25 @@ CREATE TABLE "board" (
 	"sqltime"	TIMESTAMP NOT NULL DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')),
 	"seqnr"	 INTEGER NOT NULL,
 	"turn"	INTEGER NOT NULL,
+	"bar_r"	INTEGER NOT NULL,
+	"bar_w"	INTEGER NOT NULL,
+	"off_r"	INTEGER NOT NULL,
+	"off_w"	INTEGER NOT NULL,
+	"dice1"	INTEGER NOT NULL,
+	"dice2"	INTEGER NOT NULL,
 	PRIMARY KEY("id" AUTOINCREMENT),
 	FOREIGN KEY("game_id") REFERENCES "game"("id")
+);
+
+CREATE TABLE "point" (
+	"id"	INTEGER NOT NULL,
+	"board_id"	INTEGER NOT NULL,
+	"sqltime"	TIMESTAMP NOT NULL DEFAULT (STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW')),
+	"idx"	INTEGER NOT NULL,
+	"color"	INTEGER NOT NULL,
+	"cnt"	INTEGER NOT NULL,
+	PRIMARY KEY("id" AUTOINCREMENT),
+	FOREIGN KEY("board_id") REFERENCES "board"("id")
 );
 
 

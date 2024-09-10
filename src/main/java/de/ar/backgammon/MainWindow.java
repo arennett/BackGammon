@@ -4,12 +4,12 @@ import de.ar.backgammon.compute.ComputerIf;
 import de.ar.backgammon.compute.EasyComputable;
 import de.ar.backgammon.compute.MainComputer;
 import de.ar.backgammon.dbase.DbasePanel;
+import de.ar.backgammon.dbase.DbasePanelControl;
 import de.ar.backgammon.dices.DicesControl;
 import de.ar.backgammon.dices.DicesPanel;
 import de.ar.backgammon.model.*;
 import de.ar.backgammon.moves.MoveSetListGenerator;
 import de.ar.backgammon.validation.MoveValidator;
-import de.ar.backgammon.validation.MoveValidatorIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,8 +69,13 @@ public class MainWindow extends JFrame implements ComponentListener {
         gameControl.setButtonPanel(buttonPanel);
         gameControl.setButtonPanelControl(bpControl);
 
+        DbasePanelControl dbpControl = new DbasePanelControl(
+                game,
+                bModel);
 
-        DbasePanel dbasePanel = new DbasePanel(bModel);
+        gameControl.setDbasePanelControl(dbpControl);
+        DbasePanel dbasePanel=new DbasePanel(dbpControl,bModel);
+
 
         add(boardPanel,BorderLayout.CENTER);
         add(messagePanel,BorderLayout.WEST);

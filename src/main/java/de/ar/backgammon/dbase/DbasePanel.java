@@ -15,9 +15,10 @@ public class DbasePanel extends JPanel implements ActionListener {
     private static final Logger logger = LoggerFactory.getLogger(DbasePanel.class);
 
     JToggleButton jtbRecordingOnOff;
+    DbasePanelControl dbpControl;
 
-    public DbasePanel(BoardModelIf boardModel) {
-
+    public DbasePanel(DbasePanelControl dbpControl,BoardModelIf boardModel) {
+        this.dbpControl = dbpControl;
         this.boardModel = boardModel;
         initUi();
     }
@@ -46,7 +47,7 @@ public class DbasePanel extends JPanel implements ActionListener {
         panelBoards.setBorder(BorderFactory.createTitledBorder("Boards"));
 
 
-        jtbRecordingOnOff = new JToggleButton("TEST");
+        jtbRecordingOnOff = new JToggleButton("REC");
         jtbRecordingOnOff.addActionListener(this);
         panelMainControl.add(jtbRecordingOnOff);
 
@@ -73,6 +74,9 @@ public class DbasePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource()==jtbRecordingOnOff) {
+            dbpControl.setRecordingOn(jtbRecordingOnOff.isSelected());
+        }
 
     }
 }

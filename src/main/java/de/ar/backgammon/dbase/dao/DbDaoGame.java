@@ -6,48 +6,59 @@ import de.ar.backgammon.dbase.entity.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DbDaoGame {
     private static final Logger logger = LoggerFactory.getLogger(DbDaoGame.class);
-    private static final String sql_insert="INSERT INTO game DEFAULT VALUES";
+    private static final String sql_insert="INSERT INTO game DEFAULT VALUES;";
 
     private static final String
-            sql_update_inc_next_board_seqnr="UPDATE game Set next_board_seqnr=next_board_seqnr+1 where id =?";
+            sql_update_inc_next_board_seqnr="UPDATE game Set next_board_seqnr=next_board_seqnr+1 where id =?;";
 
     private static final String sql_read_last ="SELECT id,sqltime,next_board_seqnr FROM game order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM game;";
+    private final Connection conn;
+
+    public DbDaoGame(Connection conn){
+
+        this.conn = conn;
+    }
 
     public Game insert () throws BException {
         Game game;
         try (
-                Connection conn = DbConnect.getInstance().getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql_insert)
         ) {
             pstmt.executeUpdate();
             game = readLast();
         } catch (Exception e){
                logger.error("insert failed",e);
-               throw new BException("insert failed",e);
+            try {
+                conn.rollback();
+                logger.debug("insert rollback");
+            } catch (SQLException ex) {
+                throw new BException("insert rollback failed",e);
+            }
+            throw new BException("insert failed",e);
         }
         return game;
 
     }
     public void incNextBoardSeqNr() throws BException {
-        Game game;
+        Game game=readLast();
         try (
-
-                Connection conn = DbConnect.getInstance().getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql_update_inc_next_board_seqnr)
+             PreparedStatement pstmt = conn.prepareStatement(sql_update_inc_next_board_seqnr)
         ) {
-            game=readLast();
-            pstmt.setInt(0,game.getId());
+            pstmt.setInt(1,game.getId());
             pstmt.executeUpdate();
         } catch (Exception e){
             logger.error("incNextBoardSeqNr failed",e);
+            try {
+                conn.rollback();
+                logger.debug("incNextBoardSeqNr rollback");
+            } catch (SQLException ex) {
+                throw new BException("incNextBoardSeqNr rollback failed",e);
+            }
             throw new BException("incNextBoardSeqNr failed",e);
         }
     }
@@ -55,8 +66,7 @@ public class DbDaoGame {
 
     public Game readLast() throws BException {
         Game game = null;
-        try (Connection conn = DbConnect.getInstance().getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_read_last);
         ) {
             while (rs.next()){
@@ -67,15 +77,14 @@ public class DbDaoGame {
             }
 
         } catch (Exception e){
-            logger.error("read last failed");
-            throw new BException("read last failed");
+            logger.error("read last failed",e);
+            throw new BException("read last failed",e);
         }
         return game;
     }
     public int count() throws BException {
         int count = -1;
-        try (Connection conn = DbConnect.getInstance().getConnection();
-             Statement stmt = conn.createStatement();
+        try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_count);
         ) {
             while (rs.next()){
