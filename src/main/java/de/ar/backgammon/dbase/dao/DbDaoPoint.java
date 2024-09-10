@@ -3,7 +3,6 @@ package de.ar.backgammon.dbase.dao;
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.entity.Board;
 import de.ar.backgammon.dbase.entity.DbPoint;
-import de.ar.backgammon.dbase.entity.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

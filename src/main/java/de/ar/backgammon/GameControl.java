@@ -379,9 +379,14 @@ public class GameControl {
         if (!isMovePossible()) {
             game.message_error("no possible moves found for " + getTurn() + ", please switch turn");
         } else {
-            // recorf board
-            dbpControl.writeBoard();
+
             game.message("move is possible");
+        }
+        // record board
+        try {
+            dbpControl.writeBoard();
+        } catch (BException e) {
+            logger.error("db writeBoard failed",e);
         }
     }
 

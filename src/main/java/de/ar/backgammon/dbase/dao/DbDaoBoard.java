@@ -1,9 +1,8 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
-import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.entity.Board;
-import de.ar.backgammon.dbase.entity.Game;
+import de.ar.backgammon.dbase.entity.DbGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ public class DbDaoBoard {
             = "SELECT id, game_id, sqltime, seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2 FROM board"
             + " order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM board;";
-    private final Connection conn;
+    private Connection conn;
 
     public DbDaoBoard(Connection conn){
 
@@ -28,12 +27,12 @@ public class DbDaoBoard {
     public Board insert (Board board) throws BException {
         Board retBoard;
         DbDaoGame daoGame= new DbDaoGame(conn);
-        Game game=daoGame.readLast();
+        DbGame game=daoGame.readLast();
         try (
                  PreparedStatement pstmt = conn.prepareStatement(sql_insert)
         ) {
 
-            pstmt.setInt(1,1);
+            pstmt.setInt(1,game.getId());
             pstmt.setInt(2,game.getNextBoardSeqNr());
             pstmt.setInt(3,board.getTurn());
             pstmt.setInt(4,board.getBarRed());
@@ -106,7 +105,7 @@ public class DbDaoBoard {
     }
 
 
-
-
-
+    public void setConnection(Connection conn) {
+        this.conn=conn;
+    }
 }

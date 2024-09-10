@@ -70,4 +70,11 @@ public class DbConnect {
     }
 
 
+    public void commit() throws BException {
+        try {
+            conn.commit();
+        } catch (SQLException e) {
+            throw new BException("commit failed",e);
+        }
+    }
 }

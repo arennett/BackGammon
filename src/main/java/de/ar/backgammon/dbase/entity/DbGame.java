@@ -2,7 +2,7 @@ package de.ar.backgammon.dbase.entity;
 
 import java.sql.Timestamp;
 
-public class Game {
+public class DbGame {
 
 
     /*
