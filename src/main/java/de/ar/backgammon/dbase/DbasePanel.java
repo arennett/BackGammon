@@ -1,5 +1,6 @@
 package de.ar.backgammon.dbase;
 
+import de.ar.backgammon.dbase.entity.DbGamePanel;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,34 +29,26 @@ public class DbasePanel extends JPanel implements ActionListener {
         setBorder(tb);
         setLayout(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        c.fill = GridBagConstraints.BOTH;
+        //c.fill = GridBagConstraints.BOTH;
         c.anchor =GridBagConstraints.LINE_START;
         //c.weightx = 0.5;
 
 
         JPanel panelMainControl = new JPanel();
-        JPanel panelGames = new JPanel();
+        panelMainControl.setPreferredSize(new Dimension(200,150));
+        DbGamePanel panelGames = new DbGamePanel();
         JPanel panelBoards = new JPanel();
+        panelBoards.setPreferredSize(new Dimension(200,150));
 
         panelMainControl.setLayout(new BorderLayout());
         panelMainControl.setBorder(BorderFactory.createTitledBorder("Recording"));
-        panelGames.setLayout(new BorderLayout());
-        panelGames.setBorder(BorderFactory.createTitledBorder("Games"));
-
 
         panelBoards.setLayout(new BorderLayout());
         panelBoards.setBorder(BorderFactory.createTitledBorder("Boards"));
 
-
         jtbRecordingOnOff = new JToggleButton("REC");
         jtbRecordingOnOff.addActionListener(this);
-        panelMainControl.add(jtbRecordingOnOff);
-
-        panelGames.add(new JButton("TEST"));
-        panelGames.add(new JButton("TEST"),BorderLayout.SOUTH);
-
-        panelBoards.add(new JButton("TEST"));
-
+        panelMainControl.add(jtbRecordingOnOff,BorderLayout.NORTH);
 
         c.gridx = 0;
         c.gridy = 0;
@@ -63,11 +56,11 @@ public class DbasePanel extends JPanel implements ActionListener {
         add(panelMainControl, c);
         c.gridx = 1;
         c.gridy = 0;
-        c.weightx=0.5;
+       // c.weightx=0.5;
         add(panelGames, c);
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy = 0;
-        c.weightx=0.5;
+        //c.weightx=0.5;
         add(panelBoards, c);
 
     }

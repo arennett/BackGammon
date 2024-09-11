@@ -42,5 +42,45 @@ public class DbGame {
     public void setSqltime(Timestamp sqltime) {
         this.sqltime = sqltime;
     }
+
+    public int getColumnCount(){
+        return 3;
+    }
+
+    public String getColumnName(int columnIndex) {
+        switch (columnIndex){
+            case 0:
+                return "ID";
+            case 1:
+                return "Sqltime";
+            case 2:
+                return "NextSeqNr";
+        }
+        return"";
+    }
+
+    public Class<?> getColumnClass(int columnIndex) {
+        switch (columnIndex){
+            case 0:
+                return Integer.class;
+            case 1:
+                return Timestamp.class;
+            case 2:
+                return Integer.class;
+        }
+        return null;
+    }
+
+    public Object getColumnValue(int columnIndex) {
+        switch (columnIndex){
+            case 0:
+                return getId();
+            case 1:
+                return getSqltime();
+            case 2:
+                return getNextBoardSeqNr();
+        }
+        return null;
+    }
 }
 

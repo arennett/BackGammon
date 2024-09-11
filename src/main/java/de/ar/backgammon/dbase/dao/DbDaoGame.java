@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DbDaoGame {
     private static final Logger logger = LoggerFactory.getLogger(DbDaoGame.class);
@@ -14,6 +15,7 @@ public class DbDaoGame {
     private static final String
             sql_update_inc_next_board_seqnr="UPDATE game Set next_board_seqnr=next_board_seqnr+1 where id =?;";
 
+    private static final String sql_read_all ="SELECT id,sqltime,next_board_seqnr FROM game order by id;";
     private static final String sql_read_last ="SELECT id,sqltime,next_board_seqnr FROM game order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM game;";
     private Connection conn;
@@ -80,6 +82,26 @@ public class DbDaoGame {
             throw new BException("read last failed",e);
         }
         return game;
+    }
+
+    public ArrayList<DbGame> readAll() throws BException {
+        ArrayList<DbGame> gameList = new ArrayList<>();
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql_read_all);
+        ) {
+            while (rs.next()){
+                DbGame game = new DbGame();
+                game.setId(rs.getInt("id"));
+                game.setNextBoardSeqNr(rs.getInt("next_board_seqnr"));
+                game.setSqltime(rs.getTimestamp("sqltime"));
+                gameList.add(game);
+            }
+
+        } catch (Exception e){
+            logger.error("read all failed",e);
+            throw new BException("read all failed",e);
+        }
+        return gameList;
     }
     public int count() throws BException {
         int count = -1;
