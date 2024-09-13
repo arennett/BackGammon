@@ -26,6 +26,10 @@ public enum BColor {
         return null;
     }
 
+    public static Object getBColorByIdx(int turn) {
+        return COLORS[turn];
+    }
+
     public String toString() {
         return STR_COLORS[this.ordinal()];
     }

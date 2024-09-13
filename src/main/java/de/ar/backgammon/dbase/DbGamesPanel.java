@@ -1,20 +1,19 @@
-package de.ar.backgammon.dbase.entity;
-
-import de.ar.backgammon.dbase.DateCellRenderer;
+package de.ar.backgammon.dbase;
 
 import javax.swing.*;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.Date;
 
-public class DbGamePanel extends JPanel {
+public class DbGamesPanel extends JPanel  {
     JTable gTable;
-    TableModel gModel;
-    public DbGamePanel(){
-        gModel=new DbGameTableModel();
+
+
+
+    TableModel model;
+    public DbGamesPanel(){
+        model =new DbGameTableModel();
         initUI();
    }
 
@@ -24,7 +23,7 @@ public class DbGamePanel extends JPanel {
         setPreferredSize(new Dimension(300,150));
         gTable=new JTable();
         gTable.setDefaultRenderer(Date.class,new DateCellRenderer());
-        gTable.setModel(gModel);
+        gTable.setModel(model);
         gTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
         TableColumnModel colModel=gTable.getColumnModel();
         colModel.getColumn(0).setPreferredWidth(25);
@@ -33,5 +32,16 @@ public class DbGamePanel extends JPanel {
         //jScrollPane.setPreferredSize(new Dimension(100,100));
         add(jScrollPane, BorderLayout.CENTER);
 
+    }
+    public TableModel getModel() {
+        return model;
+    }
+
+    public void setModel(TableModel model) {
+        this.model = model;
+    }
+
+    public JTable getTable() {
+        return gTable;
     }
 }

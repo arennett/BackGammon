@@ -43,11 +43,11 @@ public class DbGame {
         this.sqltime = sqltime;
     }
 
-    public int getColumnCount(){
+    public static int getColumnCount(){
         return 3;
     }
 
-    public String getColumnName(int columnIndex) {
+    public static String getColumnName(int columnIndex) {
         switch (columnIndex){
             case 0:
                 return "ID";
@@ -59,7 +59,7 @@ public class DbGame {
         return"";
     }
 
-    public Class<?> getColumnClass(int columnIndex) {
+    public static Class<?> getColumnClass(int columnIndex) {
         switch (columnIndex){
             case 0:
                 return Integer.class;

@@ -1,7 +1,7 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
-import de.ar.backgammon.dbase.entity.Board;
+import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbPoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class DbDaoPoint {
     public DbPoint insert (DbPoint point) throws BException {
         DbPoint retPoint;
         DbDaoBoard daoBoard = new DbDaoBoard(conn);
-        Board board = daoBoard.readLast();
+        DbBoard board = daoBoard.readLast();
         try (
                  PreparedStatement pstmt = conn.prepareStatement(sql_insert)
         ) {

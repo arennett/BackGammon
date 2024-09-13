@@ -3,7 +3,7 @@ package de.ar.backgammon.dbase;
 import de.ar.backgammon.*;
 import de.ar.backgammon.dbase.dao.DbDaoBoard;
 import de.ar.backgammon.dbase.dao.DbDaoGame;
-import de.ar.backgammon.dbase.entity.Board;
+import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbGame;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
@@ -61,7 +61,7 @@ public class DbasePanelControl {
         Connection conn = null;
         conn = DbConnect.getInstance().getConnection();
         dbDaoBoard.setConnection(conn);
-        Board board = new Board();
+        DbBoard board = new DbBoard();
         board.setGameId(dbgame.getId());
         board.setTurn(bmodel.getTurn().ordinal());
         board.setBarRed(bmodel.getBarPoint(BColor.RED).getPieceCount());
@@ -70,7 +70,7 @@ public class DbasePanelControl {
         board.setOffWhite(bmodel.getOffPoint(BColor.WHITE).getPieceCount());
         board.setDice1(bmodel.getDices().dice1);
         board.setDice2(bmodel.getDices().dice2);
-        Board wboard=dbDaoBoard.insert(board);
+        DbBoard wboard=dbDaoBoard.insert(board);
         DbConnect.getInstance().commit();
         DbConnect.getInstance().close();
         logger.debug("writeBoard <{}>", wboard.getId());

@@ -1,12 +1,15 @@
 package de.ar.backgammon.dbase;
 
-import de.ar.backgammon.dbase.entity.DbGamePanel;
 import de.ar.backgammon.model.BoardModelIf;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,6 +20,7 @@ public class DbasePanel extends JPanel implements ActionListener {
 
     JToggleButton jtbRecordingOnOff;
     DbasePanelControl dbpControl;
+    DbGamesPanel panelGames;
 
     public DbasePanel(DbasePanelControl dbpControl,BoardModelIf boardModel) {
         this.dbpControl = dbpControl;
@@ -36,8 +40,20 @@ public class DbasePanel extends JPanel implements ActionListener {
 
         JPanel panelMainControl = new JPanel();
         panelMainControl.setPreferredSize(new Dimension(200,150));
-        DbGamePanel panelGames = new DbGamePanel();
-        JPanel panelBoards = new JPanel();
+        panelGames = new DbGamesPanel();
+        DbBoardsPanel panelBoards = new DbBoardsPanel();
+        panelGames.getTable().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        panelGames.getTable().getSelectionModel().addListSelectionListener(e -> {
+
+                if (e.getValueIsAdjusting()){
+                    return;
+                }
+                int idx = e.getLastIndex();
+                int game_id = (int) panelGames.getModel().getValueAt(idx, 0);
+                logger.debug("game idx:<{}>  game id:<{}> selected",idx, game_id);
+
+        });
         panelBoards.setPreferredSize(new Dimension(200,150));
 
         panelMainControl.setLayout(new BorderLayout());
@@ -72,4 +88,6 @@ public class DbasePanel extends JPanel implements ActionListener {
         }
 
     }
+
+
 }

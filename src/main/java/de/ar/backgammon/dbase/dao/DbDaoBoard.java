@@ -1,12 +1,13 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
-import de.ar.backgammon.dbase.entity.Board;
+import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DbDaoBoard {
     private static final Logger logger = LoggerFactory.getLogger(DbDaoBoard.class);
@@ -16,6 +17,10 @@ public class DbDaoBoard {
     private static final String sql_read_last
             = "SELECT id, game_id, sqltime, seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2 FROM board"
             + " order by id desc LIMIT 1;";
+    private static final String sql_read_boards
+            = "SELECT id, game_id, sqltime, seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2 FROM board"
+            + " WHERE game_id = ?"
+            + " order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM board;";
     private Connection conn;
 
@@ -24,8 +29,8 @@ public class DbDaoBoard {
         this.conn = conn;
     }
 
-    public Board insert (Board board) throws BException {
-        Board retBoard;
+    public DbBoard insert (DbBoard board) throws BException {
+        DbBoard retBoard;
         DbDaoGame daoGame= new DbDaoGame(conn);
         DbGame game=daoGame.readLast();
         try (
@@ -59,14 +64,14 @@ public class DbDaoBoard {
 
     }
 
-    public Board readLast() throws BException {
-        Board board = null;
+    public DbBoard readLast() throws BException {
+        DbBoard board = null;
         try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_read_last);
         ) {
             while (rs.next()){
-                board = new Board();
+                board = new DbBoard();
                 board.setId(rs.getInt("id"));
                 board.setGameId(rs.getInt("game_id"));
                 board.setSqltime(rs.getTimestamp("sqltime"));
@@ -87,6 +92,38 @@ public class DbDaoBoard {
         }
         return board;
     }
+
+    public ArrayList<DbBoard> readBoards(DbGame dbgame) throws BException{
+        ArrayList<DbBoard> boardsList = new ArrayList<>();
+        DbBoard board = null;
+        try (
+                PreparedStatement pstmt = conn.prepareStatement(sql_read_boards)
+         ) {
+            pstmt.setInt(1,dbgame.getId());
+            ResultSet rs = pstmt.executeQuery(sql_read_boards);
+            while (rs.next()){
+                board = new DbBoard();
+                boardsList.add(board);
+                board.setId(rs.getInt("id"));
+                board.setGameId(rs.getInt("game_id"));
+                board.setSqltime(rs.getTimestamp("sqltime"));
+                board.setSeqNr(rs.getInt("seqnr"));
+                board.setTurn(rs.getInt("turn"));
+                board.setBarRed(rs.getInt("bar_r"));
+                board.setBarWhite(rs.getInt("bar_w"));
+                board.setOffRed(rs.getInt("off_r"));
+                board.setOffWhite(rs.getInt("off_w"));
+                board.setDice1(rs.getInt("dice1"));
+                board.setDice2(rs.getInt("dice2"));
+            }
+            rs.close();
+        } catch (Exception e){
+            logger.error("read last failed",e);
+            throw new BException("read last failed",e);
+        }
+        return boardsList;
+    }
+
     public int count() throws BException {
         int count = -1;
         try (
@@ -108,4 +145,6 @@ public class DbDaoBoard {
     public void setConnection(Connection conn) {
         this.conn=conn;
     }
+
+
 }

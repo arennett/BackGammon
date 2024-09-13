@@ -1,8 +1,9 @@
-package de.ar.backgammon.dbase.entity;
+package de.ar.backgammon.dbase;
 
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.dao.DbDaoGame;
+import de.ar.backgammon.dbase.entity.DbGame;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
 
 public class DbGameTableModel implements TableModel {
     private final DbDaoGame daoGame;
-    private final DbGame dbGame;
+
     private ArrayList<DbGame> gameList;
 
     public DbGameTableModel(){
@@ -23,7 +24,7 @@ public class DbGameTableModel implements TableModel {
             throw new RuntimeException(e);
         }
         this.daoGame = new DbDaoGame(conn);
-        dbGame= new DbGame();
+
         update();
     }
 
@@ -42,17 +43,17 @@ public class DbGameTableModel implements TableModel {
 
     @Override
     public int getColumnCount() {
-        return dbGame.getColumnCount();
+        return DbGame.getColumnCount();
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-        return dbGame.getColumnName(columnIndex);
+        return DbGame.getColumnName(columnIndex);
     }
 
     @Override
     public Class<?> getColumnClass(int columnIndex) {
-        return dbGame.getColumnClass(columnIndex);
+        return DbGame.getColumnClass(columnIndex);
     }
 
     @Override

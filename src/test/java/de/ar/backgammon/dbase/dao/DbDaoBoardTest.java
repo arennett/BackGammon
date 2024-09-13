@@ -3,7 +3,7 @@ package de.ar.backgammon.dbase.dao;
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
-import de.ar.backgammon.dbase.entity.Board;
+import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbGame;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +41,7 @@ class DbDaoBoardTest {
     @Test
     void insert() throws BException {
         DbGame game = dbDaoGame.insert();
-        Board board = new Board();
+        DbBoard board = new DbBoard();
         board.setTurn(0);
         board.setBarWhite(1);
         board.setBarRed(2);
@@ -50,7 +50,7 @@ class DbDaoBoardTest {
         board.setDice1(1);
         board.setDice2(2);
 
-        Board bx=null;
+        DbBoard bx=null;
         for (int i=0;i<1000;i++){
             bx =dbDaoBoard.insert(board);
         }
@@ -60,7 +60,7 @@ class DbDaoBoardTest {
 
     @Test
     void readLast() throws BException {
-        Board board = dbDaoBoard.readLast();
+        DbBoard board = dbDaoBoard.readLast();
         assertEquals(1000,board.getId());
     }
 
