@@ -63,12 +63,6 @@ public class DbConnect {
         return false;
     }
 
-    public static void main(String[] args) throws BException {
-        getInstance().connect();
-        getInstance().close();
-
-    }
-
 
     public void commit() throws BException {
         try {

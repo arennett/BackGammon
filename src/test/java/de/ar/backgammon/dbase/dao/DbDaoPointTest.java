@@ -4,8 +4,8 @@ import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
 import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbPoint;
 import de.ar.backgammon.dbase.entity.DbGame;
+import de.ar.backgammon.dbase.entity.DbPoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DbDaoPointTest {
 

@@ -187,7 +187,7 @@ public class DbBoard {
             case 3:
                 return getSeqNr();
             case 4:
-                return BColor.getBColorByIdx(getTurn()).toString();
+                return BColor.getBColorByIdx(getTurn()).getShortString();
             case 5:
                 return getBarRed();
             case 6:

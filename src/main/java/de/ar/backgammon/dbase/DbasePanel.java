@@ -10,6 +10,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,6 +22,7 @@ public class DbasePanel extends JPanel implements ActionListener {
     JToggleButton jtbRecordingOnOff;
     DbasePanelControl dbpControl;
     DbGamesPanel panelGames;
+    DbBoardsPanel panelBoards;
 
     public DbasePanel(DbasePanelControl dbpControl,BoardModelIf boardModel) {
         this.dbpControl = dbpControl;
@@ -41,30 +43,34 @@ public class DbasePanel extends JPanel implements ActionListener {
         JPanel panelMainControl = new JPanel();
         panelMainControl.setPreferredSize(new Dimension(200,150));
         panelGames = new DbGamesPanel();
-        DbBoardsPanel panelBoards = new DbBoardsPanel();
+
         panelGames.getTable().getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+        panelBoards = new DbBoardsPanel();
         panelGames.getTable().getSelectionModel().addListSelectionListener(e -> {
-
+                ListSelectionModel lsm = (ListSelectionModel)e.getSource();
                 if (e.getValueIsAdjusting()){
                     return;
                 }
-                int idx = e.getLastIndex();
-                int game_id = (int) panelGames.getModel().getValueAt(idx, 0);
-                logger.debug("game idx:<{}>  game id:<{}> selected",idx, game_id);
-
+            if (lsm.isSelectionEmpty()) {
+                return;
+            } else {
+                // Find out which indexes are selected.
+                int minIndex = lsm.getMinSelectionIndex();
+                int game_id = (int) panelGames.getModel().getValueAt(minIndex, 0);
+                panelBoards.getModel().update(game_id);
+                logger.debug("game idx:<{}>  game id:<{}> selected", minIndex, game_id);
+                panelBoards.getTable().updateUI();
+            }
         });
-        panelBoards.setPreferredSize(new Dimension(200,150));
 
         panelMainControl.setLayout(new BorderLayout());
         panelMainControl.setBorder(BorderFactory.createTitledBorder("Recording"));
 
-        panelBoards.setLayout(new BorderLayout());
-        panelBoards.setBorder(BorderFactory.createTitledBorder("Boards"));
 
         jtbRecordingOnOff = new JToggleButton("REC");
         jtbRecordingOnOff.addActionListener(this);
         panelMainControl.add(jtbRecordingOnOff,BorderLayout.NORTH);
+
 
         c.gridx = 0;
         c.gridy = 0;
@@ -79,7 +85,22 @@ public class DbasePanel extends JPanel implements ActionListener {
         //c.weightx=0.5;
         add(panelBoards, c);
 
+        if (panelGames.getTable().getRowCount()>0) {
+            panelGames.getTable().getSelectionModel().setSelectionInterval(0, 0);
+        }
+
     }
+
+    public void updateTables() {
+        panelGames.updateTables();
+        int rcount = panelGames.getTable().getRowCount();
+        if (rcount > 0) {
+            int gameid = panelGames.getModel().getGameId(rcount - 1);
+            panelBoards.updateTables(gameid);
+        }
+    }
+
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

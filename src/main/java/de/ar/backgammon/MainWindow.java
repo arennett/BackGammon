@@ -75,6 +75,7 @@ public class MainWindow extends JFrame implements ComponentListener {
 
         gameControl.setDbasePanelControl(dbpControl);
         DbasePanel dbasePanel=new DbasePanel(dbpControl,bModel);
+        dbpControl.setDbasePanel(dbasePanel);
 
 
         add(boardPanel,BorderLayout.CENTER);

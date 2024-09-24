@@ -1,6 +1,7 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
+import de.ar.backgammon.Game;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
 import de.ar.backgammon.dbase.entity.DbBoard;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -69,4 +71,16 @@ class DbDaoBoardTest {
         assertEquals(1000,dbDaoBoard.count());
     }
 
+    @Test
+    void readBoards() throws BException {
+        insert();
+        DbGame game = dbDaoGame.readLast();
+
+        ArrayList<DbBoard> boards=dbDaoBoard.readBoards(game.getId());
+        int i=0;
+        for (DbBoard board:boards){
+             i++;
+        }
+        assertTrue(i >0);
+    }
 }

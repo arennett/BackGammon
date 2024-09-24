@@ -26,8 +26,8 @@ public enum BColor {
         return null;
     }
 
-    public static Object getBColorByIdx(int turn) {
-        return COLORS[turn];
+    public static BColor getBColorByIdx(int turn) {
+        return BColor.values()[turn];
     }
 
     public String toString() {

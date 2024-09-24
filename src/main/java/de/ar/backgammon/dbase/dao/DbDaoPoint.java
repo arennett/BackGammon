@@ -1,6 +1,7 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
+import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbPoint;
 import org.slf4j.Logger;
@@ -13,16 +14,16 @@ public class DbDaoPoint {
     private static final String sql_insert="insert into point (board_id,idx,color,cnt) VALUES (?,?,?,?);";
     private static final String sql_read_last ="SELECT id, board_id, sqltime, idx,color,cnt FROM point order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM point;";
-    private final Connection conn;
 
-    public DbDaoPoint(Connection conn){
 
-        this.conn = conn;
+    public DbDaoPoint(){
+
     }
 
     public DbPoint insert (DbPoint point) throws BException {
         DbPoint retPoint;
-        DbDaoBoard daoBoard = new DbDaoBoard(conn);
+        Connection conn = DbConnect.getInstance().getConnection();
+        DbDaoBoard daoBoard = new DbDaoBoard();
         DbBoard board = daoBoard.readLast();
         try (
                  PreparedStatement pstmt = conn.prepareStatement(sql_insert)
@@ -52,6 +53,7 @@ public class DbDaoPoint {
 
     public DbPoint readLast() throws BException {
         DbPoint point = null;
+        Connection conn = DbConnect.getInstance().getConnection();
         try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_read_last);
@@ -74,6 +76,7 @@ public class DbDaoPoint {
     }
     public int count() throws BException {
         int count = -1;
+        Connection conn = DbConnect.getInstance().getConnection();
         try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_count);

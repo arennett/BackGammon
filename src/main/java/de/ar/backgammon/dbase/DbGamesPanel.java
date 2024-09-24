@@ -1,6 +1,7 @@
 package de.ar.backgammon.dbase;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import java.awt.*;
@@ -8,10 +9,10 @@ import java.util.Date;
 
 public class DbGamesPanel extends JPanel  {
     JTable gTable;
+    JScrollPane jScrollPane;
 
 
-
-    TableModel model;
+    DbGameTableModel model;
     public DbGamesPanel(){
         model =new DbGameTableModel();
         initUI();
@@ -28,20 +29,26 @@ public class DbGamesPanel extends JPanel  {
         TableColumnModel colModel=gTable.getColumnModel();
         colModel.getColumn(0).setPreferredWidth(25);
         colModel.getColumn(1).setPreferredWidth(150);
-        JScrollPane jScrollPane = new JScrollPane(gTable);
+        jScrollPane = new JScrollPane(gTable);
         //jScrollPane.setPreferredSize(new Dimension(100,100));
+
         add(jScrollPane, BorderLayout.CENTER);
 
     }
-    public TableModel getModel() {
-        return model;
+    public void updateTables() {
+        model.update();
+        gTable.setRowSelectionInterval(gTable.getRowCount() - 1, gTable.getRowCount() - 1);
+        gTable.revalidate();
+        JScrollBar vertical = jScrollPane.getVerticalScrollBar();
+        vertical.setValue( vertical.getMaximum());
     }
 
-    public void setModel(TableModel model) {
-        this.model = model;
-    }
 
     public JTable getTable() {
         return gTable;
+    }
+
+    public DbGameTableModel getModel() {
+        return model;
     }
 }

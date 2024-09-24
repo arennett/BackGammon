@@ -1,6 +1,7 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
+import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.entity.DbBoard;
 import de.ar.backgammon.dbase.entity.DbGame;
 import org.slf4j.Logger;
@@ -20,20 +21,21 @@ public class DbDaoBoard {
     private static final String sql_read_boards
             = "SELECT id, game_id, sqltime, seqnr,turn,bar_r,bar_w,off_r,off_w,dice1,dice2 FROM board"
             + " WHERE game_id = ?"
-            + " order by id desc LIMIT 1;";
+            + " order by id;";
     private static final String sql_count ="SELECT count(*) as count FROM board;";
-    private Connection conn;
 
-    public DbDaoBoard(Connection conn){
+    public DbDaoBoard(){
 
-        this.conn = conn;
+
     }
 
     public DbBoard insert (DbBoard board) throws BException {
         DbBoard retBoard;
-        DbDaoGame daoGame= new DbDaoGame(conn);
+        DbDaoGame daoGame= new DbDaoGame();
         DbGame game=daoGame.readLast();
+        Connection conn = DbConnect.getInstance().getConnection();
         try (
+
                  PreparedStatement pstmt = conn.prepareStatement(sql_insert)
         ) {
 
@@ -66,6 +68,7 @@ public class DbDaoBoard {
 
     public DbBoard readLast() throws BException {
         DbBoard board = null;
+        Connection conn = DbConnect.getInstance().getConnection();
         try (
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql_read_last);
@@ -93,14 +96,15 @@ public class DbDaoBoard {
         return board;
     }
 
-    public ArrayList<DbBoard> readBoards(DbGame dbgame) throws BException{
+    public ArrayList<DbBoard> readBoards(int game_id) throws BException{
         ArrayList<DbBoard> boardsList = new ArrayList<>();
         DbBoard board = null;
+        Connection conn = DbConnect.getInstance().getConnection();
         try (
                 PreparedStatement pstmt = conn.prepareStatement(sql_read_boards)
          ) {
-            pstmt.setInt(1,dbgame.getId());
-            ResultSet rs = pstmt.executeQuery(sql_read_boards);
+            pstmt.setInt(1,game_id);
+            ResultSet rs = pstmt.executeQuery();
             while (rs.next()){
                 board = new DbBoard();
                 boardsList.add(board);
@@ -125,6 +129,7 @@ public class DbDaoBoard {
     }
 
     public int count() throws BException {
+        Connection conn = DbConnect.getInstance().getConnection();
         int count = -1;
         try (
              Statement stmt = conn.createStatement();
@@ -140,11 +145,5 @@ public class DbDaoBoard {
         }
         return count;
     }
-
-
-    public void setConnection(Connection conn) {
-        this.conn=conn;
-    }
-
 
 }

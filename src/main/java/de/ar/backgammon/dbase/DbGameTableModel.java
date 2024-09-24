@@ -6,31 +6,26 @@ import de.ar.backgammon.dbase.dao.DbDaoGame;
 import de.ar.backgammon.dbase.entity.DbGame;
 
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-public class DbGameTableModel implements TableModel {
+public class DbGameTableModel extends DefaultTableModel {
     private final DbDaoGame daoGame;
 
     private ArrayList<DbGame> gameList;
 
     public DbGameTableModel(){
-        DbConnect dbConnect=DbConnect.getInstance();
-        Connection conn= null;
-        try {
-            conn = dbConnect.getConnection();
-        } catch (BException e) {
-            throw new RuntimeException(e);
-        }
-        this.daoGame = new DbDaoGame(conn);
-
+        this.daoGame = new DbDaoGame();
+        gameList=new ArrayList<>();
         update();
     }
 
     public void update(){
         try {
             gameList=daoGame.readAll();
+            fireTableDataChanged();
         } catch (BException e) {
             throw new RuntimeException(e);
         }
@@ -38,6 +33,9 @@ public class DbGameTableModel implements TableModel {
 
     @Override
     public int getRowCount() {
+        if (gameList==null){
+            return 0;
+        }
        return gameList.size();
     }
 
@@ -66,10 +64,6 @@ public class DbGameTableModel implements TableModel {
         return gameList.get(rowIndex).getColumnValue(columnIndex);
     }
 
-    @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
-    }
 
     @Override
     public void addTableModelListener(TableModelListener l) {
@@ -79,5 +73,13 @@ public class DbGameTableModel implements TableModel {
     @Override
     public void removeTableModelListener(TableModelListener l) {
 
+    }
+
+    public int getGameId(int rowId) {
+        if (getRowCount()>0){
+            return gameList.get(rowId).getId();
+        }else{
+            return -1;
+        }
     }
 }

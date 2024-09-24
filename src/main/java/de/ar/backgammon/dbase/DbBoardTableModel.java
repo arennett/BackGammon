@@ -3,40 +3,37 @@ package de.ar.backgammon.dbase;
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.dao.DbDaoBoard;
 import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbGame;
 
 import javax.swing.event.TableModelListener;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import java.sql.Connection;
 import java.util.ArrayList;
 
-public class DbBoardTableModel implements TableModel {
+public class DbBoardTableModel extends DefaultTableModel {
     private final DbDaoBoard daoBoard;
     private ArrayList<DbBoard> boardsList;
 
 
     public DbBoardTableModel(){
-        DbConnect dbConnect=DbConnect.getInstance();
-        Connection conn= null;
-        try {
-            conn = dbConnect.getConnection();
-        } catch (BException e) {
-            throw new RuntimeException(e);
-        }
+
         this.boardsList=new ArrayList<>();
-        this.daoBoard = new DbDaoBoard(conn);
+        this.daoBoard = new DbDaoBoard();
     }
 
-    public void update(DbGame dbgame){
+    public void update(int game_id){
         try {
-            boardsList =daoBoard.readBoards(dbgame);
+           boardsList =daoBoard.readBoards(game_id);
         } catch (BException e) {
-            throw new RuntimeException(e);
+           throw new RuntimeException(e);
         }
     }
 
     @Override
     public int getRowCount() {
+        if(boardsList==null){
+            return 0;
+        }
        return boardsList.size();
     }
 
