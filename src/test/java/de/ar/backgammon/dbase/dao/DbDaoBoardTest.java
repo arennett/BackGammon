@@ -1,11 +1,12 @@
 package de.ar.backgammon.dbase.dao;
 
 import de.ar.backgammon.BException;
-import de.ar.backgammon.Game;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
-import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbGame;
+import de.ar.backgammon.dbase.board.DbDaoBoard;
+import de.ar.backgammon.dbase.game.DbDaoGame;
+import de.ar.backgammon.dbase.board.DbBoard;
+import de.ar.backgammon.dbase.game.DbGame;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +32,8 @@ class DbDaoBoardTest {
     @BeforeEach
     void setupBeforeEach() throws BException {
         conn=DbConnect.getInstance().getConnection();
-        dbDaoGame = new DbDaoGame(conn);
-        dbDaoBoard = new DbDaoBoard(conn);
+        dbDaoGame = new DbDaoGame();
+        dbDaoBoard = new DbDaoBoard();
     }
     @AfterEach
     void setupAfterEach() throws SQLException {

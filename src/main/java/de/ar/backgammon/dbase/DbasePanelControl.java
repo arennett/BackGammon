@@ -1,12 +1,12 @@
 package de.ar.backgammon.dbase;
 
 import de.ar.backgammon.*;
-import de.ar.backgammon.dbase.dao.DbDaoBoard;
-import de.ar.backgammon.dbase.dao.DbDaoGame;
-import de.ar.backgammon.dbase.dao.DbDaoPoint;
-import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbGame;
-import de.ar.backgammon.dbase.entity.DbPoint;
+import de.ar.backgammon.dbase.board.DbDaoBoard;
+import de.ar.backgammon.dbase.game.DbDaoGame;
+import de.ar.backgammon.dbase.point.DbDaoPoint;
+import de.ar.backgammon.dbase.board.DbBoard;
+import de.ar.backgammon.dbase.game.DbGame;
+import de.ar.backgammon.dbase.point.DbPoint;
 import de.ar.backgammon.model.BoardModel;
 import de.ar.backgammon.model.BoardModelIf;
 import de.ar.backgammon.points.BPoint;

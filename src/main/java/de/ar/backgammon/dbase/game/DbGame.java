@@ -1,4 +1,4 @@
-package de.ar.backgammon.dbase.entity;
+package de.ar.backgammon.dbase.game;
 
 import java.sql.Timestamp;
 

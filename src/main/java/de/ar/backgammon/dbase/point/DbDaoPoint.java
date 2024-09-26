@@ -1,19 +1,23 @@
-package de.ar.backgammon.dbase.dao;
+package de.ar.backgammon.dbase.point;
 
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
-import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbPoint;
+import de.ar.backgammon.dbase.board.DbDaoBoard;
+import de.ar.backgammon.dbase.board.DbBoard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class DbDaoPoint {
     private static final Logger logger = LoggerFactory.getLogger(DbDaoPoint.class);
     private static final String sql_insert="insert into point (board_id,idx,color,cnt) VALUES (?,?,?,?);";
     private static final String sql_read_last ="SELECT id, board_id, sqltime, idx,color,cnt FROM point order by id desc LIMIT 1;";
     private static final String sql_count ="SELECT count(*) as count FROM point;";
+    private static final String sql_read_points ="SELECT id, board_id, sqltime, idx,color,cnt FROM point "
+                                                  +" WHERE id = ?  order by idx;";
+
 
 
     public DbDaoPoint(){
@@ -63,9 +67,9 @@ public class DbDaoPoint {
                 point.setId(rs.getInt("id"));
                 point.setBoardId(rs.getInt("board_id"));
                 point.setSqltime(rs.getTimestamp("sqltime"));
-                point.setCount(rs.getInt("cnt"));
                 point.setIdx(rs.getInt("idx"));
                 point.setColor(rs.getInt("color"));
+                point.setCount(rs.getInt("cnt"));
             }
 
         } catch (Exception e){
@@ -91,9 +95,33 @@ public class DbDaoPoint {
         }
         return count;
     }
+    public ArrayList<DbPoint> readPoints(int board_id) throws BException{
+        ArrayList<DbPoint> pointsList = new ArrayList<>();
+        DbPoint point = null;
+        Connection conn = DbConnect.getInstance().getConnection();
+        try (
+                PreparedStatement pstmt = conn.prepareStatement(sql_read_points)
+        ) {
+            pstmt.setInt(1,board_id);
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()){
+                point = new DbPoint();
+                pointsList.add(point);
+                point.setId(rs.getInt("id"));
+                point.setBoardId(rs.getInt("board_id"));
+                point.setSqltime(rs.getTimestamp("sqltime"));
+                point.setIdx(rs.getInt("idx"));
+                point.setColor(rs.getInt("color"));
+                point.setCount(rs.getInt("cnt"));
 
-
-
+            }
+            rs.close();
+        } catch (Exception e){
+            logger.error("read points",e);
+            throw new BException("read points",e);
+        }
+        return pointsList;
+    }
 
 
 }

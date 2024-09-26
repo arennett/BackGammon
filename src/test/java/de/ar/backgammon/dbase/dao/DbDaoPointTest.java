@@ -3,9 +3,12 @@ package de.ar.backgammon.dbase.dao;
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
 import de.ar.backgammon.dbase.DbCreate;
-import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbGame;
-import de.ar.backgammon.dbase.entity.DbPoint;
+import de.ar.backgammon.dbase.board.DbDaoBoard;
+import de.ar.backgammon.dbase.game.DbDaoGame;
+import de.ar.backgammon.dbase.point.DbDaoPoint;
+import de.ar.backgammon.dbase.board.DbBoard;
+import de.ar.backgammon.dbase.game.DbGame;
+import de.ar.backgammon.dbase.point.DbPoint;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,8 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DbDaoPointTest {
 
@@ -31,9 +36,9 @@ class DbDaoPointTest {
     @BeforeEach
     void setupBeforeEach() throws BException {
         conn= DbConnect.getInstance().getConnection();
-        dbDaoGame  = new DbDaoGame(conn);
-        dbDaoBoard = new DbDaoBoard(conn);
-        dbDaoPoint = new DbDaoPoint(conn);
+        dbDaoGame  = new DbDaoGame();
+        dbDaoBoard = new DbDaoBoard();
+        dbDaoPoint = new DbDaoPoint();
    }
     @AfterEach
     void setupAfterEach() throws SQLException {
@@ -71,4 +76,20 @@ class DbDaoPointTest {
     void count() throws BException {
         assertEquals(24,dbDaoPoint.count());
     }
+
+    @Test
+    void readPoints() throws BException {
+        insert();
+        DbBoard board = dbDaoBoard.readLast();
+
+        ArrayList<DbPoint> points=dbDaoPoint.readPoints(board.getId());
+        int i=0;
+        for (DbPoint point:points){
+            i++;
+        }
+        assertTrue(i >0);
+    }
+
+
+
 }

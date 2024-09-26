@@ -1,13 +1,11 @@
-package de.ar.backgammon.dbase;
+package de.ar.backgammon.dbase.board;
 
 import de.ar.backgammon.BException;
-import de.ar.backgammon.dbase.dao.DbDaoBoard;
-import de.ar.backgammon.dbase.entity.DbBoard;
+import de.ar.backgammon.dbase.board.DbDaoBoard;
+import de.ar.backgammon.dbase.board.DbBoard;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
-import java.sql.Connection;
 import java.util.ArrayList;
 
 public class DbBoardTableModel extends DefaultTableModel {

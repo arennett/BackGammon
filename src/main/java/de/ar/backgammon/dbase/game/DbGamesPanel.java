@@ -1,9 +1,10 @@
-package de.ar.backgammon.dbase;
+package de.ar.backgammon.dbase.game;
+
+import de.ar.backgammon.dbase.DateCellRenderer;
+import de.ar.backgammon.dbase.game.DbGameTableModel;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.util.Date;
 

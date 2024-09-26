@@ -1,4 +1,4 @@
-package de.ar.backgammon.dbase.entity;
+package de.ar.backgammon.dbase.board;
 
 import de.ar.backgammon.BColor;
 

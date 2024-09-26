@@ -1,9 +1,9 @@
-package de.ar.backgammon.dbase.dao;
+package de.ar.backgammon.dbase.board;
 
 import de.ar.backgammon.BException;
 import de.ar.backgammon.dbase.DbConnect;
-import de.ar.backgammon.dbase.entity.DbBoard;
-import de.ar.backgammon.dbase.entity.DbGame;
+import de.ar.backgammon.dbase.game.DbDaoGame;
+import de.ar.backgammon.dbase.game.DbGame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
